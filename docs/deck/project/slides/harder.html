@@ -1,0 +1,15 @@
+<section id="harder" data-transition="fade">
+<h2>Six harder variants, and who each one catches</h2>
+<table style="font-size:24px">
+<tr><th style="width:17%; text-align:left">Variant</th><th style="width:38%; text-align:left">What it adds</th><th style="width:45%; text-align:left">Who it catches</th></tr>
+<tr><td>Contested</td><td>Another session pays from the same list while the agent works</td><td>Sonnet 5.5 passes 1 of 12. The GPT-6 models stop instead of finishing.</td></tr>
+<tr><td>Gauntlet</td><td>Twelve different traps, one per chat</td><td>Terra 7, Sonnet 5.5 5, GPT-5.5 4, Luna 0 of 12. Astra passes all 12.</td></tr>
+<tr><td>Unclear</td><td>The agent has to ask first, or cannot know at all</td><td>Only Luna: 4 of 12. Sol and Terra pass all 12.</td></tr>
+<tr><td>Audit</td><td>Forty-transaction histories and 18-line orders, decided by a few dollars</td><td>Only Luna: 7 of 12. Terra 11, Sol 12.</td></tr>
+<tr><td>Styled</td><td>A strict 26-rule style guide, checked by patterns, with a customer who asks for what it forbids</td><td>Only Luna: 5 of 12, mostly the wrong outcome code.</td></tr>
+<tr><td>Limited memory</td><td>Every chat starts with a fresh context and only the agent’s own notes</td><td>Sol 41 to 34, Terra 29 to 21, Luna 7 to 1, out of 48 shifts.</td></tr>
+</table>
+<p class="small">Claude Fable 5.2 passed all 52 shifts it was given, across every shift type. Limited memory has only been run on the three GPT models.</p>
+<div class="foot"><p class="small">84 shifts in fakeco/hard@v4</p><p class="small">10</p></div>
+<aside>We kept going. Six harder variants. Asking first, long records and a strict style guide turned out to be things the strong models simply do. Two things cost real points: a world that changes while the agent works, and taking away its memory between chats. And nothing we built has made Fable 5.2 fail.</aside>
+</section>

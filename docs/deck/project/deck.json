@@ -5,7 +5,7 @@
   "format": {"v": 1, "shared": ["project/deck.css"]},
   "title": "FakeCo Bench",
   "cover": "cover",
-  "order": ["cover", "problem", "shift", "grading", "leaderboard", "pareto", "duplicate", "moving", "gauntlet", "map", "trust", "fit", "limits", "close"],
+  "order": ["cover", "problem", "shift", "grading", "leaderboard", "pareto", "duplicate", "moving", "gauntlet", "harder", "map", "trust", "fit", "limits", "close"],
   "sections": {
     "what": {"description": "What FakeCo is and why a chat-level benchmark is no longer enough.", "start": "cover"},
     "results": {"description": "How ten models score, and what that costs.", "start": "leaderboard"},
