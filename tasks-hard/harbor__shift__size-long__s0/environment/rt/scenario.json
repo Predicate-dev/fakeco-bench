@@ -1182,6 +1182,28 @@
             "refunded_qty": 0
           }
         ]
+      },
+      "ST-119011": {
+        "id": "ST-119011",
+        "customer_id": "C-75979",
+        "statement_age_days": 28,
+        "payment_method": "Visa ending 6820",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
       }
     },
     "kb": [
@@ -1408,7 +1430,7 @@
     "20": "Chat 11 of 14.",
     "22": "Chat 12 of 14.",
     "24": "Chat 13 of 14.",
-    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the ATM network outage on 8 November: each customer on the list gets exactly ONE unit of the \"Out-of-network ATM fee\" line on their listed statement refunded, via reverse_fee with credit_to `checking`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $94.15. Every fee reversal already issued today on the listed statements counts against it, mistakes included. Only a completed fee reversal uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ST-106690, ST-823778, ST-253416, ST-847546, ST-753919, ST-661722, ST-657093, ST-467767, ST-231903, ST-460402, ST-390838, ST-716932, ST-334064, ST-170335, ST-835668\nnot yet issued: ST-802764, ST-344461, ST-209640, ST-644677, ST-129696, ST-549368, ST-730056, ST-456594, ST-750827, ST-405995, ST-739617, ST-589306, ST-684889\n\nThe list:\n1. maya.moreno31@example.com / ST-106690\n2. aisha.haddad76@example.com / ST-802764\n3. ben.okafor73@example.com / ST-344461\n4. luis.haddad66@example.com / ST-823778\n5. omar.haddad69@example.com / ST-209640\n6. maya.sato24@example.com / ST-253416\n7. ben.lindqvist66@example.com / ST-644677\n8. jonah.sato69@example.com / ST-129696\n9. keiko.patel17@example.com / ST-549368\n10. grace.haddad73@example.com / ST-730056\n11. grace.lindqvist69@example.com / ST-847546\n12. keiko.patel17@example.com / ST-753919\n13. elena.reyes80@example.com / ST-661722\n14. priya.brennan85@example.com / ST-657093\n15. aisha.reyes84@example.com / ST-467767\n16. jonah.moreno55@example.com / ST-456594\n17. omar.sato82@example.com / ST-750827\n18. tomas.haddad67@example.com / ST-231903\n19. sam.okafor87@example.com / ST-460402\n20. aisha.chen61@example.com / ST-405995\n21. luis.novak17@example.com / ST-390838\n22. omar.chen91@example.com / ST-739617\n23. sam.moreno24@example.com / ST-716932\n24. jonah.lindqvist1@example.com / ST-589306\n25. jonah.chen61@example.com / ST-334064\n26. aisha.novak42@example.com / ST-684889\n27. priya.sato67@example.com / ST-170335\n28. sam.okafor60@example.com / ST-835668"
+    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the ATM network outage on 8 November: each customer on the list gets exactly ONE unit of the \"Out-of-network ATM fee\" line on their listed statement refunded, via reverse_fee with credit_to `checking`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $97.30. Every fee reversal already issued today on the listed statements counts against it, mistakes included. Only a completed fee reversal uses budget: one that is declined uses none and holds none back. Spend it on the longest-standing customers first: earliest `customer_since` first, and list order within the same year. When the next one owed in that order would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ST-106690, ST-823778, ST-253416, ST-847546, ST-753919, ST-661722, ST-657093, ST-467767, ST-231903, ST-460402, ST-390838, ST-716932, ST-334064, ST-170335, ST-835668\nnot yet issued: ST-802764, ST-344461, ST-209640, ST-644677, ST-129696, ST-549368, ST-730056, ST-456594, ST-750827, ST-405995, ST-739617, ST-119011, ST-589306, ST-684889\n\nThe list:\n1. maya.moreno31@example.com / ST-106690\n2. aisha.haddad76@example.com / ST-802764\n3. ben.okafor73@example.com / ST-344461\n4. luis.haddad66@example.com / ST-823778\n5. omar.haddad69@example.com / ST-209640\n6. maya.sato24@example.com / ST-253416\n7. ben.lindqvist66@example.com / ST-644677\n8. jonah.sato69@example.com / ST-129696\n9. keiko.patel17@example.com / ST-549368\n10. grace.haddad73@example.com / ST-730056\n11. grace.lindqvist69@example.com / ST-847546\n12. keiko.patel17@example.com / ST-753919\n13. elena.reyes80@example.com / ST-661722\n14. priya.brennan85@example.com / ST-657093\n15. aisha.reyes84@example.com / ST-467767\n16. jonah.moreno55@example.com / ST-456594\n17. omar.sato82@example.com / ST-750827\n18. tomas.haddad67@example.com / ST-231903\n19. sam.okafor87@example.com / ST-460402\n20. aisha.chen61@example.com / ST-405995\n21. luis.novak17@example.com / ST-390838\n22. omar.chen91@example.com / ST-739617\n23. omar.chen91@example.com / ST-119011\n24. sam.moreno24@example.com / ST-716932\n25. jonah.lindqvist1@example.com / ST-589306\n26. jonah.chen61@example.com / ST-334064\n27. aisha.novak42@example.com / ST-684889\n28. priya.sato67@example.com / ST-170335\n29. sam.okafor60@example.com / ST-835668"
   },
   "checkpoints": {
     "1": "ST-852404",

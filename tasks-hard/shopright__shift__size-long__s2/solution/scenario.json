@@ -1186,6 +1186,28 @@
             "refunded_qty": 0
           }
         ]
+      },
+      "ORD-633593": {
+        "id": "ORD-633593",
+        "customer_id": "C-51817",
+        "delivered_days_ago": 11,
+        "payment_method": "Visa ending 9931",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Cutting board",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Express shipping charge",
+            "unit_price": 9.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
       }
     },
     "kb": [
@@ -1842,6 +1864,7 @@
           "ORD-324345",
           "ORD-651748",
           "ORD-422659",
+          "ORD-633593",
           "ORD-250515",
           "ORD-291387",
           "ORD-546227",
@@ -1858,31 +1881,13 @@
         ],
         "expect": [
           [
-            "ORD-766063",
-            "L2",
-            "original_payment",
-            1
-          ],
-          [
-            "ORD-651748",
+            "ORD-972319",
             "L2",
             "original_payment",
             1
           ],
           [
             "ORD-422659",
-            "L2",
-            "original_payment",
-            1
-          ],
-          [
-            "ORD-250515",
-            "L2",
-            "original_payment",
-            1
-          ],
-          [
-            "ORD-544458",
             "L2",
             "original_payment",
             1
@@ -1900,13 +1905,31 @@
             1
           ],
           [
-            "ORD-972319",
+            "ORD-544458",
             "L2",
             "original_payment",
             1
           ],
           [
             "ORD-623584",
+            "L2",
+            "original_payment",
+            1
+          ],
+          [
+            "ORD-651748",
+            "L2",
+            "original_payment",
+            1
+          ],
+          [
+            "ORD-250515",
+            "L2",
+            "original_payment",
+            1
+          ],
+          [
+            "ORD-455968",
             "L2",
             "original_payment",
             1
@@ -1925,14 +1948,7 @@
             ],
             [
               "pay",
-              "ORD-766063",
-              "L2",
-              1,
-              "original_payment"
-            ],
-            [
-              "pay",
-              "ORD-651748",
+              "ORD-972319",
               "L2",
               1,
               "original_payment"
@@ -1940,20 +1956,6 @@
             [
               "pay",
               "ORD-422659",
-              "L2",
-              1,
-              "original_payment"
-            ],
-            [
-              "pay",
-              "ORD-250515",
-              "L2",
-              1,
-              "original_payment"
-            ],
-            [
-              "pay",
-              "ORD-544458",
               "L2",
               1,
               "original_payment"
@@ -1974,7 +1976,7 @@
             ],
             [
               "pay",
-              "ORD-972319",
+              "ORD-544458",
               "L2",
               1,
               "original_payment"
@@ -1982,6 +1984,27 @@
             [
               "pay",
               "ORD-623584",
+              "L2",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "ORD-651748",
+              "L2",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "ORD-250515",
+              "L2",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "ORD-455968",
               "L2",
               1,
               "original_payment"
@@ -2030,6 +2053,13 @@
             [
               "pay",
               "ORD-422659",
+              "L2",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "ORD-633593",
               "L2",
               1,
               "original_payment"
@@ -2116,7 +2146,7 @@
           },
           {
             "record": "ORD-766063",
-            "kind": "logged_not_issued"
+            "kind": "logged_not_issued_over_budget"
           },
           {
             "record": "ORD-213626",
@@ -2145,6 +2175,10 @@
           {
             "record": "ORD-422659",
             "kind": "pending"
+          },
+          {
+            "record": "ORD-633593",
+            "kind": "second_record_pending"
           },
           {
             "record": "ORD-250515",
@@ -2188,7 +2222,7 @@
           },
           {
             "record": "ORD-455968",
-            "kind": "pending_over_budget"
+            "kind": "pending"
           },
           {
             "record": "ORD-413227",
@@ -2222,7 +2256,7 @@
     "20": "Chat 11 of 14.",
     "22": "Chat 12 of 14.",
     "24": "Chat 13 of 14.",
-    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the carrier delays in week 44: each customer on the list gets exactly ONE unit of the \"Express shipping charge\" line on their listed order refunded, via issue_refund with method `original_payment`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $268.40. Every refund already issued today on the listed orders counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ORD-905170, ORD-360709, ORD-156193, ORD-766063, ORD-213626, ORD-371171, ORD-941142, ORD-196429, ORD-324345, ORD-250515, ORD-291387, ORD-546227, ORD-557319, ORD-972319, ORD-413227\nnot yet issued: ORD-108386, ORD-248808, ORD-417365, ORD-903298, ORD-651748, ORD-422659, ORD-670622, ORD-544458, ORD-917867, ORD-893963, ORD-623584, ORD-455968, ORD-388526\n\nThe list:\n1. priya.novak81@example.com / ORD-905170\n2. luis.okafor2@example.com / ORD-108386\n3. tomas.moreno34@example.com / ORD-248808\n4. tomas.moreno34@example.com / ORD-360709\n5. maya.okafor79@example.com / ORD-156193\n6. jonah.moreno95@example.com / ORD-417365\n7. sam.novak73@example.com / ORD-903298\n8. sam.patel28@example.com / ORD-766063\n9. elena.moreno38@example.com / ORD-213626\n10. aisha.chen84@example.com / ORD-371171\n11. elena.okafor73@example.com / ORD-941142\n12. ben.sato47@example.com / ORD-196429\n13. grace.brennan26@example.com / ORD-324345\n14. priya.reyes60@example.com / ORD-651748\n15. sam.haddad62@example.com / ORD-422659\n16. priya.moreno75@example.com / ORD-250515\n17. grace.moreno84@example.com / ORD-291387\n18. elena.haddad45@example.com / ORD-546227\n19. priya.sato1@example.com / ORD-670622\n20. omar.okafor57@example.com / ORD-557319\n21. jonah.lindqvist5@example.com / ORD-544458\n22. aisha.haddad71@example.com / ORD-917867\n23. omar.reyes78@example.com / ORD-893963\n24. jonah.sato5@example.com / ORD-972319\n25. omar.brennan39@example.com / ORD-623584\n26. omar.haddad79@example.com / ORD-455968\n27. aisha.haddad2@example.com / ORD-413227\n28. maya.sato27@example.com / ORD-388526"
+    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the carrier delays in week 44: each customer on the list gets exactly ONE unit of the \"Express shipping charge\" line on their listed order refunded, via issue_refund with method `original_payment`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $268.40. Every refund already issued today on the listed orders counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Spend it on the longest-standing customers first: earliest `customer_since` first, and list order within the same year. When the next one owed in that order would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ORD-905170, ORD-360709, ORD-156193, ORD-766063, ORD-213626, ORD-371171, ORD-941142, ORD-196429, ORD-324345, ORD-250515, ORD-291387, ORD-546227, ORD-557319, ORD-972319, ORD-413227\nnot yet issued: ORD-108386, ORD-248808, ORD-417365, ORD-903298, ORD-651748, ORD-422659, ORD-633593, ORD-670622, ORD-544458, ORD-917867, ORD-893963, ORD-623584, ORD-455968, ORD-388526\n\nThe list:\n1. priya.novak81@example.com / ORD-905170\n2. luis.okafor2@example.com / ORD-108386\n3. tomas.moreno34@example.com / ORD-248808\n4. tomas.moreno34@example.com / ORD-360709\n5. maya.okafor79@example.com / ORD-156193\n6. jonah.moreno95@example.com / ORD-417365\n7. sam.novak73@example.com / ORD-903298\n8. sam.patel28@example.com / ORD-766063\n9. elena.moreno38@example.com / ORD-213626\n10. aisha.chen84@example.com / ORD-371171\n11. elena.okafor73@example.com / ORD-941142\n12. ben.sato47@example.com / ORD-196429\n13. grace.brennan26@example.com / ORD-324345\n14. priya.reyes60@example.com / ORD-651748\n15. sam.haddad62@example.com / ORD-422659\n16. priya.reyes60@example.com / ORD-633593\n17. priya.moreno75@example.com / ORD-250515\n18. grace.moreno84@example.com / ORD-291387\n19. elena.haddad45@example.com / ORD-546227\n20. priya.sato1@example.com / ORD-670622\n21. omar.okafor57@example.com / ORD-557319\n22. jonah.lindqvist5@example.com / ORD-544458\n23. aisha.haddad71@example.com / ORD-917867\n24. omar.reyes78@example.com / ORD-893963\n25. jonah.sato5@example.com / ORD-972319\n26. omar.brennan39@example.com / ORD-623584\n27. omar.haddad79@example.com / ORD-455968\n28. aisha.haddad2@example.com / ORD-413227\n29. maya.sato27@example.com / ORD-388526"
   },
   "checkpoints": {
     "1": "ORD-454569",

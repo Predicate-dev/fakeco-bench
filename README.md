@@ -61,12 +61,13 @@ back office, under a handbook of eleven numbered rules. It is harder in the ways
   two accounts under one name asking about the other account's order.
 - **An unfinished job to take over.** Every shift ends with a colleague's half-run goodwill batch: a list of
   customers who each get one unit refunded, a log of what was supposedly done, and a session that crashed
-  partway. The log disagrees with the record. In the long shift the batch has 28 rows and nine kinds of
+  partway. The log disagrees with the record. In the long shift the batch has about 30 rows and ten kinds of
   disagreement: logged but never issued, issued twice, issued but logged as pending, issued to the wrong
-  destination, issued on the wrong line, a customer listed twice, a listed email that does not own the record, a
-  line that is final sale on one record, and one action the tool declines. It also has a budget that counts
-  what was already issued (mistakes included) and runs out before the end of the list. Working from the log
-  pays the wrong people; the right answer is an exact set of payments.
+  destination, issued on the wrong line, a customer listed twice with one already paid, a customer listed
+  twice with neither paid, a listed email that does not own the record, a line that is final sale on one
+  record, and one action the tool declines. It also has a budget that counts what was already issued (mistakes
+  included), is spent on the longest-standing customers first, and runs out before everyone is paid. Working
+  from the log pays the wrong people; the right answer is one exact set of payments.
 - **Tools that half-work.** A money action that is declined under an `ok: true` wrapper, or that completes for
   one unit fewer than asked.
 

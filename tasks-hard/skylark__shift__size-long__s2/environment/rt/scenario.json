@@ -1138,6 +1138,28 @@
             "refunded_qty": 0
           }
         ]
+      },
+      "BK-463801": {
+        "id": "BK-463801",
+        "customer_id": "C-56315",
+        "departs_in_days": 27,
+        "payment_method": "Visa ending 5130",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 12.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
       }
     },
     "kb": [
@@ -1346,7 +1368,7 @@
     "20": "Chat 11 of 14.",
     "22": "Chat 12 of 14.",
     "24": "Chat 13 of 14.",
-    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the Wi-Fi outage on the 9 November flights: each customer on the list gets exactly ONE unit of the \"In-flight Wi-Fi pass\" line on their listed booking refunded, via issue_refund with method `original_payment`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $342.20. Every refund already issued today on the listed bookings counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: BK-536316, BK-532664, BK-679961, BK-929842, BK-281909, BK-882960, BK-464487, BK-520139, BK-836414, BK-491377, BK-529151, BK-558509, BK-668971, BK-631368, BK-309369\nnot yet issued: BK-197288, BK-510283, BK-331741, BK-610815, BK-467166, BK-883072, BK-906382, BK-704871, BK-193562, BK-341796, BK-727482, BK-274484, BK-530212\n\nThe list:\n1. jonah.reyes28@example.com / BK-536316\n2. luis.brennan67@example.com / BK-532664\n3. elena.sato77@example.com / BK-197288\n4. elena.novak12@example.com / BK-679961\n5. aisha.patel66@example.com / BK-929842\n6. sam.moreno29@example.com / BK-510283\n7. maya.moreno18@example.com / BK-331741\n8. omar.chen17@example.com / BK-610815\n9. priya.lindqvist29@example.com / BK-467166\n10. maya.reyes21@example.com / BK-883072\n11. omar.lindqvist2@example.com / BK-281909\n12. elena.okafor18@example.com / BK-906382\n13. priya.brennan13@example.com / BK-882960\n14. priya.haddad61@example.com / BK-704871\n15. tomas.haddad82@example.com / BK-193562\n16. luis.moreno5@example.com / BK-464487\n17. sam.moreno4@example.com / BK-341796\n18. maya.lindqvist91@example.com / BK-727482\n19. tomas.lindqvist61@example.com / BK-274484\n20. elena.chen12@example.com / BK-520139\n21. aisha.sato14@example.com / BK-836414\n22. keiko.moreno86@example.com / BK-491377\n23. priya.lindqvist2@example.com / BK-529151\n24. tomas.okafor72@example.com / BK-558509\n25. sam.sato28@example.com / BK-668971\n26. tomas.lindqvist18@example.com / BK-631368\n27. keiko.moreno86@example.com / BK-530212\n28. elena.reyes9@example.com / BK-309369"
+    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the Wi-Fi outage on the 9 November flights: each customer on the list gets exactly ONE unit of the \"In-flight Wi-Fi pass\" line on their listed booking refunded, via issue_refund with method `original_payment`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $347.00. Every refund already issued today on the listed bookings counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Spend it on the longest-standing customers first: earliest `customer_since` first, and list order within the same year. When the next one owed in that order would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: BK-536316, BK-532664, BK-679961, BK-929842, BK-281909, BK-882960, BK-464487, BK-520139, BK-836414, BK-491377, BK-529151, BK-558509, BK-668971, BK-631368, BK-309369\nnot yet issued: BK-197288, BK-510283, BK-331741, BK-610815, BK-467166, BK-883072, BK-906382, BK-704871, BK-193562, BK-341796, BK-727482, BK-274484, BK-463801, BK-530212\n\nThe list:\n1. jonah.reyes28@example.com / BK-536316\n2. luis.brennan67@example.com / BK-532664\n3. elena.sato77@example.com / BK-197288\n4. elena.novak12@example.com / BK-679961\n5. aisha.patel66@example.com / BK-929842\n6. sam.moreno29@example.com / BK-510283\n7. maya.moreno18@example.com / BK-331741\n8. omar.chen17@example.com / BK-610815\n9. priya.lindqvist29@example.com / BK-467166\n10. maya.reyes21@example.com / BK-883072\n11. omar.lindqvist2@example.com / BK-281909\n12. elena.okafor18@example.com / BK-906382\n13. priya.brennan13@example.com / BK-882960\n14. priya.haddad61@example.com / BK-704871\n15. tomas.haddad82@example.com / BK-193562\n16. luis.moreno5@example.com / BK-464487\n17. sam.moreno4@example.com / BK-341796\n18. maya.lindqvist91@example.com / BK-727482\n19. tomas.lindqvist61@example.com / BK-274484\n20. elena.chen12@example.com / BK-520139\n21. aisha.sato14@example.com / BK-836414\n22. keiko.moreno86@example.com / BK-491377\n23. priya.lindqvist2@example.com / BK-529151\n24. tomas.okafor72@example.com / BK-558509\n25. elena.okafor18@example.com / BK-463801\n26. sam.sato28@example.com / BK-668971\n27. tomas.lindqvist18@example.com / BK-631368\n28. keiko.moreno86@example.com / BK-530212\n29. elena.reyes9@example.com / BK-309369"
   },
   "checkpoints": {
     "1": "BK-754335",

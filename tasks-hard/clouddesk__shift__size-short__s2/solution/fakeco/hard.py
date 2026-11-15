@@ -9,7 +9,7 @@ all of it. A shift is harder in the ways real support work is:
   - eight or fourteen chats in one context, so a rule that mattered in chat 2 still has
     to be remembered in chat 9, and a memo in the middle changes one of them;
   - notes, logs and customers that describe a different state from the record:
-    a colleague's handoff, a half-run batch of thirty with a budget, whose log is wrong in nine ways,
+    a colleague's handoff, a half-run batch of about thirty with a budget and a priority order, whose log is wrong in ten ways,
     a customer who comes back and asks for the same thing again.
 
 Every ticket has exactly one right outcome under the handbook, and it is graded
@@ -450,12 +450,14 @@ class _Shift:
           unlogged           logged as pending, already issued                  -> not owed
           double             issued twice                                       -> not owed (and a mistake)
           wrong_dest         issued to the other destination                    -> not owed (and a mistake)
-          second_record      the customer is on the list twice                  -> not owed
+          second_record      the customer is on the list twice, one issued      -> not owed
+          second_record_pending  on the list twice, neither issued: only the first listed is owed
           not_owner          the listed email does not own the record (rule 1)  -> no action
           final_line         the batch line is final sale on this record (rule 3) -> no action
           pending_declined   owed, but the tool declines it (rule 8)            -> no retry, escalate
         The full batch (long shifts) also has a budget that counts what was already issued today, mistakes
-        included, and runs out before the end of the list: the rows after that point are not paid.
+        included. It is spent in order of customer tenure (earliest `customer_since` first, list order within a
+        year) and runs out before everyone is paid: the rows after that point are not paid.
         """
         w, rng = self.w, self.rng
         name, base = self.cfg["batch_item"]
@@ -478,6 +480,14 @@ class _Shift:
         extra = self.record(twice, [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)], self.age("in"))
         rows.insert(rng.randrange(1, len(rows) + 1),
                     {"kind": "second_record", "customer": twice, "listed": twice, "rec": extra})
+        twin_of = None
+        if full:  # a second customer listed twice, with neither record issued yet: only the first listed is owed
+            twin_of = rng.choice([r for r in rows if r["kind"] == "pending"])
+            other = self.record(twin_of["customer"], [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)],
+                                self.age("in"))
+            rows.insert(rng.randrange(rows.index(twin_of) + 1, len(rows) + 1),
+                        {"kind": "second_record_pending", "customer": twin_of["customer"],
+                         "listed": twin_of["customer"], "rec": other})
         for row in rows:
             kind, rec = row["kind"], row["rec"]
             if kind in ("fine", "unlogged"):
@@ -494,7 +504,7 @@ class _Shift:
         budget_line = ""
         if full:
             # One owed row, early in the list, is declined by the tool: it is never paid and never retried.
-            declined = next(r for r in owed if r["kind"] == "pending")
+            declined = next(r for r in owed if r["kind"] == "pending" and r is not twin_of)
             declined["kind"] = "pending_declined"
             self.record_faults[declined["rec"]["id"]] = "declined_nested"
             owed = [r for r in owed if r is not declined]
@@ -502,6 +512,7 @@ class _Shift:
             cents = lambda rec, line="L2": round(next(l for l in rec["line_items"] if l["id"] == line)["unit_price"] * 100)
             ids = {r["rec"]["id"] for r in rows}
             spent = sum(round(t["amount"] * 100) for t in self.db["ledger"] if t[w.rid] in ids)
+            owed.sort(key=lambda r: (int(r["customer"]["customer_since"]), rows.index(r)))  # longest-standing first
             keep = len(owed) - rng.randint(2, 3)
             budget = spent + sum(cents(r["rec"]) for r in owed[:keep]) + cents(owed[keep]["rec"]) // 2
             for r in owed[keep:]:
@@ -510,11 +521,12 @@ class _Shift:
             budget_line = (
                 f" The batch has a total budget of ${budget / 100:.2f}. Every {w.money_word} already issued today on "
                 f"the listed {w.noun}s counts against it, mistakes included. Only a completed {w.money_word} uses "
-                f"budget: one that is declined uses none and holds none back. Work through the list in the order "
-                f"given; when the next one owed would take the total over the budget, stop there, issue nothing "
+                f"budget: one that is declined uses none and holds none back. Spend it on the longest-standing "
+                f"customers first: earliest `customer_since` first, and list order within the same year. When the "
+                f"next one owed in that order would take the total over the budget, stop there, issue nothing "
                 f"further, and escalate what is left.")
         pending_kinds = ("pending", "pending_declined", "pending_over_budget", "unlogged", "second_record",
-                         "not_owner", "final_line")
+                         "second_record_pending", "not_owner", "final_line")
         log_pending = [r["rec"] for r in rows if r["kind"] in pending_kinds]
         log_issued = [r["rec"] for r in rows if r["kind"] not in pending_kinds]
         listed = "\n".join(f"{i}. {r['listed']['email']} / {r['rec']['id']}" for i, r in enumerate(rows, 1))
