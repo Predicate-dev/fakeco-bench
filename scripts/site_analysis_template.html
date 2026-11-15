@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FakeCo Bench Analysis</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Archivo:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: the working sheet behind the release page. Same paper and ink; two tools, each a control row over one dense table. */
+:root {
+  --paper: #FCFCFA; --ink: #0B0B0B; --ink-2: #4B4B45; --hair: #D4D4CC; --soft: #F0F0EA;
+  --yellow: #FFE500; --red: #D42A20; --blue: #1F3FC4;
+  --display: "Barlow Condensed", "Archivo Narrow", "Arial Narrow", sans-serif;
+  --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+p, h1, h2, figure { margin: 0; }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--ink); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { background: var(--yellow); }
+button, select { font: inherit; color: inherit; }
+button:focus-visible, a:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.label { font: 500 12px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }
+.small { font-size: 13.5px; color: var(--ink-2); max-width: 90ch; }
+.mast { padding-block: 18px 22px; }
+.bar { display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; align-items: baseline; border-bottom: 3px solid var(--ink); padding-bottom: 8px; }
+.word { font: 800 24px/1 var(--display); letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; }
+.bar nav { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.bar nav a { font: 500 12px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; }
+h1 { font: 800 clamp(36px, 5vw, 60px)/1 var(--display); letter-spacing: -0.012em; padding-top: 22px; }
+h2 { font: 800 clamp(28px, 4vw, 44px)/1 var(--display); letter-spacing: -0.01em; }
+.sec { border-top: 3px solid var(--ink); padding-block: 20px 44px; }
+.sec > .wrap { display: flex; flex-direction: column; gap: 14px; }
+.ctl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; }
+.ctl label { display: flex; flex-direction: column; gap: 3px; font: 500 11.5px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
+select { font: 14px var(--body); background: var(--paper); border: 1.5px solid var(--ink); border-radius: 0; padding: 6px 8px; max-width: 100%; }
+select:disabled { color: var(--ink-2); border-color: var(--hair); }
+.scroll { overflow: auto; max-height: 78vh; border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink); }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 6px 12px 6px 0; white-space: nowrap; vertical-align: middle; border-bottom: 1px solid var(--hair); }
+thead th { position: sticky; top: 0; background: var(--paper); font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1.5px solid var(--ink); vertical-align: bottom; z-index: 2; }
+thead th button { all: unset; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; }
+thead th button:hover { background: var(--yellow); }
+th[aria-sort="descending"] button::after { content: " \2193"; }
+th[aria-sort="ascending"] button::after { content: " \2191"; }
+tbody th { font-weight: 600; position: sticky; left: 0; background: var(--paper); z-index: 1; padding-right: 16px; }
+thead th:first-child { left: 0; z-index: 3; }
+.cell { display: flex; flex-direction: column; gap: 2px; min-width: 52px; font: 13px var(--mono); }
+.cell .tr { height: 5px; border: 1px solid var(--ink); }
+.cell .tr i { display: block; height: 100%; background: var(--ink); }
+.none { color: var(--hair); }
+#items td.g { padding: 3px 2px; text-align: center; }
+#items i.m { display: inline-block; width: 13px; height: 13px; background: var(--ink); vertical-align: middle; }
+#items i.m.f { background: none; border: 1.5px solid var(--ink); }
+#items i.m.x { background: none; border: 1.5px dotted var(--hair); }
+#items thead th.v { padding: 4px 2px; }
+#items thead th.v span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; display: inline-block; }
+.num { text-align: right; padding-left: 12px; font-family: var(--mono); }
+.hot { background: var(--yellow); }
+.foot { border-top: 3px solid var(--ink); padding-block: 14px 36px; font: 12px var(--mono); color: var(--ink-2); }
+.tip { position: fixed; z-index: 30; pointer-events: none; background: var(--ink); color: var(--paper); font: 13px/1.4 var(--body); padding: 7px 10px; max-width: 270px; white-space: pre-line; }
+</style>
+</head>
+<body>
+<div class="fk">
+  <header class="mast"><div class="wrap">
+    <div class="bar">
+      <a class="word" href="index.html">FakeCo Bench</a>
+      <nav aria-label="Sections"><a href="index.html">Back to the leaderboard</a><a href="#pivot">Pivot</a><a href="#shifts">Every shift</a><a href="https://claude.ai/artifact/UvfGzRp6HjqTocHeYqn8yR">Trajectories</a></nav>
+    </div>
+    <h1>Analysis</h1>
+    <p class="small" id="intro" style="margin-top:8px"></p>
+  </div></header>
+
+  <section class="sec" id="pivot"><div class="wrap">
+    <h2>Pivot</h2>
+    <div class="ctl">
+      <label>Columns<select id="p-cols"><option value="size">Shift type</option><option value="world">Domain</option><option value="family">Chat family</option><option value="kind">Chat type</option></select></label>
+      <label>Metric<select id="p-metric"><option value="shifts">Shifts passed</option><option value="chats">Chats right</option></select></label>
+      <label>Scope<select id="p-scope"><option value="all">All shifts run</option><option value="standard">Standard 24 only</option></select></label>
+    </div>
+    <p class="small" id="p-note"></p>
+    <div class="scroll"><table id="ptable"><thead></thead><tbody></tbody></table></div>
+  </div></section>
+
+  <section class="sec" id="shifts"><div class="wrap">
+    <h2>Every shift, every model</h2>
+    <div class="ctl">
+      <label>Domain<select id="i-world"></select></label>
+      <label>Shift type<select id="i-size"></select></label>
+    </div>
+    <p class="small">Discrimination is the mean standard-24 score of the models that passed a shift minus the mean of those that failed it, in points. For a standard shift, that shift is left out of the score. High means strong models pass and weak ones fail; the three highest values are marked. A dash means every model run on it did the same thing.</p>
+    <p class="small" id="i-count" aria-live="polite"></p>
+    <div class="scroll"><table id="items"><thead></thead><tbody></tbody></table></div>
+    <p class="small">To read any of these runs chat by chat, open the <a href="https://claude.ai/artifact/UvfGzRp6HjqTocHeYqn8yR">dashboard</a>. It is a private link until its owner shares it.</p>
+  </div></section>
+
+  <footer class="foot"><div class="wrap" id="built"></div></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const DATA = /*DATA*/null;
+const M = DATA.models, STANDARD = ["short", "long"];
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, attrs, ...kids) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") node.className = v;
+    else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+    else node.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()) if (kid != null && kid !== false) node.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  return node;
+}
+const short = (name) => name.replace("Claude ", "");
+const SIZE_NAMES = { takeover: "Large takeover" };
+const sizeName = (s) => SIZE_NAMES[s] || s[0].toUpperCase() + s.slice(1);
+const byId = Object.fromEntries(DATA.shifts.map((s) => [s.id, s]));
+
+const tip = $("#tip");
+function showTip(t) {
+  tip.textContent = t.dataset.tip; tip.hidden = false;
+  const r = t.getBoundingClientRect(), w = tip.offsetWidth, ht = tip.offsetHeight;
+  tip.style.left = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2)) + "px";
+  tip.style.top = (r.top - ht - 8 < 8 ? r.bottom + 8 : r.top - ht - 8) + "px";
+}
+document.addEventListener("mouseover", (e) => { const t = e.target.closest && e.target.closest("[data-tip]"); t ? showTip(t) : (tip.hidden = true); });
+document.addEventListener("focusin", (e) => { const t = e.target.closest && e.target.closest("[data-tip]"); t ? showTip(t) : (tip.hidden = true); });
+document.addEventListener("scroll", () => { tip.hidden = true; }, true);
+
+/* ---------- pivot ---------- */
+const P = { cols: "size", metric: "shifts", scope: "all", sort: null, dir: -1 };
+function pivotColumns() {
+  if (P.cols === "size") return (P.scope === "standard" ? STANDARD : DATA.sizes).map((s) => [s, sizeName(s)]);
+  if (P.cols === "world") return Object.entries(DATA.worlds);
+  if (P.cols === "family") return DATA.families.map((f) => [f, f]);
+  return DATA.families.flatMap((f) => Object.keys(DATA.kinds).filter((k) => DATA.kinds[k] === f && M.some((m) => m.kinds[k]))).map((k) => [k, k]);
+}
+function pivotCell(m, col) {
+  if (P.cols === "family") return m.families[col] && m.families[col][1] ? m.families[col] : null;
+  if (P.cols === "kind") return m.kinds[col] && m.kinds[col][1] ? m.kinds[col] : null;
+  let a = 0, n = 0;
+  for (const [id, [pass, right, total]] of Object.entries(m.shifts)) {
+    const s = byId[id];
+    if (P.scope === "standard" && !STANDARD.includes(s.size)) continue;
+    if ((P.cols === "size" ? s.size : s.world) !== col) continue;
+    if (P.metric === "shifts") { a += pass; n += 1; } else { a += right; n += total; }
+  }
+  return n ? [a, n] : null;
+}
+function drawPivot() {
+  const chatCut = P.cols === "family" || P.cols === "kind";
+  if (chatCut) { P.metric = "chats"; P.scope = "all"; }
+  $("#p-metric").value = P.metric; $("#p-scope").value = P.scope;
+  $("#p-metric").disabled = chatCut; $("#p-scope").disabled = chatCut;
+  $("#p-note").textContent = chatCut ? "Chat families and chat types are counted in chats, across every shift a model was run on." : "Select a column heading to sort by it. A blank cell means the model was not run on any shift in that column.";
+  const cols = pivotColumns();
+  const rows = M.map((m) => { const cells = cols.map(([c]) => pivotCell(m, c)); const tot = cells.reduce((t, c) => (c ? [t[0] + c[0], t[1] + c[1]] : t), [0, 0]); return { m, cells, tot: tot[1] ? tot : null }; });
+  const val = (r, i) => { const c = i === "tot" ? r.tot : r.cells[i]; return c ? c[0] / c[1] : -1; };
+  if (P.sort != null) rows.sort((a, b) => P.dir * (val(a, P.sort) - val(b, P.sort)) || M.indexOf(a.m) - M.indexOf(b.m));
+  const head = (label, key) => h("th", { "aria-sort": P.sort === key ? (P.dir < 0 ? "descending" : "ascending") : null },
+    h("button", { onclick: () => { P.dir = P.sort === key ? -P.dir : -1; P.sort = key; drawPivot(); } }, label));
+  $("#ptable thead").replaceChildren(h("tr", null, h("th", null, h("button", { onclick: () => { P.sort = null; drawPivot(); } }, "Model")), head("Total", "tot"), ...cols.map(([, label], i) => head(label, i))));
+  const cell = (c) => (c ? h("td", { "data-tip": `${c[0]} of ${c[1]} (${Math.round((100 * c[0]) / c[1])}%)` }, h("div", { class: "cell" }, `${c[0]}/${c[1]}`, h("div", { class: "tr" }, h("i", { style: `width:${(100 * c[0]) / c[1]}%` })))) : h("td", { class: "none" }, "–"));
+  $("#ptable tbody").replaceChildren(...rows.map((r) => h("tr", null, h("th", { scope: "row" }, r.m.name), cell(r.tot), ...r.cells.map(cell))));
+}
+for (const [id, key] of [["#p-cols", "cols"], ["#p-metric", "metric"], ["#p-scope", "scope"]]) $(id).addEventListener("change", (e) => { P[key] = e.target.value; P.sort = null; drawPivot(); });
+
+/* ---------- every shift ---------- */
+const I = { world: "", size: "", sort: "order", dir: 1 };
+/* a model's standard-24 score, leaving the shift in question out when it is itself a standard shift */
+const std = (m, s) => { const own = STANDARD.includes(s.size) && m.shifts[s.id] ? m.shifts[s.id][0] : null; return own == null ? m.main[0] / m.main[1] : (m.main[0] - own) / (m.main[1] - 1); };
+const ITEMS = DATA.shifts.map((s, order) => {
+  const ran = M.filter((m) => m.shifts[s.id]), pass = ran.filter((m) => m.shifts[s.id][0]), fail = ran.filter((m) => !m.shifts[s.id][0]);
+  const mean = (ms) => ms.reduce((t, m) => t + std(m, s), 0) / ms.length;
+  return { ...s, order, ran: ran.length, passed: pass.length, disc: pass.length && fail.length ? Math.round(100 * (mean(pass) - mean(fail))) : null };
+});
+const TOP = [...new Set(ITEMS.map((s) => s.disc).filter((d) => d != null))].sort((a, b) => b - a)[2];  // the three highest values are marked
+function drawItems() {
+  const list = ITEMS.filter((s) => (!I.world || s.world === I.world) && (!I.size || s.size === I.size));
+  const key = { order: (s) => s.order, rate: (s) => s.passed / s.ran, disc: (s) => (s.disc == null ? -999 : s.disc) }[I.sort];
+  list.sort((a, b) => I.dir * (key(a) - key(b)) || a.order - b.order);
+  const head = (label, k, cls) => h("th", { class: cls || "", "aria-sort": I.sort === k ? (I.dir < 0 ? "descending" : "ascending") : null },
+    h("button", { onclick: () => { I.dir = I.sort === k ? -I.dir : (k === "order" ? 1 : -1); I.sort = k; drawItems(); } }, label));
+  $("#items thead").replaceChildren(h("tr", null, head("Shift", "order"), head("Passed", "rate", "num"), head("Discrimination", "disc", "num"),
+    ...M.map((m) => h("th", { class: "v", "data-tip": m.name, tabindex: 0 }, h("span", null, short(m.name))))));
+  $("#items tbody").replaceChildren(...list.map((s) => h("tr", null,
+    h("th", { scope: "row" }, `${DATA.worlds[s.world]} · ${sizeName(s.size).toLowerCase()} · ${s.seed}`),
+    h("td", { class: "num" }, `${s.passed}/${s.ran}`),
+    h("td", { class: "num" }, s.disc == null ? "–" : h("span", { class: TOP != null && s.disc >= TOP ? "hot" : "" }, (s.disc > 0 ? "+" : "") + s.disc)),
+    ...M.map((m) => { const r = m.shifts[s.id]; return h("td", { class: "g", "data-tip": `${m.name}: ${r ? (r[0] ? "passed" : "failed") + `, ${r[1]} of ${r[2]} chats right` : "not run"}` }, h("i", { class: "m" + (r ? (r[0] ? "" : " f") : " x") })); }))));
+  $("#i-count").textContent = `${list.length} of ${ITEMS.length} shifts shown.`;
+}
+$("#i-world").replaceChildren(h("option", { value: "" }, "All domains"), ...Object.entries(DATA.worlds).map(([k, v]) => h("option", { value: k }, v)));
+$("#i-size").replaceChildren(h("option", { value: "" }, "All shift types"), ...DATA.sizes.map((s) => h("option", { value: s }, sizeName(s))));
+$("#i-world").addEventListener("change", (e) => { I.world = e.target.value; drawItems(); });
+$("#i-size").addEventListener("change", (e) => { I.size = e.target.value; drawItems(); });
+
+$("#intro").textContent = `${M.length} models, ${DATA.shifts.length} shifts, ${DATA.sizes.length} shift types, ${Object.keys(DATA.worlds).length} domains. One run per model, and not every model was run on every shift.`;
+$("#built").textContent = `Built ${DATA.built} from saved runs.`;
+drawPivot(); drawItems();
+</script>
+</body>
+</html>

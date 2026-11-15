@@ -78,6 +78,15 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 .marks i.f { background: none; border: 1.5px solid var(--ink); }
 .marks i.x { background: none; border: 1.5px dotted var(--hair); }
 .marks i.gap { width: 8px; background: none; border: 0; }
+.marks.tiny { gap: 1px; }
+.marks.tiny i { width: 4px; height: 20px; }
+.marks.tiny i.f, .marks.tiny i.x { border-width: 1px; }
+.marks.tiny i.gap { width: 5px; }
+.readtag { font: 500 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 6px; border: 1.5px solid var(--ink); white-space: nowrap; }
+.readtag.top { background: var(--yellow); }
+.readtag.sat { color: var(--ink-2); border-color: var(--hair); }
+.cutgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px 40px; }
+.biglink { font: 800 26px/1 var(--display); letter-spacing: 0.04em; text-transform: uppercase; }
 .passed { font: 500 19px var(--mono); }
 .passed small { font-size: 12.5px; color: var(--ink-2); margin-left: 8px; }
 .dim { color: var(--ink-2); }
@@ -187,7 +196,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
   <header class="mast"><div class="wrap">
     <div class="bar">
       <span class="word">FakeCo Bench</span>
-      <nav aria-label="Sections"><a href="#leaderboard">Leaderboard</a><a href="#batch">Try it</a><a href="#replay">Replay</a><a href="#notes">Notes</a><a href="#run">Run</a></nav>
+      <nav aria-label="Sections"><a href="#leaderboard">Leaderboard</a><a href="#batch">Try it</a><a href="#replay">Replay</a><a href="#cuts">Cuts</a><a href="#notes">Notes</a><a href="#run">Run</a><a href="analysis.html">Analysis</a></nav>
     </div>
     <div class="head">
       <h1 id="headline">An agent can follow every rule and still pay the wrong person.</h1>
@@ -233,6 +242,15 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
       <div class="steps" id="steps" role="group" aria-label="Steps"></div>
       <div class="stage" id="stage" aria-live="polite"></div>
     </div>
+  </div></section>
+
+  <section class="sec" id="cuts"><div class="wrap">
+    <h2>Cut it four ways</h2>
+    <p><a class="biglink" href="analysis.html">Open the analysis page</a> <span class="small">Pivot any cut. Every shift by every model.</span></p>
+    <div class="strip"><h3>By domain</h3><p class="small" id="domain-note"></p><div class="scroll"><table id="domains"><thead></thead><tbody></tbody></table></div></div>
+    <div class="strip"><h3>By shift type: what is saturated</h3><p class="small">Saturated: at least half the models run on it score 90% or more. Reaches the top: none does. Otherwise it separates the middle. Models with fewer than 8 shifts of a type are left out.</p><div class="scroll"><table id="types"><thead></thead><tbody></tbody></table></div></div>
+    <div class="strip"><h3>By chat type: where the signal is</h3><p class="small" id="chat-note"></p><div class="cutgrid"><div class="scroll"><table id="chat-top"><thead></thead><tbody></tbody></table></div><div class="scroll"><table id="chat-bottom"><thead></thead><tbody></tbody></table></div></div></div>
+    <div class="strip"><h3>The signal set</h3><p class="small" id="signal-note"></p><div class="scroll"><table id="signal"><thead></thead><tbody></tbody></table></div></div>
   </div></section>
 
   <section class="sec" id="notes"><div class="wrap">
@@ -308,14 +326,15 @@ function drawHead() {
 }
 
 /* leaderboard */
-const TIER_NAMES = { main: "Short + long", contested: "Contested", gauntlet: "Gauntlet", unclear: "Unclear", audit: "Audit", styled: "Styled", takeover: "Large takeover", tone: "Tone" };
-const tiers = ["main", ...DATA.sizes.filter((s) => s !== "short" && s !== "long")];
-let tier = "main", sort = { key: "score", dir: -1 };
-const got = (m, t) => (t === "main" ? m.main : m.tiers[t]);
+const TIER_NAMES = { all: "All shifts", main: "Short + long", contested: "Contested", gauntlet: "Gauntlet", unclear: "Unclear", audit: "Audit", styled: "Styled", takeover: "Large takeover", tone: "Tone" };
+const tiers = ["all", "main", ...DATA.sizes.filter((s) => s !== "short" && s !== "long")];
+let tier = "all", sort = { key: "std", dir: -1 };
+const got = (m, t) => (t === "main" ? m.main : t === "all" ? DATA.cuts.models[m.key].all : m.tiers[t]);
 const rate = (m, t) => { const [ok, n] = got(m, t); return n ? ok / n : -1; };
 const sem = (m, t) => { const [ok, n] = got(m, t); if (!n) return 0; const p = ok / n; return 100 * Math.sqrt((p * (1 - p)) / n); };
 const breaks = (m) => Object.values(m.style || {}).reduce((a, b) => a + b, 0);
 const COLS = {
+  std: { label: "Standard 24", val: (m) => rate(m, "main"), only: "all" },
   score: { label: "Passed", val: (m) => rate(m, tier) },
   chats: { label: "Chats right", val: (m) => m.tickets[0] / (m.tickets[1] || 1), only: "main" },
   finished: { label: "Finished the batch", val: (m) => (m.finished[1] ? m.finished[0] / m.finished[1] : -1), only: "contested" },
@@ -324,8 +343,8 @@ const COLS = {
   minutes: { label: "Min / shift", val: (m) => (m.minutes == null ? Infinity : m.minutes), only: "main", asc: true },
 };
 function marks(m) {
-  const groups = tier === "main" ? ["short", "long"] : [tier];
-  const row = h("div", { class: "marks" });
+  const groups = tier === "main" ? ["short", "long"] : tier === "all" ? DATA.sizes : [tier];
+  const row = h("div", { class: "marks" + (tier === "all" ? " tiny" : "") });
   groups.forEach((g, gi) => {
     const full = Math.max(...models.map((x) => x.marks[g].length)), mine = m.marks[g];
     if (gi) row.append(h("i", { class: "gap" }));
@@ -337,7 +356,7 @@ function marks(m) {
 function drawTabs() {
   $("#tier-tabs").replaceChildren(...tiers.map((key) => {
     const n = Math.max(...models.map((m) => got(m, key)[1]));
-    return h("button", { role: "tab", "aria-selected": String(tier === key), onclick: () => { tier = key; sort = { key: "score", dir: -1 }; drawTabs(); drawBoard(); } }, `${TIER_NAMES[key] || key} ${n}`);
+    return h("button", { role: "tab", "aria-selected": String(tier === key), onclick: () => { tier = key; sort = { key: key === "all" ? "std" : "score", dir: -1 }; drawTabs(); drawBoard(); } }, `${TIER_NAMES[key] || key} ${n}`);
   }));
 }
 function drawBoard() {
@@ -354,6 +373,7 @@ function drawBoard() {
       h("th", { scope: "row" }, h("span", { class: "who" }, h("span", { class: "prov" + (m.provider === "OpenAI" ? " o" : ""), "data-tip": m.provider, tabindex: 0, "aria-label": m.provider }, m.provider[0]), m.name)),
       h("td", null, marks(m)));
     for (const [key] of cols) {
+      if (key === "std") tr.append(h("td", { class: "num passed" }, `${m.main[0]}/${m.main[1]}`));
       if (key === "score") tr.append(h("td", { class: "num passed", "data-tip": n < full ? `Only ${n} of ${full} shifts were run` : e ? `Standard error ±${e.toFixed(1)} points over ${n} shifts` : `${ok} of ${n}` }, `${ok}/${n}`, h("small", null, n < full ? `${n} of ${full} run` : e ? `±${Math.round(e)}` : "")));
       if (key === "chats") tr.append(h("td", { class: "num mono", "data-tip": `${m.tickets[0]} of ${m.tickets[1]} chats` }, ((100 * m.tickets[0]) / m.tickets[1]).toFixed(m.tickets[0] === m.tickets[1] ? 0 : 1) + "%"));
       if (key === "finished") tr.append(h("td", { class: "num mono" }, `${m.finished[0]}/${m.finished[1]}`));
@@ -366,7 +386,7 @@ function drawBoard() {
   const idle = models.filter((x) => !got(x, tier)[1]);
   if (idle.length) rows.push(h("tr", null, h("td", { class: "rank" }, "–"), h("td", { class: "dim", colspan: cols.length + 2, style: "white-space:normal" }, "Not run on these shifts: " + idle.map((m) => short(m.name)).join(", "))));
   $("#board tbody").replaceChildren(...rows);
-  const note = { main: "± is the standard error over 24 shifts. One run per model.", contested: "Stopping and escalating passes. Finishing the batch is counted separately.",
+  const note = { all: "Ranked by the 24 standard shifts, because models were run on different numbers of shifts.", main: "± is the standard error over 24 shifts. One run per model.", contested: "Stopping and escalating passes. Finishing the batch is counted separately.",
     styled: "Replies are checked against the style guide by fixed patterns." }[tier] || "One run per model.";
   $("#board-key").replaceChildren(h("span", null, h("span", { class: "marks" }, h("i")), "passed"), h("span", null, h("span", { class: "marks" }, h("i", { class: "f" })), "failed"),
     h("span", null, h("span", { class: "marks" }, h("i", { class: "x" })), "not run"), h("span", null, h("span", { class: "prov" }, "A"), "Anthropic"), h("span", null, h("span", { class: "prov o" }, "O"), "OpenAI"), h("span", null, note));
@@ -518,6 +538,39 @@ function drawReplay() {
   drawStep();
 }
 
+/* cuts: domains, shift types, chat types, the signal set */
+function cells(list) { return h("span", { class: "marks" }, ...list.map((v) => h("i", { class: v ? "" : "f" }))); }
+function drawCuts() {
+  const C = DATA.cuts, top = models[0];
+  $("#domains thead").replaceChildren(h("tr", null, h("th", null, "Standard shifts passed"), ...C.worlds.map(([, name, what]) => h("th", { "data-tip": what, tabindex: 0 }, name))));
+  $("#domains tbody").replaceChildren(...models.map((m) => h("tr", null, h("th", { scope: "row", style: "font-weight:600" }, m.name),
+    ...C.worlds.map(([w]) => { const [ok, n] = C.models[m.key].domains[w]; return h("td", { class: "mono" }, n ? `${ok}/${n}` : "–"); }))),
+    h("tr", null, h("th", { scope: "row" }, `All ${models.length} models`), ...C.worlds.map(([w]) => { const [ok, n] = C.domain_totals[w]; return h("td", { class: "mono", style: "font-weight:500" }, `${ok}/${n}`); })));
+  const ranked = [...C.worlds].sort((a, b) => C.domain_totals[a[0]][0] / C.domain_totals[a[0]][1] - C.domain_totals[b[0]][0] / C.domain_totals[b[0]][1]);
+  const places = [...new Set((top.fails || []).map((f) => f[0]))];
+  $("#domain-note").textContent = `Hardest to easiest: ${ranked.map(([w, name]) => `${name} ${C.domain_totals[w][0]}/${C.domain_totals[w][1]}`).join(", ")}.`
+    + (top.fails && top.fails.length && places.length === 1 ? ` ${top.fails.length === 2 ? "Both" : "All"} of ${short(top.name)}'s failed shifts are at ${(C.worlds.find((x) => x[0] === places[0]) || [0, places[0]])[1]}.` : "");
+  $("#types thead").replaceChildren(h("tr", null, h("th", null, "Shift type"), h("th", { class: "num" }, "Models run"), h("th", null, "Best"), h("th", { class: "num" }, "At 90% or more"), h("th", { class: "num" }, "Median"), h("th", null, "Read")));
+  $("#types tbody").replaceChildren(...C.types.map((t) => h("tr", null, h("th", { scope: "row", style: "font-weight:600" }, TIER_NAMES[t.size] || t.size[0].toUpperCase() + t.size.slice(1)),
+    h("td", { class: "num mono" }, t.models), h("td", { class: "mono" }, `${short(t.best[0])} ${t.best[1]}/${t.best[2]}`), h("td", { class: "num mono" }, `${t.high} of ${t.models}`), h("td", { class: "num mono" }, t.median + "%"),
+    h("td", null, h("span", { class: "readtag" + (t.read === "reaches the top" ? " top" : t.read === "saturated" ? " sat" : "") }, t.read)))));
+  const flat = C.chats.filter((c) => c.spread === 0).length, show = 7;
+  $("#chat-note").textContent = `Signal is the gap between the best and worst model's share right, among models with at least 6 chats of that type. ${flat} of ${C.chats.length} chat types have no gap at all.`;
+  const chatTable = (id, title, list) => {
+    $(id + " thead").replaceChildren(h("tr", null, h("th", null, title), h("th", { class: "num" }, "Gap"), h("th", { class: "num" }, "Worst to best")));
+    $(id + " tbody").replaceChildren(...list.map((c) => h("tr", null, h("th", { scope: "row", class: "mono", style: "font-size:13.5px", "data-tip": `${c.family}. Lowest: ${c.low}. ${c.models} models.`, tabindex: 0 }, c.kind),
+      h("td", { class: "num passed" }, c.spread), h("td", { class: "num mono dim" }, `${c.min}% to ${c.max}%`))));
+  };
+  chatTable("#chat-top", "Most signal", C.chats.slice(0, show));
+  chatTable("#chat-bottom", "Least signal above zero", C.chats.filter((c) => c.spread > 0).slice(-show).reverse());
+  const [a, b] = C.signal, names = (x) => (TIER_NAMES[x] || x).toLowerCase(), nA = Math.max(...models.map((m) => m.tiers[a][1])), nB = Math.max(...models.map((m) => m.tiers[b][1]));
+  $("#signal-note").textContent = `Chosen by shift type, not by picking shifts after seeing results: the ${nA} ${names(a)} shifts and the ${nB} ${names(b)} shifts.`;
+  $("#signal thead").replaceChildren(h("tr", null, h("th", null, "Model"), h("th", null, TIER_NAMES[a] || "Long"), h("th", { class: "num" }, ""), h("th", null, TIER_NAMES[b] || b), h("th", { class: "num" }, "")));
+  const one = (m, x) => (m.tiers[x][1] ? [h("td", null, cells(m.marks[x])), h("td", { class: "num passed" }, `${m.tiers[x][0]}/${m.tiers[x][1]}`)] : [h("td", { class: "dim mono", colspan: 2 }, "not run")]);
+  $("#signal tbody").replaceChildren(...[...models].sort((x, y) => y.tiers[a][0] / (y.tiers[a][1] || 1) - x.tiers[a][0] / (x.tiers[a][1] || 1) || models.indexOf(x) - models.indexOf(y))
+    .map((m) => h("tr", null, h("th", { scope: "row", style: "font-weight:600" }, m.name), ...one(m, a), ...one(m, b))));
+}
+
 /* strips */
 const PLACE = { shopright: "the home-goods store", skylark: "the airline", clouddesk: "the software vendor", harbor: "the bank" };
 const CATCH = {
@@ -544,7 +597,7 @@ function drawLadders() {
         h("span", { class: "nm" }, short(m.name)), h("span", { class: "tr" }, h("i", { style: `width:${(100 * m.main[0]) / m.main[1]}%` })), h("b", null, `${m.main[0]}/${m.main[1]}`)))))))));
 }
 function drawStrips() {
-  const extra = tiers.filter((t) => t !== "main");
+  const extra = tiers.filter((t) => t !== "main" && t !== "all");
   $("#catch thead").replaceChildren(h("tr", null, h("th", null, "Shift type"), h("th", null, "What it adds"), h("th", null, "Clean"), h("th", null, "Caught")));
   $("#catch tbody").replaceChildren(...extra.map((t) => {
     const ran = models.filter((m) => m.tiers[t][1] > 0), clean = ran.filter((m) => m.tiers[t][0] === m.tiers[t][1]), caught = ran.filter((m) => m.tiers[t][0] < m.tiers[t][1]);
@@ -586,7 +639,7 @@ $("#copy").addEventListener("click", async (e) => {
   catch (err) { const r = document.createRange(); r.selectNodeContents($("#cmd")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); e.target.textContent = "Selected"; }
   setTimeout(() => { e.target.textContent = "Copy"; }, 1800);
 });
-drawHead(); drawTabs(); drawBoard(); drawChart(); drawBatch(); drawReplay(); drawLadders(); drawStrips();
+drawHead(); drawTabs(); drawBoard(); drawChart(); drawBatch(); drawReplay(); drawCuts(); drawLadders(); drawStrips();
 $("#built").textContent = `Built ${DATA.built} from saved runs. Rebuild with scripts/build_dashboard.py, then scripts/build_site.py.`;
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawChart, 150); });
 </script>

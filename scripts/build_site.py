@@ -286,6 +286,67 @@ def memory_pairs(index: dict) -> list:
     return sorted(pairs, key=lambda p: -p["n"])
 
 
+DOMAINS = {  # the four companies are the benchmark's domains
+    "shopright": ["ShopRight", "Online home-goods retail: orders, refunds to card or store credit."],
+    "skylark": ["SkyLark Air", "Regional airline: bookings, refunds or travel credit."],
+    "clouddesk": ["CloudDesk", "Help-desk software: invoices and credits."],
+    "harbor": ["Harbor Bank", "Online bank: statements and fee reversals."],
+}
+STANDARD = ("short", "long")
+SIGNAL = ("long", "takeover")  # the high-signal subset, chosen by shift type
+
+
+def median(values: list) -> float:
+    v = sorted(values)
+    return (v[len(v) // 2] + v[(len(v) - 1) // 2]) / 2
+
+
+def cuts(index: dict, base: list) -> dict:
+    """Every cross-cut the page shows, computed from the dashboard index: all shifts, domains, shift types, chat types."""
+    worlds = [w for w in DOMAINS if any(s["world"] == w for m in base for s in m["shifts"])]
+    total = len({s["id"] for m in index["models"] for s in m["shifts"]})
+    per_model = {}
+    for m in base:
+        std = [s for s in m["shifts"] if s["size"] in STANDARD]
+        per_model[m["key"]] = {
+            "all": [sum(s["pass"] for s in m["shifts"]), len(m["shifts"])],
+            "domains": {w: [sum(s["pass"] for s in std if s["world"] == w), sum(1 for s in std if s["world"] == w)] for w in worlds},
+        }
+    domain_totals = {w: [sum(per_model[m["key"]]["domains"][w][0] for m in base), sum(per_model[m["key"]]["domains"][w][1] for m in base)] for w in worlds}
+    types = []
+    for size in index["sizes"]:
+        ran = [m for m in base if m["tiers"][size][1] >= 8]
+        if not ran:
+            continue
+        rates = [m["tiers"][size][0] / m["tiers"][size][1] for m in ran]
+        best = max(ran, key=lambda m: m["tiers"][size][0] / m["tiers"][size][1])
+        high = sum(r >= 0.9 for r in rates)
+        read = "saturated" if high * 2 >= len(ran) else "reaches the top" if high == 0 else "separates the middle"
+        types.append({"size": size, "models": len(ran), "best": [best["name"], *best["tiers"][size]], "high": high,
+                      "median": round(100 * median(rates)), "read": read})
+    chats = []
+    for kind, info in index["kinds"].items():
+        shares = [(m["kinds"][kind][0] / m["kinds"][kind][1], m["name"]) for m in base if m["kinds"].get(kind, [0, 0])[1] >= 6]
+        if len(shares) >= 2:
+            chats.append({"kind": kind, "family": info["family"], "models": len(shares), "spread": round(100 * (max(shares)[0] - min(shares)[0])),
+                          "max": round(100 * max(shares)[0]), "min": round(100 * min(shares)[0]), "low": min(shares)[1]})
+    chats.sort(key=lambda c: (-c["spread"], c["kind"]))
+    return {"total": total, "worlds": [[w, *DOMAINS[w]] for w in worlds], "models": per_model, "domain_totals": domain_totals,
+            "types": types, "chats": chats, "signal": list(SIGNAL)}
+
+
+def analysis_data(index: dict, base: list) -> dict:
+    """What the analysis page needs to pivot and to list every shift by model."""
+    ids = sorted({(index["sizes"].index(s["size"]), s["world"], s["seed"], s["id"], s["size"]) for m in base for s in m["shifts"]})
+    return {
+        "sizes": index["sizes"], "families": index["families"], "kinds": {k: v["family"] for k, v in index["kinds"].items()},
+        "worlds": {w: DOMAINS[w][0] for w in DOMAINS},
+        "shifts": [{"id": i[3], "world": i[1], "size": i[4], "seed": i[2].replace("s", "")} for i in ids],
+        "models": [{"key": m["key"], "name": m["name"], "provider": m["provider"], "main": m["main"], "families": m["families"], "kinds": m["kinds"],
+                    "shifts": {s["id"]: [int(s["pass"]), s["correct"], s["total"]] for s in m["shifts"]}} for m in base],
+    }
+
+
 def main() -> None:
     index = dashboard_index()
     pareto_path = ROOT / "results" / "final" / "pareto.json"
@@ -304,7 +365,8 @@ def main() -> None:
     shift_ids = {s["id"] for m in index["models"] for s in m["shifts"]}
     totals = {"models": len(models), "shifts": len(shift_ids), "companies": len({s.split("__")[0] for s in shift_ids}),
               "types": len(index["sizes"]), "chats": sum(f[1] for m in index["models"] for f in m["families"].values())}
-    data = {"built": datetime.date.today().isoformat(), "totals": totals, "models": models, "sizes": index["sizes"],
+    base = [m for m in index["models"] if not m["key"].endswith("-notes")]
+    data = {"built": datetime.date.today().isoformat(), "totals": totals, "models": models, "sizes": index["sizes"], "cuts": cuts(index, base),
             "style": index.get("style", []), "memory": memory_pairs(index), "game": game(),
             "replays": [r for r in (replay_repeat(), replay()) if r]}
     body = (ROOT / "scripts" / "site_template.html").read_text().replace(
@@ -315,6 +377,16 @@ def main() -> None:
         '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n<style>body{margin:0}</style>\n</head>\n<body>\n'
         + body + "\n</body>\n</html>\n")
+    page = (ROOT / "scripts" / "site_analysis_template.html")
+    if page.exists():
+        blob = json.dumps({"built": data["built"], **analysis_data(index, base)}, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
+        (OUT / "analysis.html").write_text(page.read_text().replace("/*DATA*/null", blob))
+    c = data["cuts"]
+    print("  domains:", {w: c["domain_totals"][w] for w in c["domain_totals"]})
+    print("  types:", [(t["size"], t["models"], t["best"][1:], t["high"], t["median"], t["read"]) for t in c["types"]])
+    print("  chat signal top:", [(x["kind"], x["spread"]) for x in c["chats"][:6]], "bottom:", [(x["kind"], x["spread"]) for x in c["chats"][-6:]])
+    print("  all:", {k: v["all"] for k, v in c["models"].items()})
+    print("  long:", [(m["name"], m["tiers"]["long"], m["tiers"].get("takeover")) for m in sorted(base, key=lambda m: -m["tiers"]["long"][0])])
     print(f"wrote {OUT}: {totals}; game {'yes' if data['game'] else 'MISSING'}, replay "
           f"{[(r['key'], len(r['steps'])) for r in data['replays']]}, page {len(body) / 1e3:.0f} KB")
     for pair in data["memory"]:
