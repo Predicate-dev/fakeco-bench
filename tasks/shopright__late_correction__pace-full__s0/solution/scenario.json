@@ -89,5 +89,10 @@
     "complete_at": 0
   },
   "confirm_after": 1,
-  "preface": ""
+  "preface": "",
+  "notes": {},
+  "checkpoints": {},
+  "record_faults": {},
+  "turn_tickets": [],
+  "tools": "core"
 }

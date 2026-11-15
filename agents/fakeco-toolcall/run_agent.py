@@ -64,9 +64,15 @@ class AnthropicChat:
         self.messages.append({"role": "user", "content": user_text})
         texts = []
         for _ in range(self.max_steps):
+            # Top-level cache_control caches the conversation so far; a shift re-sends it on every call.
             resp = self.client.messages.create(model=self.model, max_tokens=8000, system=self.system,
-                                               tools=self.tools, messages=self.messages, **self.extra)
-            self.trace.count(resp.usage.input_tokens, resp.usage.output_tokens)
+                                               tools=self.tools, messages=self.messages,
+                                               cache_control={"type": "ephemeral"}, **self.extra)
+            usage = resp.usage
+            self.trace.count(usage.input_tokens + (getattr(usage, "cache_read_input_tokens", 0) or 0)
+                             + (getattr(usage, "cache_creation_input_tokens", 0) or 0), usage.output_tokens)
+            self.trace.usage["cache_read_input_tokens"] = (self.trace.usage.get("cache_read_input_tokens", 0)
+                                                           + (getattr(usage, "cache_read_input_tokens", 0) or 0))
             self.trace.add("model", stop_reason=resp.stop_reason, content=[b.model_dump() for b in resp.content])
             # Hand the content back unchanged so thinking blocks stay attached to their tool calls.
             self.messages.append({"role": "assistant", "content": resp.content})
@@ -125,7 +131,7 @@ def main() -> int:
     p.add_argument("instruction_path", type=Path)
     p.add_argument("--task-id", default="")
     p.add_argument("--model", required=True)
-    p.add_argument("--max-steps", type=int, default=12)
+    p.add_argument("--max-steps", type=int, default=40)
     p.add_argument("--effort", default="default")
     p.add_argument("--out", type=Path, default=Path(os.environ.get("AGENT_OUTPUT_ROOT", "/logs/agent")))
     args = p.parse_args()
@@ -147,7 +153,7 @@ def main() -> int:
     while not state["closed"]:
         trace.add("customer", turn=state["turn"], text=state["customer"], internal_note=state.get("internal_note"))
         shown = state["customer"]
-        if state.get("internal_note"):  # e.g. a colleague's handoff note; the customer never sees it
+        if state.get("internal_note"):  # e.g. a colleague's handoff note or a memo; the customer never sees it
             shown = f"[Internal note, not visible to the customer]\n{state['internal_note']}\n\n[Customer]\n{shown}"
         reply = chat.respond(shown) or "[The agent sent no message.]"
         trace.add("reply", turn=state["turn"], text=reply)

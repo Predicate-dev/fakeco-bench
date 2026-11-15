@@ -7,6 +7,7 @@ keywords = ["fakeco", "tool-use", "customer-support", "skylark", "takeover"]
 
 [metadata]
 category = "agent-reliability"
+tier = "core"
 world = "skylark"
 mode = "takeover"
 dials = { handoff = "wrong_item" }

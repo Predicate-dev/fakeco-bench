@@ -96,5 +96,10 @@
     ]
   },
   "confirm_after": null,
-  "preface": "Handoff note from Dana, the agent who had this chat before their shift ended: \"Customer wants a refund for ONE of the two checked bag charges on booking BK-297054 (destination: original payment). I checked the record and it is within policy, but I have not issued anything yet.\""
+  "preface": "Handoff note from Dana, the agent who had this chat before their shift ended: \"Customer wants a refund for ONE of the two checked bag charges on booking BK-297054 (destination: original payment). I checked the record and it is within policy, but I have not issued anything yet.\"",
+  "notes": {},
+  "checkpoints": {},
+  "record_faults": {},
+  "turn_tickets": [],
+  "tools": "core"
 }

@@ -96,5 +96,10 @@
     "new_re": "\\$\\s?125\\b"
   },
   "confirm_after": null,
-  "preface": ""
+  "preface": "",
+  "notes": {},
+  "checkpoints": {},
+  "record_faults": {},
+  "turn_tickets": [],
+  "tools": "core"
 }

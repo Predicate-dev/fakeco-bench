@@ -93,5 +93,10 @@
     "complete_at": 3
   },
   "confirm_after": 5,
-  "preface": ""
+  "preface": "",
+  "notes": {},
+  "checkpoints": {},
+  "record_faults": {},
+  "turn_tickets": [],
+  "tools": "core"
 }

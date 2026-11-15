@@ -95,5 +95,10 @@
     "new_re": "\\b(7|seven)[- ]?days?\\b|\\bone week\\b|\\ba week\\b"
   },
   "confirm_after": null,
-  "preface": ""
+  "preface": "",
+  "notes": {},
+  "checkpoints": {},
+  "record_faults": {},
+  "turn_tickets": [],
+  "tools": "core"
 }

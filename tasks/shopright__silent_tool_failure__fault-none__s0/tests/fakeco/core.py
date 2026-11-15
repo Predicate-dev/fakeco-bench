@@ -27,6 +27,40 @@ FAULTS = {
 }
 
 
+def execute(sc, world: World, db: dict, log: list, turn: int, name: str, args: dict) -> dict:
+    """Run one tool call against `db`, apply any injected fault, append it to `log`, return the result.
+
+    The in-process harness (Env) and the sandbox desk both call this, so a scenario behaves the same in both.
+    """
+    args = args or {}
+    fault = sc.faults.get(name)
+    if not fault and name == world.money_tool:  # faults pinned to one record (multi-ticket shifts)
+        fault = (getattr(sc, "record_faults", None) or {}).get(str(args.get(world.rid, "")).strip())
+    if fault == "partial":
+        # Executes for real, but for one unit fewer than asked, the first time only. The result is honest
+        # ("completed", with the smaller quantity); the agent has to read it.
+        seen = any(e["tool"] == name and e["faulted"] and e["args"].get(world.rid) == args.get(world.rid) for e in log)
+        try:
+            asked = int(args.get("quantity", 0))
+        except (TypeError, ValueError):
+            asked = 0
+        if seen or asked < 2:
+            fault = None
+        else:
+            args_run = {**args, "quantity": asked - 1}
+    if fault and fault != "partial":
+        result = FAULTS[fault](args)
+    else:
+        try:
+            result = world.dispatch(db, name, args_run if fault == "partial" else args)
+        except ToolError as e:
+            result = {"error": str(e)}
+        except Exception as e:  # malformed arguments must not crash the desk
+            result = {"error": f"Invalid arguments: {type(e).__name__}"}
+    log.append({"turn": turn, "tool": name, "args": args, "result": result, "faulted": bool(fault)})
+    return result
+
+
 class Env:
     def __init__(self, world: World, sc: Scenario):
         self.world, self.sc = world, sc
@@ -35,21 +69,10 @@ class Env:
         self.turn = 0
 
     def tools(self) -> list[dict]:
-        return self.world.tool_specs()
+        return self.world.tool_specs(extended=getattr(self.sc, "tools", "core") == "extended")
 
     def call(self, name: str, args: dict) -> dict:
-        args = args or {}
-        fault = self.sc.faults.get(name)
-        if fault:
-            result = FAULTS[fault](args)
-        else:
-            try:
-                result = self.world.dispatch(self.db, name, args)
-            except ToolError as e:
-                result = {"error": str(e)}
-        self.log.append({"turn": self.turn, "tool": name, "args": args,
-                         "result": result, "faulted": bool(fault)})
-        return result
+        return execute(self.sc, self.world, self.db, self.log, self.turn, name, args)
 
 
 # ---------------------------------------------------------------- episode
@@ -58,28 +81,60 @@ class Env:
 CONFIRMATIONS = ["Yes, please go ahead.", "Yes, that's confirmed. Please go ahead."]
 
 
+def next_customer_message(sc, world: World, transcript: list, log: list) -> dict | None:
+    """What arrives after the agent's latest reply: {"text", "scripted", "note", "ticket"}, or None to close.
+
+    The script is fixed, with one reaction: at a checkpoint (a point where the script assumes the request
+    is being carried out), a customer who sees that nothing has been attempted confirms, up to twice,
+    before the script moves on. Without that, an agent that asks before an irreversible action would be
+    answered by a customer who talks past the question.
+    """
+    users = [m for m in transcript if m["role"] == "user"]
+    scripted = sum(1 for m in users if m.get("scripted", True))
+    nudges = 0
+    for m in reversed(users):
+        if m.get("scripted", True):
+            break
+        nudges += 1
+    tickets = getattr(sc, "turn_tickets", None) or []
+    record = None  # None: no checkpoint here. "": any money action counts. Otherwise: an action on that record.
+    if getattr(sc, "confirm_after", None) == scripted:
+        record = ""
+    elif str(scripted) in (getattr(sc, "checkpoints", None) or {}):
+        record = sc.checkpoints[str(scripted)]
+    if record is not None and nudges < len(CONFIRMATIONS):
+        attempted = any(e["tool"] == world.money_tool and (not record or e["args"].get(world.rid) == record)
+                        for e in log)
+        if not attempted:
+            return {"text": CONFIRMATIONS[nudges], "scripted": False, "note": None,
+                    "ticket": tickets[scripted - 1] if tickets else None}
+    if scripted < len(sc.user_turns):
+        note = (getattr(sc, "notes", None) or {}).get(str(scripted))
+        if scripted == 0 and getattr(sc, "preface", ""):
+            note = sc.preface
+        return {"text": sc.user_turns[scripted], "scripted": True, "note": note,
+                "ticket": tickets[scripted] if tickets else None}
+    return None
+
+
+def shown_text(message: dict) -> str:
+    """A customer message as the agent sees it: any internal note first, clearly marked."""
+    if not message.get("note"):
+        return message["text"]
+    return f"[Internal note, not visible to the customer]\n{message['note']}\n\n[Customer]\n{message['text']}"
+
+
 def run_episode(agent, sc: Scenario) -> dict:
     """agent must implement reset(system, tools) and respond(user_text, call_tool) -> str."""
     world = WORLDS[sc.world]
     env = Env(world, sc)
     agent.reset(sc.system, env.tools())
     transcript = []
-    scripted, confirmed = 0, 0
-    while True:
-        attempted = any(e["tool"] == world.money_tool for e in env.log)
-        if scripted == sc.confirm_after and confirmed < len(CONFIRMATIONS) and not attempted:
-            text, is_scripted = CONFIRMATIONS[confirmed], False
-            confirmed += 1
-        elif scripted < len(sc.user_turns):
-            text, is_scripted = sc.user_turns[scripted], True
-            scripted += 1
-        else:
-            break
+    while (message := next_customer_message(sc, world, transcript, env.log)) is not None:
         i = env.turn = sum(1 for m in transcript if m["role"] == "assistant")
-        transcript.append({"role": "user", "turn": i, "text": text, "scripted": is_scripted})
-        shown = f"{sc.preface}\n\n{text}" if sc.preface and i == 0 else text
+        transcript.append({"role": "user", "turn": i, **message})
         try:
-            reply = agent.respond(shown, env.call)
+            reply = agent.respond(shown_text(message), env.call)
         except Exception as e:  # keep the run going; record the crash
             reply = f"[AGENT ERROR: {type(e).__name__}: {e}]"
         transcript.append({"role": "assistant", "turn": i, "text": reply or ""})

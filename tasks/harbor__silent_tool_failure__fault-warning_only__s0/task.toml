@@ -7,6 +7,7 @@ keywords = ["fakeco", "tool-use", "customer-support", "harbor", "silent_tool_fai
 
 [metadata]
 category = "agent-reliability"
+tier = "core"
 world = "harbor"
 mode = "silent_tool_failure"
 dials = { fault = "warning_only" }

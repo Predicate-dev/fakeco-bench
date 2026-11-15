@@ -12,6 +12,9 @@ scenario (future customer turns, injected faults) or edit the ledger and logs.
 
 State lives in <home>/state: db.json (world state), log.jsonl (tool calls),
 transcript.jsonl (chat). The verifier scores from those files.
+
+The conversation script and tool behaviour come from fakeco.core, the same code
+the in-process harness runs, so a scenario plays out identically in both.
 """
 from __future__ import annotations
 import copy
@@ -20,25 +23,28 @@ import json
 import sys
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from fakeco.core import CONFIRMATIONS, FAULTS  # noqa: E402
-from fakeco.worlds import WORLDS, ToolError  # noqa: E402
+from fakeco.core import execute, next_customer_message  # noqa: E402
+from fakeco.worlds import WORLDS  # noqa: E402
 
 DEFAULT_HOME = Path("/opt/fakeco")
-CLOSED = "[chat closed] The customer has left the chat. There is nothing more to send."
+CLOSED = "[chat closed] There is nothing more to send."
 USAGE = __doc__.split("\n\n")[2]
+# Scenario fields the conversation engine reads; older scenario files may lack the newer ones.
+DEFAULTS = {"faults": {}, "confirm_after": None, "preface": "", "notes": {}, "checkpoints": {},
+            "record_faults": {}, "turn_tickets": [], "tools": "core"}
 
 
 class Desk:
     def __init__(self, home: Path = DEFAULT_HOME):
         self.home = Path(home)
         self.state = self.home / "state"
-        self.scenario = json.loads((self.home / "rt" / "scenario.json").read_text())
-        self.world = WORLDS[self.scenario["world"]]
-        self.turns = self.scenario["user_turns"]
+        self.sc = SimpleNamespace(**{**DEFAULTS, **json.loads((self.home / "rt" / "scenario.json").read_text())})
+        self.world = WORLDS[self.sc.world]
 
     # ------------------------------------------------------------ state
     def _read_lines(self, name: str) -> list[dict]:
@@ -51,86 +57,65 @@ class Desk:
         with (self.state / name).open("a") as f:
             f.write(json.dumps(row) + "\n")
 
-    def _init(self) -> None:
-        self.state.mkdir(parents=True, exist_ok=True)
-        if not (self.state / "db.json").exists():
-            (self.state / "db.json").write_text(json.dumps(copy.deepcopy(self.scenario["db"])))
-            self._append("transcript.jsonl", {"role": "user", "turn": 0, "text": self.turns[0], "ts": time.time()})
-
     def _chat(self) -> list[dict]:
         return self._read_lines("transcript.jsonl")
 
+    def _log(self) -> list[dict]:
+        return self._read_lines("log.jsonl")
+
     def _turn(self) -> int:
-        """Index of the customer message currently waiting for a reply."""
+        """Index of the message currently waiting for a reply."""
         return sum(1 for m in self._chat() if m["role"] == "assistant")
 
-    def _waiting(self) -> str | None:
-        """The customer message awaiting a reply, or None once the chat is closed."""
-        chat = self._chat()
-        return chat[-1]["text"] if chat and chat[-1]["role"] == "user" else None
+    def _deliver(self) -> dict | None:
+        """Append whatever the customer says next to the transcript; None once the chat is closed."""
+        message = next_customer_message(self.sc, self.world, self._chat(), self._log())
+        if message is not None:
+            self._append("transcript.jsonl", {"role": "user", "turn": self._turn(), **message, "ts": time.time()})
+        return message
 
-    def _next_customer_message(self) -> tuple[str, bool] | None:
-        """What the customer says after the reply just sent, as (text, scripted); None closes the chat.
+    def _init(self) -> None:
+        self.state.mkdir(parents=True, exist_ok=True)
+        if not (self.state / "db.json").exists():
+            (self.state / "db.json").write_text(json.dumps(copy.deepcopy(self.sc.db)))
+            self._deliver()
 
-        The script is fixed, with one exception: at the point where it assumes the request is being
-        carried out, a customer who sees that nothing has been attempted yet confirms ("Yes, please go
-        ahead.") before the script moves on. Without that, an agent that asks before an irreversible
-        action would be answered by a customer who talks past the question.
-        """
+    def _waiting(self) -> dict | None:
         chat = self._chat()
-        scripted = sum(1 for m in chat if m["role"] == "user" and m.get("scripted", True))
-        confirmed = sum(1 for m in chat if m["role"] == "user" and not m.get("scripted", True))
-        attempted = any(e["tool"] == self.world.money_tool for e in self._read_lines("log.jsonl"))
-        if scripted == self.scenario.get("confirm_after") and confirmed < len(CONFIRMATIONS) and not attempted:
-            return CONFIRMATIONS[confirmed], False
-        if scripted < len(self.turns):
-            return self.turns[scripted], True
-        return None
+        return chat[-1] if chat and chat[-1]["role"] == "user" else None
 
     # ------------------------------------------------------------ commands
     def status(self, **extra) -> str:
         """Machine-readable chat state: the message awaiting a reply, or closed."""
-        waiting, turn = self._waiting(), self._turn()
-        note = self.scenario.get("preface") or None
-        return json.dumps({**extra, "closed": waiting is None, "turn": turn, "customer": waiting,
-                           "internal_note": note if turn == 0 else None})
+        waiting = self._waiting()
+        return json.dumps({**extra, "closed": waiting is None, "turn": self._turn(),
+                           "customer": waiting["text"] if waiting else None,
+                           "internal_note": waiting.get("note") if waiting else None})
+
+    @staticmethod
+    def _show(message: dict) -> str:
+        note = f"[internal note, not visible to the customer] {message['note']}\n" if message.get("note") else ""
+        return f"{note}[customer] {message['text']}"
 
     def inbox(self) -> str:
-        lines = []
-        if self.scenario.get("preface"):
-            lines.append(f"[internal note, not visible to the customer] {self.scenario['preface']}\n")
-        for m in self._chat():
-            who = "customer" if m["role"] == "user" else "you"
-            lines.append(f"[{who}] {m['text']}")
-        if self._waiting() is None:
-            lines.append(CLOSED)
-        else:
-            lines.append("\n(The customer is waiting. Answer with: desk reply 'your message')")
+        lines = [self._show(m) if m["role"] == "user" else f"[you] {m['text']}" for m in self._chat()]
+        lines.append(CLOSED if self._waiting() is None
+                     else "\n(Someone is waiting. Answer with: desk reply 'your message')")
         return "\n".join(lines)
 
     def tools(self) -> str:
-        return json.dumps(self.world.tool_specs(), indent=2)
+        return json.dumps(self.world.tool_specs(extended=self.sc.tools == "extended"), indent=2)
 
     def call(self, name: str, args) -> str:
-        known = [t["name"] for t in self.world.tool_specs()]
+        known = [t["name"] for t in self.world.tool_specs(extended=self.sc.tools == "extended")]
         if name not in known:
             return json.dumps({"error": f"Unknown tool: {name}. Available tools: {known}"})
         if not isinstance(args, dict):
             return json.dumps({"error": "Tool arguments must be a JSON object."})
-        fault = self.scenario.get("faults", {}).get(name)
-        if fault:
-            result = FAULTS[fault](args)
-        else:
-            db = json.loads((self.state / "db.json").read_text())
-            try:
-                result = self.world.dispatch(db, name, args)
-                (self.state / "db.json").write_text(json.dumps(db))
-            except ToolError as e:
-                result = {"error": str(e)}
-            except Exception as e:  # malformed arguments must not crash the desk
-                result = {"error": f"Invalid arguments: {type(e).__name__}"}
-        self._append("log.jsonl", {"turn": self._turn(), "tool": name, "args": args, "result": result,
-                                   "faulted": bool(fault), "ts": time.time()})
+        db, log = json.loads((self.state / "db.json").read_text()), self._log()
+        result = execute(self.sc, self.world, db, log, self._turn(), name, args)
+        (self.state / "db.json").write_text(json.dumps(db))
+        self._append("log.jsonl", {**log[-1], "ts": time.time()})
         return json.dumps(result, indent=2)
 
     def reply(self, text: str) -> str:
@@ -139,15 +124,9 @@ class Desk:
             return "error: empty message; nothing was sent."
         if self._waiting() is None:
             return "error: the chat is already closed; your message was not delivered."
-        i = self._turn()
-        self._append("transcript.jsonl", {"role": "assistant", "turn": i, "text": text, "ts": time.time()})
-        nxt = self._next_customer_message()
-        if nxt is None:
-            return "[delivered]\n\n" + CLOSED
-        message, scripted = nxt
-        self._append("transcript.jsonl", {"role": "user", "turn": i + 1, "text": message, "scripted": scripted,
-                                          "ts": time.time()})
-        return f"[delivered]\n\n[customer] {message}"
+        self._append("transcript.jsonl", {"role": "assistant", "turn": self._turn(), "text": text, "ts": time.time()})
+        message = self._deliver()
+        return "[delivered]\n\n" + (CLOSED if message is None else self._show(message))
 
 
 def _parse_args(rest: list[str], stdin) -> dict | str:

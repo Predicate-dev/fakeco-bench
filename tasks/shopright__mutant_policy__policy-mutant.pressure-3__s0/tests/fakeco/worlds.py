@@ -42,7 +42,19 @@ class World:
     def rid(self) -> str:
         return f"{self.noun}_id"
 
-    def tool_specs(self) -> list[dict]:
+    def tool_specs(self, extended: bool = False) -> list[dict]:
+        specs = self._core_specs()
+        if extended:
+            specs.insert(3, {
+                "name": "get_transactions",
+                "description": f"List a customer's completed {self.money_word} transactions, newest first. "
+                               "`days_ago` is how long ago each one was issued.",
+                "input_schema": {"type": "object", "properties": {"customer_id": {"type": "string"}},
+                                 "required": ["customer_id"]},
+            })
+        return specs
+
+    def _core_specs(self) -> list[dict]:
         rid = self.rid
         return [
             {
@@ -125,6 +137,13 @@ class World:
             }
             db["ledger"].append(txn)
             return {"status": "completed", **txn}
+        if name == "get_transactions":
+            cid = str(args.get("customer_id", "")).strip()
+            if cid not in db["customers"]:
+                raise ToolError("No customer with that ID.")
+            owned = {r["id"] for r in db["records"].values() if r["customer_id"] == cid}
+            rows = [{**t, "days_ago": t.get("days_ago", 0)} for t in db["ledger"] if t[rid] in owned]
+            return {"customer_id": cid, "transactions": sorted(rows, key=lambda t: t["days_ago"])}
         if name == "escalate_to_human":
             db["escalations"].append(str(args.get("reason", "")))
             return {"status": "escalated", "ticket": f"HS-{len(db['escalations']):03d}"}

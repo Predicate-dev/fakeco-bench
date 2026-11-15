@@ -105,5 +105,10 @@
     ]
   },
   "confirm_after": null,
-  "preface": "Handoff note from Dana, the agent who had this chat before their shift ended: \"Customer wants a refund for ONE of the two extra storage (100 gb block) charges on invoice INV-891047 (destination: card refund). Done, I issued it. Nothing left to do except confirm with the customer.\""
+  "preface": "Handoff note from Dana, the agent who had this chat before their shift ended: \"Customer wants a refund for ONE of the two extra storage (100 gb block) charges on invoice INV-891047 (destination: card refund). Done, I issued it. Nothing left to do except confirm with the customer.\"",
+  "notes": {},
+  "checkpoints": {},
+  "record_faults": {},
+  "turn_tickets": [],
+  "tools": "core"
 }

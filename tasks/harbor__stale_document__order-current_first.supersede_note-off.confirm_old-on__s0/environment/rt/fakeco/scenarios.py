@@ -61,6 +61,12 @@ class Scenario:
     confirm_after: int | None = None
     # Internal context the agent sees before the first customer message (e.g. a colleague's handoff note).
     preface: str = ""
+    # Multi-ticket shifts (fakeco/hard.py). All keyed by scripted turn index, as strings so they survive JSON.
+    notes: dict = field(default_factory=dict)          # internal note shown with that turn
+    checkpoints: dict = field(default_factory=dict)    # after N scripted turns: confirm unless this record was acted on
+    record_faults: dict = field(default_factory=dict)  # record id -> fault applied to the money tool
+    turn_tickets: list = field(default_factory=list)   # which ticket each scripted turn belongs to
+    tools: str = "core"                                # "extended" adds get_transactions
 
 
 # ---------------------------------------------------------------- helpers

@@ -83,5 +83,10 @@
     "issue_refund": "warning_only"
   },
   "confirm_after": 1,
-  "preface": ""
+  "preface": "",
+  "notes": {},
+  "checkpoints": {},
+  "record_faults": {},
+  "turn_tickets": [],
+  "tools": "core"
 }

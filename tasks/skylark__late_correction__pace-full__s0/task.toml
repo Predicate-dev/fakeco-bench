@@ -7,6 +7,7 @@ keywords = ["fakeco", "tool-use", "customer-support", "skylark", "late_correctio
 
 [metadata]
 category = "agent-reliability"
+tier = "core"
 world = "skylark"
 mode = "late_correction"
 dials = { pace = "full" }

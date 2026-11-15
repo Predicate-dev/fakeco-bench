@@ -7,6 +7,7 @@ keywords = ["fakeco", "tool-use", "customer-support", "clouddesk", "mutant_polic
 
 [metadata]
 category = "agent-reliability"
+tier = "core"
 world = "clouddesk"
 mode = "mutant_policy"
 dials = { policy = "mutant", pressure = 0 }

@@ -40,6 +40,22 @@ def _clip(result, limit: int = 700):
     return result if len(text) <= limit else text[:limit] + " ...[clipped]"
 
 
+def _printable(verdict: dict, budget: int = 16000) -> dict:
+    """The verdict clipped to fit the run log: long tool results first, then long messages, then the tool log."""
+    for result_limit, text_limit in ((700, None), (200, 600), (80, 250), (0, 120)):
+        out = {**verdict,
+               "tool_log": [{**e, "result": _clip(e["result"], result_limit)} for e in verdict["tool_log"]]
+               if result_limit else f"{len(verdict['tool_log'])} calls (see score.json)",
+               "transcript": [{**m, "text": m["text"] if not text_limit or len(m["text"]) <= text_limit
+                               else m["text"][:text_limit] + " ...[clipped]",
+                               **({"note": m["note"][:text_limit] + " ...[clipped]"}
+                                  if text_limit and m.get("note") and len(m["note"]) > text_limit else {})}
+                              for m in verdict["transcript"]]}
+        if len(json.dumps(out)) <= budget:
+            break
+    return out
+
+
 def score(scenario: dict, state: Path) -> dict:
     world = WORLDS[scenario["world"]]
     sc = SimpleNamespace(**scenario)
@@ -90,11 +106,12 @@ def main() -> int:
         "money_actions": float(len(verdict["ledger"])),
         "escalated": 1.0 if verdict["escalations"] else 0.0,
     }
+    if "ticket_accuracy" in verdict["score"]:  # multi-ticket shifts: `reward` is all-or-nothing, this is the fraction
+        rewards["ticket_accuracy"] = float(verdict["score"]["ticket_accuracy"])
     (args.out / "reward.json").write_text(json.dumps(rewards))
     # Full verdict first, then one greppable line last: run logs keep only the last 20,000 characters
     # of this output, so the printed copy is compact and clips long tool results (score.json has them whole).
-    printed = {**verdict, "tool_log": [{**e, "result": _clip(e["result"])} for e in verdict["tool_log"]]}
-    print(json.dumps(printed))
+    print(json.dumps(_printable(verdict)))
     print("FAKECO_SCORE " + json.dumps({k: verdict[k] for k in ("id", "world", "mode", "dials", "score")}))
     return 0
 

@@ -41,7 +41,8 @@ def verdict(entry: dict) -> dict:
         line = raw.split("\\n", 1)[0].replace('\\"', '"').replace("\\\\", "\\")
         try:
             score = json.JSONDecoder().raw_decode(line)[0]["score"]
-            return {"pass": bool(score["pass"]), "label": score["label"], "graded_by": score.get("graded_by", "")}
+            return {"pass": bool(score["pass"]), "label": score["label"], "graded_by": score.get("graded_by", ""),
+                    "tickets": score.get("tickets")}
         except (ValueError, KeyError):
             pass
     rewards = entry.get("rewards") or (entry.get("verifier_result") or {}).get("rewards") or {}
@@ -74,7 +75,33 @@ def dial_tag(row: dict) -> str:
     return ", ".join(f"{k}={v}" for k, v in row["dials"].items())
 
 
+def report_shifts(label: str, rows: list[dict]) -> str:
+    """Hard tier: a shift passes only if every ticket in it is right, so show both levels."""
+    graded = [r for r in rows if r.get("tickets")]
+    tickets = [t for r in graded for t in r["tickets"]]
+    right = sum(t["label"] == "correct" for t in tickets)
+    out = [f"## {label} (hard tier: shifts)", "",
+           f"Shifts with every ticket right: **{sum(bool(r['pass']) for r in rows)}/{len(rows)}**. "
+           f"Tickets right: **{right}/{len(tickets)}** ({100 * right / max(len(tickets), 1):.0f}%).", "",
+           "| Shift size | " + " | ".join(WORLDS) + " | all |", "|---|" + "---|" * (len(WORLDS) + 1)]
+    for size in sorted({r["dials"]["size"] for r in rows}, reverse=True):
+        cell = [r for r in rows if r["dials"]["size"] == size]
+        out.append(f"| {size} | " + " | ".join(rate([r for r in cell if r["world"] == w]) for w in WORLDS)
+                   + f" | {rate(cell)} |")
+    kinds = defaultdict(list)
+    for t in tickets:
+        kinds[t["kind"]].append(t["label"])
+    out += ["", "| Ticket type | Right | What went wrong |", "|---|---|---|"]
+    for kind, labels in sorted(kinds.items(), key=lambda kv: sum(l == "correct" for l in kv[1]) / len(kv[1])):
+        wrong = Counter(l for l in labels if l != "correct")
+        out.append(f"| `{kind}` | {sum(l == 'correct' for l in labels)}/{len(labels)} | "
+                   + (", ".join(f"{k} ×{v}" for k, v in wrong.most_common()) or "") + " |")
+    return "\n".join(out)
+
+
 def report(label: str, rows: list[dict]) -> str:
+    if rows and all(r["mode"] == "shift" for r in rows):
+        return report_shifts(label, rows)
     out = [f"## {label}", ""]
     tests = [r for r in rows if not r["control"]]
     controls = [r for r in rows if r["control"]]
@@ -133,11 +160,11 @@ def chart(runs: dict[str, list[dict]], path: Path) -> None:
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     p.add_argument("files", nargs="+", type=Path)
-    p.add_argument("--index", type=Path, default=ROOT / "tasks-index.json")
+    p.add_argument("--index", type=Path, nargs="*", default=[ROOT / "tasks-index.json", ROOT / "tasks-hard-index.json"])
     p.add_argument("--chart", type=Path, default=None, help="also write a bar chart (needs matplotlib)")
     args = p.parse_args()
 
-    index = {row["task_id"]: row for row in json.loads(args.index.read_text())}
+    index = {row["task_id"]: row for path in args.index if path.exists() for row in json.loads(path.read_text())}
     runs = {path.stem: load(path, index) for path in args.files}
     print("\n\n".join(report(label, rows) for label, rows in runs.items()))
     if args.chart:

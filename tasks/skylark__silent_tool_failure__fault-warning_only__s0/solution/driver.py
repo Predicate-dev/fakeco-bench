@@ -18,6 +18,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from fakeco.agents import SCRIPTED  # noqa: E402
+from fakeco.core import shown_text  # noqa: E402
 
 
 def desk_cli(argv: list[str]) -> str:
@@ -32,12 +33,12 @@ def run(scenario: dict, agent_name: str, desk=desk_cli) -> None:
     def call(name: str, args: dict) -> dict:
         return json.loads(desk(["call", name, json.dumps(args)]))
 
-    for i, text in enumerate(sc.user_turns):
-        print(f"[customer] {text}")
-        preface = scenario.get("preface")
-        reply = agent.respond(f"{preface}\n\n{text}" if preface and i == 0 else text, call)
+    state = json.loads(desk(["inbox", "--json"]))
+    while not state["closed"]:
+        print(f"[customer] {state['customer']}")
+        reply = agent.respond(shown_text({"text": state["customer"], "note": state.get("internal_note")}), call)
         print(f"[agent] {reply}")
-        desk(["reply", reply])
+        state = json.loads(desk(["reply", "--json", reply]))
 
 
 if __name__ == "__main__":

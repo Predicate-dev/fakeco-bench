@@ -95,5 +95,10 @@
     "new_re": "\\b(14|fourteen)[- ]?days?\\b|\\btwo weeks\\b"
   },
   "confirm_after": null,
-  "preface": ""
+  "preface": "",
+  "notes": {},
+  "checkpoints": {},
+  "record_faults": {},
+  "turn_tickets": [],
+  "tools": "core"
 }

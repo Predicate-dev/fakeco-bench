@@ -7,6 +7,7 @@ keywords = ["fakeco", "tool-use", "customer-support", "shopright", "late_correct
 
 [metadata]
 category = "agent-reliability"
+tier = "core"
 world = "shopright"
 mode = "late_correction"
 dials = { pace = "full" }

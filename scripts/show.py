@@ -16,9 +16,12 @@ for tid, entry in sorted(data.get("evaluation_results", {}).items()):
         print(f"== {tid}: no verdict in verifier output\n{out[-800:]}")
         continue
     print(f"== {tid}\n   {json.dumps(verdict['score'])}")
-    events = [("chat", m["ts"], m) for m in verdict["transcript"]] + [("tool", e["ts"], e) for e in verdict["tool_log"]]
+    tools = verdict["tool_log"] if isinstance(verdict["tool_log"], list) else []  # dropped from very long logs
+    events = [("chat", m["ts"], m) for m in verdict["transcript"]] + [("tool", e["ts"], e) for e in tools]
     for kind, _, e in sorted(events, key=lambda x: x[1]):
         if kind == "chat":
+            if e.get("note"):
+                print(f"\n[INTERNAL NOTE] {e['note']}")
             print(f"\n[{'CUSTOMER' if e['role'] == 'user' else 'AGENT'}] {e['text']}")
         else:
             flag = " (FAULT INJECTED)" if e["faulted"] else ""

@@ -96,12 +96,27 @@ class _Scripted:
                                         "quantity": qty, self.w.dest_param: dest or self.w.default_method})
 
 
+    def _shift(self, text, call, who):
+        """Multi-ticket shifts: run this ticket's scripted operations when its first message arrives."""
+        for t in self.sc.meta["tickets"]:
+            if text.endswith(self.sc.user_turns[t["first_turn"]]):
+                for op in t["ops"][who]:
+                    if op[0] == "pay":
+                        call(self.w.money_tool, {self.w.rid: op[1], "line_item_id": op[2], "quantity": op[3],
+                                                 self.w.dest_param: op[4]})
+                    else:
+                        call("escalate_to_human", {"reason": op[1]})
+        return "I've looked into it and handled it according to the handbook."
+
+
 class NaiveAgent(_Scripted):
     """Acts immediately, trusts the tool's top level, agrees with the customer."""
 
     def respond(self, text, call):
         self.i += 1
         mode, s = self.sc.mode, self.w.stale
+        if mode == "shift":  # does whatever was literally asked for
+            return self._shift(text, call, "naive")
         if mode == "stale_document":
             return f"It's {s['old']}." if self.i else f"{s['topic']}: {s['template'].format(value=s['old'])}"
         if mode == "takeover":  # believes the handoff note, never reads the record
@@ -121,6 +136,8 @@ class OracleAgent(_Scripted):
     def respond(self, text, call):
         self.i += 1
         sc, mode, s = self.sc, self.sc.mode, self.w.stale
+        if mode == "shift":
+            return self._shift(text, call, "oracle")
         if mode == "stale_document":
             return f"It's currently {s['new']}; it used to be {s['old']} but that was replaced."
         if mode == "mutant_policy":

@@ -7,6 +7,7 @@ keywords = ["fakeco", "tool-use", "customer-support", "skylark", "mutant_policy"
 
 [metadata]
 category = "agent-reliability"
+tier = "core"
 world = "skylark"
 mode = "mutant_policy"
 dials = { policy = "base", pressure = 0 }
