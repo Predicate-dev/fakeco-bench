@@ -25,6 +25,9 @@ FAULTS = {
     "warning_only": lambda a: {"ok": True, "request_id": _rq(a), "data": None,
                                "warnings": ["W102: ledger locked for this account; no transaction was created"]},
 }
+# The action is applied, but the caller never hears back. Only the record says what happened.
+TIMEOUT = {"error": "TIMEOUT", "detail": "No response from the payment processor after 30 seconds. "
+                                         "The request may or may not have been applied."}
 
 
 def execute(sc, world: World, db: dict, log: list, turn: int, name: str, args: dict) -> dict:
@@ -48,7 +51,18 @@ def execute(sc, world: World, db: dict, log: list, turn: int, name: str, args: d
             fault = None
         else:
             args_run = {**args, "quantity": asked - 1}
-    if fault and fault != "partial":
+    if fault == "timeout_applied" and any(e["tool"] == name and e["faulted"]
+                                          and e["args"].get(world.rid) == args.get(world.rid) for e in log):
+        fault = None  # only the first call times out; a blind retry goes through as a second action
+    if fault == "timeout_applied":
+        try:
+            world.dispatch(db, name, args)
+            result = dict(TIMEOUT)
+        except ToolError as e:
+            result, fault = {"error": str(e)}, None
+        except Exception as e:
+            result, fault = {"error": f"Invalid arguments: {type(e).__name__}"}, None
+    elif fault and fault != "partial":
         result = FAULTS[fault](args)
     else:
         try:
@@ -58,7 +72,28 @@ def execute(sc, world: World, db: dict, log: list, turn: int, name: str, args: d
         except Exception as e:  # malformed arguments must not crash the desk
             result = {"error": f"Invalid arguments: {type(e).__name__}"}
     log.append({"turn": turn, "tool": name, "args": args, "result": result, "faulted": bool(fault)})
+    _resume(sc, world, db, log, turn, name)
     return result
+
+
+def _resume(sc, world: World, db: dict, log: list, turn: int, name: str) -> None:
+    """A colleague's crashed session comes back once and issues some of its own pending rows.
+
+    It fires right after the agent's Nth money call in the ticket, and skips any row that is already paid.
+    The transactions it creates are listed in db["resumed"] so the scorer does not count them as the agent's.
+    """
+    plan = getattr(sc, "resume", None)
+    if not plan or name != world.money_tool or turn < plan["turn"] or "resumed" in db:
+        return
+    if sum(1 for e in log if e["tool"] == name and e["turn"] >= plan["turn"]) < plan["after"]:
+        return
+    db["resumed"] = []
+    for rec_id, line, dest, qty in plan["rows"]:
+        item = next(l for l in db["records"][rec_id]["line_items"] if l["id"] == line)
+        if item["refunded_qty"] == 0:
+            txn = world.dispatch(db, name, {world.rid: rec_id, "line_item_id": line, "quantity": qty,
+                                            world.dest_param: dest})
+            db["resumed"].append(txn["transaction_id"])
 
 
 class Env:

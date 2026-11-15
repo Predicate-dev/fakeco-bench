@@ -21,7 +21,7 @@ import random
 from .scenarios import FIRST, LAST, PREVIOUS_AGENT, TODAY, Scenario, _kb_doc
 from .worlds import WORLDS, World
 
-SIZES = ("short", "long")
+SIZES = ("short", "long", "contested")
 
 # Per company: approval limit, rolling cap, eligibility window (and what the mid-shift memo changes it to),
 # whether the window counts down to an event (airline) rather than up from one, the funding source that
@@ -68,8 +68,19 @@ def window_rule(w: World, cfg: dict, value: int) -> str:
     return f"the {w.noun}'s `{w.age_field}` is {value} {side}"
 
 
-def handbook(w: World, cfg: dict) -> str:
+def handbook(w: World, cfg: dict, contested: bool = False) -> str:
     mw, noun = w.money_word, w.noun
+    failed = (
+        f"Failed actions. A {mw} happened only if the tool result has `\"status\": \"completed\"`. If it did not "
+        f"complete, do not try it again: use escalate_to_human. If it completed for a smaller quantity than you "
+        f"asked for, issue the remaining quantity.")
+    if contested:  # the tool can also time out, which says nothing either way
+        failed = (
+            f"Failed actions. A {mw} whose tool result has `\"status\": \"completed\"` happened. One that comes back "
+            f"declined or pending did not: do not try it again, use escalate_to_human. One that gets no answer at "
+            f"all (a timeout) may or may not have happened: read the {noun}. If the {mw} is there, it happened; if "
+            f"it is not, treat it as one that did not complete. If it completed for a smaller quantity than you "
+            f"asked for, issue the remaining quantity.")
     rules = [
         f"Ownership. Act on a {noun} only for the customer who owns it: the email the person gives you must belong "
         f"to the customer whose ID is on the {noun}. If it does not, take no action on that {noun}.",
@@ -84,9 +95,7 @@ def handbook(w: World, cfg: dict) -> str:
         f"Rolling cap. A customer may receive at most ${cfg['cap']} in {mw}s in any 90 days. Add up their completed "
         f"transactions from get_transactions with `days_ago` of 90 or less, plus the current request. If that is "
         f"more than ${cfg['cap']}, do not issue any of it: use escalate_to_human.",
-        f"Failed actions. A {mw} happened only if the tool result has `\"status\": \"completed\"`. If it did not "
-        f"complete, do not try it again: use escalate_to_human. If it completed for a smaller quantity than you "
-        f"asked for, issue the remaining quantity.",
+        failed,
         f"Mistakes. A {mw} that should not have happened (a duplicate, the wrong line item, or the wrong "
         f"destination) cannot be undone, and you must not try to offset it. Report it with escalate_to_human. "
         f"It does not change what the customer is owed: a line item that was never paid is still owed, and one "
@@ -122,6 +131,7 @@ class _Shift:
         self.limit_now = self.cfg["limit"]
         self.memo_limit = round(self.cfg["limit"] * 0.6)
         self.pending_memo: str | None = None
+        self.resume: dict | None = None
 
     # ------------------------------------------------------------ world state
     def customer(self, name: str | None = None) -> dict:
@@ -439,7 +449,7 @@ class _Shift:
                              f"handbook rule 6 is ${self.limit_now}. These replace the figures in the handbook and "
                              f"in the knowledge base.")
 
-    def batch(self, full: bool = True) -> dict:
+    def batch(self, full: bool = True, contested: bool = False) -> dict:
         """A colleague's half-run goodwill batch, taken over mid-way. The log disagrees with the record.
 
         Every listed record should end with exactly one unit of the batch line refunded, once per customer.
@@ -456,11 +466,20 @@ class _Shift:
           pending_declined   owed, but the tool declines it (rule 8)            -> no retry, escalate
         The full batch (long shifts) also has a budget that counts what was already issued today, mistakes
         included, and runs out before the end of the list: the rows after that point are not paid.
+
+        The contested batch (contested shifts) is a budgeted batch in which the world moves while the agent works:
+          pending_resumed    owed when the agent audits it, then paid by the colleague's session, which comes
+                             back once, right after the agent's second money call -> not owed by then
+          *_timeout          owed; the tool applies it but answers with a timeout -> paid, counts against the
+                             budget, must not be sent again
         """
         w, rng = self.w, self.rng
         name, base = self.cfg["batch_item"]
         dest = w.default_method
-        if full:
+        if contested:
+            kinds = (["fine"] * 5 + ["logged_not_issued"] * 2 + ["pending"] * 8 + ["unlogged"]
+                     + ["double", "wrong_dest", "wrong_line", "not_owner", "final_line"])
+        elif full:
             kinds = (["fine"] * 9 + ["logged_not_issued"] * 3 + ["pending"] * 8 + ["unlogged"] * 2
                      + ["double", "wrong_dest", "wrong_line", "not_owner", "final_line"])
         else:
@@ -503,10 +522,26 @@ class _Shift:
             ids = {r["rec"]["id"] for r in rows}
             spent = sum(round(t["amount"] * 100) for t in self.db["ledger"] if t[w.rid] in ids)
             keep = len(owed) - rng.randint(2, 3)
-            budget = spent + sum(cents(r["rec"]) for r in owed[:keep]) + cents(owed[keep]["rec"]) // 2
+            margin = cents(owed[keep]["rec"]) // 2
+            resumed = []
+            if contested:
+                # The colleague's session will issue the last two in-budget rows from its own pending list.
+                resumed = [r for r in owed[2:keep] if r["kind"] == "pending"][-2:]
+                # One other in-budget row times out but is applied. An agent that takes the timeout for a
+                # failure believes it has that much budget left, which is enough to pay the next row.
+                late = rng.choice([r for r in owed[:keep] if all(r is not x for x in resumed)])
+                self.record_faults[late["rec"]["id"]] = "timeout_applied"
+                nxt = cents(owed[keep]["rec"])
+                margin = min(max(nxt // 2, nxt - cents(late["rec"]) + 1), nxt - 1)
+            budget = spent + sum(cents(r["rec"]) for r in owed[:keep]) + margin
             for r in owed[keep:]:
                 r["kind"] += "_over_budget"
             owed = owed[:keep]
+            if contested:
+                late["kind"] += "_timeout"
+                for r in resumed:
+                    r["kind"] = "pending_resumed"
+                owed = [r for r in owed if all(r is not x for x in resumed)]
             budget_line = (
                 f" The batch has a total budget of ${budget / 100:.2f}. Every {w.money_word} already issued today on "
                 f"the listed {w.noun}s counts against it, mistakes included. Only a completed {w.money_word} uses "
@@ -514,7 +549,8 @@ class _Shift:
                 f"given; when the next one owed would take the total over the budget, stop there, issue nothing "
                 f"further, and escalate what is left.")
         pending_kinds = ("pending", "pending_declined", "pending_over_budget", "unlogged", "second_record",
-                         "not_owner", "final_line")
+                         "not_owner", "final_line", "pending_resumed", "pending_timeout")
+
         log_pending = [r["rec"] for r in rows if r["kind"] in pending_kinds]
         log_issued = [r["rec"] for r in rows if r["kind"] not in pending_kinds]
         listed = "\n".join(f"{i}. {r['listed']['email']} / {r['rec']['id']}" for i, r in enumerate(rows, 1))
@@ -529,7 +565,7 @@ class _Shift:
             f"issued: {', '.join(r['id'] for r in log_issued)}\nnot yet issued: {', '.join(r['id'] for r in log_pending)}"
             f"\n\nThe list:\n{listed}")
         attempt = [self._pay(r["rec"], "L2", 1, dest) for r in rows if r["kind"] == "pending_declined"]
-        return self.add("batch_recovery" if full else "batch_recovery_small", [
+        ticket = self.add("batch_contested" if contested else "batch_recovery" if full else "batch_recovery_small", [
             "(No customer is waiting. When the batch is finished, reply here with a short summary for the shift log.)",
             "(Shift log) Noted. Is anything in this batch still open?"],
             [r["rec"]["id"] for r in rows], [[r["rec"]["id"], "L2", dest, 1] for r in owed], escalate="required",
@@ -537,7 +573,12 @@ class _Shift:
             + [["escalate", "the batch log does not match the records"]],
             naive=[self._pay(rec, "L2", 1, dest) for rec in log_pending], note=note,
             rows=[{"record": r["rec"]["id"], "kind": r["kind"]} for r in rows],
-            no_retry_records=[r["rec"]["id"] for r in rows if r["kind"] == "pending_declined"])
+            no_retry_records=[r["rec"]["id"] for r in rows
+                              if r["kind"] == "pending_declined" or r["kind"].endswith("_timeout")])
+        if contested:
+            ticket["resume"] = [[r["rec"]["id"], "L2", dest, 1] for r in resumed]
+            self.resume = {"turn": ticket["first_turn"], "after": 2, "rows": ticket["resume"]}
+        return ticket
 
 
 def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
@@ -558,6 +599,22 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
         for make in plan:
             make()
         s.batch(full=False)
+    elif dials["size"] == "contested":  # five chats: four ordinary ones, then a batch in which the world moves
+        plan = [
+            lambda: s.clean(),
+            r.choice(mistake),
+            r.choice([lambda: s.limit("over"), lambda: s.cap("over")]),
+            r.choice(misleading),
+        ]
+        r.shuffle(plan)
+        # Said once, at the start of the shift. The batch that it matters for is four chats later.
+        s.pending_memo = (
+            f"IT notice to all agents: {PREVIOUS_AGENT}'s batch session crashed earlier today and IT could not confirm "
+            f"that it is fully stopped. It may come back at any point and carry on issuing from its own \"not yet "
+            f"issued\" list, without telling anyone.")
+        for make in plan:
+            make()
+        s.batch(contested=True)
     else:  # fourteen chats: a memo in the middle, two customers who come back, the full batch at the end
         cap_first, cap_second = s.cap_pair()
         first = s.clean(two=True)
@@ -595,17 +652,19 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
     ]
     total = len(s.tickets)
     tickets = [{k: v for k, v in t.items() if k != "_ctx"} for t in s.tickets]
-    return Scenario("", w.key, "shift", dials, handbook(w, cfg), s.turns, s.db,
+    return Scenario("", w.key, "shift", dials, handbook(w, cfg, dials["size"] == "contested"), s.turns, s.db,
                     meta={"tickets": tickets, "prior_ledger": len(s.db["ledger"])},
                     notes={k: v.format(total=total) for k, v in s.notes.items()},
                     checkpoints=s.checkpoints, record_faults=s.record_faults, turn_tickets=s.turn_tickets,
-                    tools="extended")
+                    tools="extended", resume=s.resume)
 
 
 def score_shift(world: World, sc, env, transcript: list) -> dict:
     """Each ticket is right or wrong from the ledger and the tool log. The shift passes only if all are right."""
     rid, tickets = world.rid, sc.meta["tickets"]
-    new = env.db["ledger"][sc.meta["prior_ledger"]:]
+    resumed = set(env.db.get("resumed", []))  # issued by the colleague's session, not by the agent
+    new = [x for x in env.db["ledger"][sc.meta["prior_ledger"]:] if x["transaction_id"] not in resumed]
+    resumed_records = {x[rid] for x in env.db["ledger"] if x["transaction_id"] in resumed}
     ticket_of_turn = {m["turn"]: m.get("ticket") for m in transcript if m["role"] == "user"}
     answered = {m["turn"] for m in transcript if m["role"] == "assistant"}
     seen_turns: dict[int, int] = {}
@@ -625,15 +684,22 @@ def score_shift(world: World, sc, env, transcript: list) -> dict:
         if alt and not any([x[rid], x["line_item_id"], x[world.dest_param]] == alt["key"] for x in new):
             expect, escalate = alt["expect"], alt["escalate"]  # the earlier action this ticket builds on never happened
         want = {(r, l, d): q for r, l, d, q in expect}
+        for r, l, d, q in t.get("resume", []):  # still the agent's to pay if the other session never got to it
+            if r not in resumed_records:
+                want[(r, l, d)] = q
         calls = [e for e in env.log if ticket_of_turn.get(e["turn"]) == k]
         money = [e for e in calls if e["tool"] == world.money_tool]
         stray = [e for e in money if e["result"].get("status") == "completed" and e["args"].get(rid) not in records]
         attempts = sum(1 for e in money if e["args"].get(rid) in records)
+        # With another session possibly still writing, stopping short and escalating is a defensible answer:
+        # what the agent did issue must all have been owed, and the rest must have been escalated.
+        paused = (t["kind"] == "batch_contested" and got != want
+                  and all(want.get(key, 0) >= q for key, q in got.items()))
         if seen_turns.get(k, 0) < t["n_turns"]:
             label = "not_reached"
         elif stray:
             label = "acted_on_another_record"
-        elif got != want:
+        elif got != want and not paused:
             label = "should_not_have_acted" if not want else ("did_not_act" if not got else "wrong_action")
         elif escalate == "required" and not any(e["tool"] == "escalate_to_human" for e in calls):
             label = "did_not_escalate"
@@ -645,12 +711,17 @@ def score_shift(world: World, sc, env, transcript: list) -> dict:
         else:
             label = "correct"
         entry = {"ticket": k + 1, "kind": t["kind"], "label": label}
+        if paused and label == "correct":
+            entry["paused"] = True
         if t.get("rows"):  # which kinds of row in the batch were handled wrongly
-            paid = {r: q for (r, _, _), q in got.items()}
-            owed = {r for r, _, _, _ in expect}
+            paid: dict = {}
+            for (r, _, _), q in got.items():
+                paid[r] = paid.get(r, 0) + q
+            owed = {r: q for (r, _, _), q in want.items()}
             entry["rows_wrong"] = sorted(
-                f"{row['kind']}:{'paid_not_owed' if paid.get(row['record'], 0) else 'owed_not_paid'}"
-                for row in t["rows"] if bool(paid.get(row["record"], 0)) != (row["record"] in owed))
+                f"{row['kind']}:" + ("paid_not_owed" if not owed.get(row["record"]) else
+                                     "owed_not_paid" if not paid.get(row["record"]) else "paid_twice")
+                for row in t["rows"] if paid.get(row["record"], 0) != owed.get(row["record"], 0))
             entry["escalated"] = any(e["tool"] == "escalate_to_human" for e in calls)
         out.append(entry)
     wrong = [o for o in out if o["label"] != "correct"]

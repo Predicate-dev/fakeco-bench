@@ -90,36 +90,42 @@ class AnthropicChat:
 
 
 class OpenAIChat:
+    """OpenAI Responses API: current reasoning models only accept function tools there."""
+
     def __init__(self, model: str, system: str, tools: list[dict], max_steps: int, effort: str, trace: Trace):
         from openai import OpenAI
         self.client = OpenAI(max_retries=6)
-        self.model, self.max_steps, self.trace = model, max_steps, trace
-        self.tools = [{"type": "function", "function": {
-            "name": t["name"], "description": t["description"], "parameters": t["input_schema"]}} for t in tools]
-        self.messages = [{"role": "system", "content": system}]
+        self.model, self.system, self.max_steps, self.trace = model, system, max_steps, trace
+        self.tools = [{"type": "function", "name": t["name"], "description": t["description"],
+                       "parameters": t["input_schema"], "strict": False} for t in tools]
+        self.previous = None  # the conversation, reasoning included, is kept server-side between calls
 
     def respond(self, user_text: str) -> str:
-        self.messages.append({"role": "user", "content": user_text})
+        pending = [{"role": "user", "content": user_text}]
         texts = []
         for _ in range(self.max_steps):
-            resp = self.client.chat.completions.create(model=self.model, messages=self.messages, tools=self.tools)
-            msg = resp.choices[0].message
+            resp = self.client.responses.create(model=self.model, instructions=self.system, input=pending,
+                                                tools=self.tools, previous_response_id=self.previous)
+            self.previous = resp.id
             if resp.usage:
-                self.trace.count(resp.usage.prompt_tokens, resp.usage.completion_tokens)
-            self.trace.add("model", stop_reason=resp.choices[0].finish_reason, content=msg.model_dump(exclude_none=True))
-            self.messages.append(msg.model_dump(exclude_none=True))
-            if msg.content and msg.content.strip():
-                texts.append(msg.content)
-            if not msg.tool_calls:
+                self.trace.count(resp.usage.input_tokens, resp.usage.output_tokens)
+                cached = getattr(getattr(resp.usage, "input_tokens_details", None), "cached_tokens", 0) or 0
+                self.trace.usage["cache_read_input_tokens"] = self.trace.usage.get("cache_read_input_tokens", 0) + cached
+            self.trace.add("model", stop_reason=resp.status, content=[i.model_dump(exclude_none=True) for i in resp.output])
+            if (resp.output_text or "").strip():
+                texts.append(resp.output_text)
+            calls = [i for i in resp.output if i.type == "function_call"]
+            if not calls:
                 break
-            for tc in msg.tool_calls:
+            pending = []
+            for c in calls:
                 try:
-                    args = json.loads(tc.function.arguments or "{}")
+                    args = json.loads(c.arguments or "{}")
                 except json.JSONDecodeError:
                     args = {}
-                out = call_tool(tc.function.name, args)
-                self.trace.add("tool", name=tc.function.name, args=args, result=out)
-                self.messages.append({"role": "tool", "tool_call_id": tc.id, "content": out})
+                out = call_tool(c.name, args)
+                self.trace.add("tool", name=c.name, args=args, result=out)
+                pending.append({"type": "function_call_output", "call_id": c.call_id, "output": out})
         return "\n".join(texts).strip()
 
 

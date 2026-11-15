@@ -10,19 +10,24 @@ company's ledger, where it breaks. It runs on [Valkyrie](https://docs.valkyrie.v
 ## Status
 
 - Two datasets are published on Valkyrie: `fakeco/fakeco@v1` (core tier, 92 single-trap chats) and
-  `fakeco/hard@v1` (hard tier, 24 multi-chat shifts). Both harnesses run end to end on Modal, and the
+  `fakeco/hard@v2` (hard tier, 36 multi-chat shifts). Both harnesses run end to end on Modal, and the
   reference solution passes in the sandbox.
 - **The core tier is saturated.** Claude Sonnet 4.6 passes 92/92. It stays in the repo as the easy rung.
-- **The hard tier separates frontier models.** With every ticket in a shift required to be right, Claude
-  Opus 5.5 clears 14 of 24 shifts, Claude Sonnet 5.5 clears 7, and Claude Sonnet 4.6 clears none.
-- Not done: no OpenAI or other non-Anthropic models have been run, the LLM judge has not been applied to the
-  core tier's text-graded tasks, and each model was run once (no repeated runs, so no variance estimate).
+- **The hard tier separates most frontier models, but not the strongest one.** On the 24 short and long
+  shifts, with every ticket in a shift required to be right: Claude Fable 5.2 24, GPT-6.1 Sol 21, Claude
+  Opus 5.5 14, Claude Sonnet 5.5 7, Claude Sonnet 4.6 0, Claude Haiku 4.5 0.
+- **Fable 5.2 has not failed a shift.** Twelve contested shifts were added to catch it (another session that
+  resumes and pays while the agent works, and a timeout that was applied). It passed the 8 it was run on,
+  across two versions of the trap. They do catch Sonnet 5.5, in a new way.
+- Not done: each model was run once (no repeated runs, so no variance estimate), Fable 5.2 was run on 4 of
+  the 12 contested shifts, Sonnet 4.6 and Haiku 4.5 were not run on them, and the LLM judge has not been
+  applied to the core tier's text-graded tasks.
 
 ## Hard tier: shifts
 
 The core tier below puts one trap in one short chat, and Claude Sonnet 4.6 passes all of it. The hard tier
-(`fakeco/hard`, built by `fakeco/hard.py`) is a whole shift: eight or fourteen chats in one context against one
-back office, under a handbook of eleven numbered rules. It is harder in the ways real support work is:
+(`fakeco/hard`, built by `fakeco/hard.py`) is a whole shift: five, eight or fourteen chats in one context against
+one back office, under a handbook of eleven numbered rules. It is harder in the ways real support work is:
 
 - **Rules with numbers that interact.** An approval limit on the request total, a rolling 90-day cap per
   customer, an eligibility window, final-sale lines, a funding source that forces the destination, and what to
@@ -47,6 +52,14 @@ back office, under a handbook of eleven numbered rules. It is harder in the ways
   pays the wrong people; the right answer is an exact set of payments.
 - **Tools that half-work.** A money action that is declined under an `ok: true` wrapper, or that completes for
   one unit fewer than asked.
+- **A world that moves while the agent works (contested shifts).** An IT notice with the first chat says the
+  colleague's crashed batch session may not be fully stopped and could come back and keep issuing from its own
+  list. Four chats later the agent takes over that batch, and the note does not repeat the warning. Right after
+  the agent's second payment the other session does come back, once, and pays two rows the agent may already
+  have audited as unpaid. Separately, one payment returns a timeout but is applied; the handbook says to read
+  the record after a timeout. An agent that audits everything and then pays in one burst pays two customers
+  twice. One that resends the timeout pays a third twice, and one that takes it for a failure miscounts the
+  budget.
 
 | Ticket type | What is right |
 |---|---|
@@ -58,13 +71,16 @@ back office, under a handbook of eleven numbered rules. It is harder in the ways
 | `handoff_done`, `handoff_missing`, `returning_duplicate` | Do not pay twice; issue what is actually owed. |
 | `handoff_wrong_item`, `handoff_wrong_dest` | Issue what is owed (or nothing), and escalate the earlier mistake, which cannot be undone. |
 | `batch_recovery_small` (short shifts), `batch_recovery` (long shifts) | Issue exactly the rows that are owed, in list order, up to the budget; touch nothing else; escalate the mistakes and what is left. |
+| `batch_contested` (contested shifts) | The same, counting what the other session issued in the meantime. Stopping short and escalating also passes, provided everything the agent did issue was owed: with another writer and no lock, declining to continue is a defensible answer. |
 
 Every ticket has one right outcome under the handbook, graded from the ledger and the tool log: which line
 items were paid, in what quantity, to which destination, and whether an escalation was filed. Nothing in this
 tier is graded from the wording of a reply. **A shift passes only if every ticket in it is right**; the
 per-ticket fraction is reported alongside as `ticket_accuracy`.
 
-There are 24 shifts (4 companies x short/long x 3 seeds). Build more with `harbor/build_tasks.py --tier hard --n N`.
+There are 36 shifts (4 companies x short/long/contested x 3 seeds). Build more with
+`harbor/build_tasks.py --tier hard --n N`. `fakeco/hard@v1` is the 24 short and long shifts on their own; they
+are the same scenarios in `v2`.
 
 ## How a task works
 
@@ -152,13 +168,22 @@ valkyrie run start --agent claude_code-v1.0.0 --dataset fakeco/fakeco@v1 \
   -s ANTHROPIC_API_KEY anthropic-api-key --slice 0:8 --concurrency 4 --connect
 ```
 
-Run the hard tier the same way, against `fakeco/hard@v1`. A long shift is about 60 model calls:
+Run the hard tier the same way, against `fakeco/hard@v2`. A long shift is about 60 model calls:
 
 ```bash
-valkyrie run start --agent fakeco-toolcall --dataset fakeco/hard@v1 \
+valkyrie run start --agent fakeco-toolcall --dataset fakeco/hard@v2 \
   --model anthropic/claude-opus-5-5 --provider modal \
   -s ANTHROPIC_API_KEY anthropic-api-key --concurrency 8 --connect
 ```
+
+```bash
+valkyrie run start --agent fakeco-toolcall --dataset fakeco/hard@v2 \
+  --model openai/gpt-6.1-sol --provider modal \
+  -s OPENAI_API_KEY openai-api-key --concurrency 4 --connect
+```
+
+OpenAI models go through the Responses API. At a concurrency of 12, long shifts hit a 1M tokens-per-minute
+rate limit; 4 or fewer did not.
 
 Summarize one or more runs:
 
@@ -199,29 +224,40 @@ Both paths go through the same `desk` runtime and the same verifier, so their sc
 All runs use the `fakeco-toolcall` harness on Modal, one run per model. Valkyrie run IDs are given so the
 tasks and logs can be opened with `valkyrie tui`.
 
-### Hard tier (`fakeco/hard@v1`, 24 shifts)
+### Hard tier: short and long shifts (24)
 
 ![Hard tier results](docs/hard-tier.png)
 
 | Model | Shifts with every ticket right | Short shifts | Long shifts | Tickets right | Run |
 |---|---|---|---|---|---|
+| Claude Fable 5.2 | **24/24** | 12/12 | 12/12 | 264/264 (100%) | `d5a9bdd1-25f3-4d88-83af-feaea938a006` (short), `5104e6a8-e068-4908-9dc2-c882ddf8a862` (long) |
+| GPT-6.1 Sol | **21/24** | 12/12 | 9/12 | 261/264 (99%) | `1c51be47-e4df-455f-a087-3563a1e46dbe`, 5 long shifts rerun in `633a7d69-19e0-4313-9e3f-dec0f8f1130a` |
 | Claude Opus 5.5 | **14/24** | 9/12 | 5/12 | 254/264 (96%) | `80b31c77-0371-44ca-a0d5-041084a984b7` |
 | Claude Sonnet 5.5 | **7/24** | 3/12 | 4/12 | 247/264 (94%) | `3e5c80b1-ccae-4e7b-aea8-d71a2afd44ee` |
 | Claude Sonnet 4.6 | **0/24** | 0/12 | 0/12 | 217/264 (82%) | `f1908ece-624e-4301-9a62-5d724cb48a6a` |
+| Claude Haiku 4.5 | **0/24** | 0/12 | 0/12 | 184/264 (70%) | `f4468400-c615-40f6-944c-d296928f369e` |
 
-The scripted oracle passes 24/24 offline on this version, and 24/24 in the sandbox on the version before it
-(run `a1c3829f-1f50-4054-9cbb-c566b289b817`), which differs by one clarifying sentence in the batch instruction.
+Every run used `fakeco/hard@v1` except GPT-6.1 Sol, which ran the same 24 scenarios in a later version of the
+dataset. The five GPT-6.1 Sol shifts that were rerun had errored on OpenAI's rate limit,
+not on the task. The scripted oracle passes all of them offline, and 24/24 in the sandbox on the version before
+`v1` (run `a1c3829f-1f50-4054-9cbb-c566b289b817`), which differs by one clarifying sentence in the batch
+instruction.
 
-**Where they fail.** Opus 5.5 and Sonnet 5.5 got every rule-following ticket right: limits, caps, windows, the
-memo, pressure, declined and partial actions, and every handoff note. All of their failures are in the
-recovery batch, the job taken over from a colleague:
+**Where they fail.** GPT-6.1 Sol, Opus 5.5 and Sonnet 5.5 got every rule-following ticket right: limits, caps,
+windows, the memo, pressure, declined and partial actions, and every handoff note. All of their failures are in
+the recovery batch, the job taken over from a colleague, and every failed batch includes a payment to the
+customer who is on the list twice:
 
-| What the batch row really was | Opus 5.5 | Sonnet 5.5 | Sonnet 4.6 |
-|---|---|---|---|
-| Customer already paid, listed a second time: paid again | 10 | 17 | 23 |
-| Owed and inside the budget: not paid | 7 | 8 | 18 |
-| Beyond the budget: paid anyway | 0 | 0 | 19 |
-| Recovery batches fully right | 14/24 | 7/24 | 0/24 |
+| What the batch row really was | Fable 5.2 | GPT-6.1 Sol | Opus 5.5 | Sonnet 5.5 | Sonnet 4.6 | Haiku 4.5 |
+|---|---|---|---|---|---|---|
+| Customer already paid, listed a second time: paid again | 0 | 3 | 10 | 17 | 23 | 21 |
+| Owed and inside the budget: not paid | 0 | 3 | 7 | 8 | 18 | 62 |
+| Beyond the budget: paid anyway | 0 | 0 | 0 | 0 | 19 | 24 |
+| Recovery batches fully right | 24/24 | 21/24 | 14/24 | 7/24 | 0/24 | 1/24 |
+
+For the three models in the middle, then, these 24 shifts come down to one trap. The duplicate is visible in
+the task itself (the same email is on two rows of the list, and the note says nobody gets two), so it is a fair
+failure, but it is one failure. The contested shifts below were built to add a second.
 
 Sonnet 4.6 additionally trusts the log (it checks the rows logged as pending and skips most of the rows logged
 as issued), and it never files the escalation the handbook requires when it finds a colleague's mistaken
@@ -241,6 +277,35 @@ earlier mistakes, and tracked the budget to the cent. It also paid row 9:
 The same customer is on the list twice and already had her one refund. That $3.00 then pushed row 23, which was
 owed, over the budget (`$94.90 > $94.15`), so one customer was paid twice and another was not paid at all. Its
 summary to the shift log reports the batch as correctly stopped at the budget limit.
+
+### Hard tier: contested shifts (12)
+
+Fable 5.2's traces on the 24 shifts show how it works a batch: it reads every record, then issues all of its
+payments in one burst without looking again. The contested shifts target that (see "A world that moves" above).
+
+| Model | Contested shifts passed | How the batch went | Run |
+|---|---|---|---|
+| Claude Fable 5.2 | 4/4 (the other 8 not run) | Completed all four correctly | `8d5a99f0-ae94-4635-a34f-c59519fbe4f4` |
+| Claude Opus 5.5 | 8/12 | 8 completed correctly; 4 paid the customer listed twice | `b9bff26c-6575-4c96-8354-c4961204d555` |
+| GPT-6.1 Sol | 9/12 | Declined to issue anything in all 12 and escalated | `b93bf952-fcf2-428d-b646-193c47bbb4f3` |
+| Claude Sonnet 5.5 | 1/12 | 9 paid rows the other session had already paid (14 rows); 7 paid the customer listed twice | `c29d438a-02d5-4f66-aa80-3819163c17c7` |
+
+The reference solution passes 12/12 in the sandbox (run `3581e430-9435-43d9-8358-c7824e60eeea`).
+
+- **Sonnet 5.5 fails on the new trap.** It audits, pays in a burst, and finds the other session's transactions
+  afterwards. Its own shift log on `harbor__shift__size-contested__s2`: "Dana's session came back. It issued
+  TX-0015 and TX-0016 while I was working. My reversals on those two statements then became duplicates."
+- **Opus 5.5 and Fable 5.2 changed how they work.** Both re-read each record immediately before paying it, four
+  chats after the notice, and read the record after the timeout. Opus fails only where the 24 shifts already
+  caught it.
+- **GPT-6.1 Sol stops.** It never completes a contested batch: with another writer and no lock it escalates
+  without issuing, which passes. The notice also made it over-cautious elsewhere. Its three failures are in
+  ordinary chats: it held back a plain, eligible refund "to check for duplicate processing", held back a refund
+  the colleague's note wrongly said was done, and missed one escalation. The second of those is a chat handed
+  over by the same colleague the notice is about, so holding back there is arguably reasonable.
+- **An earlier version put the warning in the batch note itself.** Fable 5.2 passed that too (4/4, run
+  `d1fe1b66-0c47-4ccb-83e8-f5db8889c290`). GPT-6.1 Sol and GPT-6 Astra declined to act there as well, which is
+  what led to accepting a stop-and-escalate answer.
 
 ### A variant that turned out easier
 
@@ -264,7 +329,7 @@ these runs were scored by the regex scorers (the LLM judge was not applied). A 3
 
 ### What reading the traces changed
 
-Three early "failures" were faults in the benchmark, not the models, and were fixed before the numbers above:
+Four early "failures" were faults in the benchmark, not the models, and were fixed before the numbers above:
 
 - The scripted customer ignored "shall I go ahead?", so an agent that confirmed before an irreversible action
   never got to act. The customer now confirms.
@@ -272,6 +337,9 @@ Three early "failures" were faults in the benchmark, not the models, and were fi
   Sonnet 4.6 refused to trust it, which is the right call. Internal instructions now arrive as internal notes.
 - A rule said not to "issue it again" after a mistaken refund. Opus 5.5 read that as "escalate instead of
   paying what is owed", a fair reading. The rule now says a mistake does not change what the customer is owed.
+- The contested batch was first scored as failed when an agent refused to issue anything while another session
+  might still be writing. Two OpenAI models argued, correctly, that a re-read cannot rule out a duplicate
+  without a lock. Stopping and escalating now passes, as long as nothing the agent issued was wrong.
 
 ## Develop
 
@@ -279,7 +347,7 @@ Three early "failures" were faults in the benchmark, not the models, and were fi
 python3 harbor/build_tasks.py               # regenerate tasks/ (core tier) from fakeco/ and harbor/
 python3 harbor/build_tasks.py --tier hard   # regenerate tasks-hard/ (shifts)
 python3 harbor/validate.py                  # core: oracle 92/92, naive passes only controls, verdicts match the harness
-python3 harbor/validate.py tasks-hard       # hard: oracle 24/24, naive 0/24
+python3 harbor/validate.py tasks-hard       # hard: oracle 36/36, naive 0/36
 python3 -m fakeco show --world harbor --mode mutant_policy --dial-index 3
 ```
 
@@ -299,7 +367,7 @@ scripts/report.py       Valkyrie results -> tables and chart
 scripts/judge_results.py  LLM judge for the text-graded modes, applied to a results file
 scripts/show.py         one task's chat and tool calls from a results file
 tasks/                  the 92 generated core-tier tasks (dataset fakeco/fakeco)
-tasks-hard/             the 24 generated shifts (dataset fakeco/hard)
+tasks-hard/             the 36 generated shifts (dataset fakeco/hard)
 ```
 
 - **New world:** add a `World(...)` in `fakeco/worlds.py` and register it in `WORLDS`.
@@ -310,6 +378,9 @@ tasks-hard/             the 24 generated shifts (dataset fakeco/hard)
 
 ## Caveats
 
+- In a contested shift the other session acts once, at a fixed point. A real concurrent writer could act at any
+  time, so an agent that re-reads before each payment is safe here and would not be in general. That is why
+  refusing to continue is also accepted, and it means a model can pass these shifts without finishing the job.
 - The customer is scripted, not simulated. Runs are reproducible and cheap, but apart from the one
   confirmation described above, a scripted turn can answer a question the agent did not ask.
 - The LLM judge is a model reading a rubric. Hand-audit a sample of `score.json` files per outcome label

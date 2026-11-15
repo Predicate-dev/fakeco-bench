@@ -1,0 +1,44 @@
+schema_version = "1.4"
+
+[task]
+name = "fakeco/harbor__shift__size-contested__s0"
+description = "FakeCo: support agent at Harbor Bank (an online bank); a full shift of chats."
+keywords = ["fakeco", "tool-use", "customer-support", "harbor", "shift"]
+
+[metadata]
+category = "agent-reliability"
+tier = "hard"
+world = "harbor"
+mode = "shift"
+dials = { size = "contested" }
+seed = 0
+control = false
+scenario_id = "harbor/shift/size=contested/s0"
+
+[agent]
+timeout_sec = 3600.0
+# Unprivileged: the agent can use `desk` but cannot read the scenario or edit the ledger it is graded on.
+user = "agent"
+
+[verifier]
+timeout_sec = 300.0
+user = "root"
+
+[verifier.env]
+# Optional LLM judge for the two text-graded modes. Reads the organization secret
+# `anthropic-api-key`, stored either as the bare key or as JSON with an ANTHROPIC_API_KEY
+# field; without it the verifier falls back to regex scoring.
+FAKECO_JUDGE_API_KEY = "${anthropic-api-key:-}"
+FAKECO_JUDGE_API_KEY_JSON = "${anthropic-api-key#ANTHROPIC_API_KEY:-}"
+FAKECO_JUDGE_MODEL = "claude-opus-5-5"
+
+[environment]
+build_timeout_sec = 900.0
+cpus = 2
+memory_mb = 4096
+
+[environment.healthcheck]
+# Fails the task before the agent starts if the desk's privilege boundary is not working.
+command = "desk tools > /dev/null"
+timeout_sec = 30.0
+retries = 3

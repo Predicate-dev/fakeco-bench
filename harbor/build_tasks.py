@@ -156,6 +156,8 @@ def write_task(sc, out: Path, seed: int) -> str:
         shutil.rmtree(task)
     full = asdict(sc)
     runtime = {k: full[k] for k in RUNTIME_FIELDS}
+    if full.get("resume"):  # only contested shifts have one; other tasks keep the scenario file they had
+        runtime["resume"] = full["resume"]
 
     (task / "environment" / "rt").mkdir(parents=True)
     (task / "task.toml").write_text(task_toml(sc, tid, seed))

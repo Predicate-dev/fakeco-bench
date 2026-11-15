@@ -36,7 +36,7 @@ CLOSED = "[chat closed] There is nothing more to send."
 USAGE = __doc__.split("\n\n")[2]
 # Scenario fields the conversation engine reads; older scenario files may lack the newer ones.
 DEFAULTS = {"faults": {}, "confirm_after": None, "preface": "", "notes": {}, "checkpoints": {},
-            "record_faults": {}, "turn_tickets": [], "tools": "core"}
+            "record_faults": {}, "turn_tickets": [], "tools": "core", "resume": None}
 
 
 class Desk:

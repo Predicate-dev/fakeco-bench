@@ -131,9 +131,9 @@ def chart_shifts(runs: dict, path: Path) -> None:
     ax.set_xticklabels(labels)
     ax.set_ylim(0, 112)
     ax.set_ylabel("%")
-    ax.set_title("FakeCo hard tier (24 shifts)")
+    ax.set_title(f"FakeCo hard tier ({len(next(iter(runs.values())))} shifts)")
     ax.spines[["top", "right"]].set_visible(False)
-    ax.legend(frameon=False, loc="upper left", fontsize=8)
+    ax.legend(frameon=False, loc="upper right", fontsize=8)
     fig.tight_layout()
     fig.savefig(path, dpi=160)
 

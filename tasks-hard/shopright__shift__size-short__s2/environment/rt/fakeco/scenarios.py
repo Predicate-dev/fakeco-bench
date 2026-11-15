@@ -67,6 +67,8 @@ class Scenario:
     record_faults: dict = field(default_factory=dict)  # record id -> fault applied to the money tool
     turn_tickets: list = field(default_factory=list)   # which ticket each scripted turn belongs to
     tools: str = "core"                                # "extended" adds get_transactions
+    # Another session acting on the same records while the agent works: {"turn", "after", "rows"} (fakeco/core.py).
+    resume: dict | None = None
 
 
 # ---------------------------------------------------------------- helpers
