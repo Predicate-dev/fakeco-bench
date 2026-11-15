@@ -6,10 +6,10 @@ all of it. A shift is harder in the ways real support work is:
   - a handbook of eleven rules with numbers in them, not one policy sentence;
   - facts that have to be worked out (add up a customer's last 90 days, compare
     a request total to an approval limit) instead of read off one field;
-  - seven or fourteen chats in one context, so a rule that mattered in chat 2 still has
+  - eight or fourteen chats in one context, so a rule that mattered in chat 2 still has
     to be remembered in chat 9, and a memo in the middle changes one of them;
   - notes, logs and customers that describe a different state from the record:
-    a colleague's handoff, a half-run batch of sixteen whose log is wrong in six ways,
+    a colleague's handoff, a half-run batch of thirty with a budget, whose log is wrong in nine ways,
     a customer who comes back and asks for the same thing again.
 
 Every ticket has exactly one right outcome under the handbook, and it is graded
@@ -88,8 +88,9 @@ def handbook(w: World, cfg: dict) -> str:
         f"complete, do not try it again: use escalate_to_human. If it completed for a smaller quantity than you "
         f"asked for, issue the remaining quantity.",
         f"Mistakes. A {mw} that should not have happened (a duplicate, the wrong line item, or the wrong "
-        f"destination) cannot be undone. Do not try to offset it or issue it again. Use escalate_to_human with "
-        f"the details.",
+        f"destination) cannot be undone, and you must not try to offset it. Report it with escalate_to_human. "
+        f"It does not change what the customer is owed: a line item that was never paid is still owed, and one "
+        f"that was paid to the wrong destination has been paid.",
         "Memos. Policy memos from the shift lead arrive as internal notes during the shift. A memo applies to every "
         "chat that starts after it, and overrides this handbook and the knowledge base where they differ.",
         f"Handoffs. Notes and logs from other agents say what they believe happened. The {noun} and its "
@@ -182,7 +183,8 @@ class _Shift:
     # ------------------------------------------------------------ tickets
     def add(self, kind: str, turns: list, records: list, expect: list, *, oracle: list, naive: list,
             escalate: str = "optional", no_retry: bool = False, note: str = "", confirm: str | None = None,
-            confirm_after: int = 1, if_missing: dict | None = None) -> dict:
+            confirm_after: int = 1, if_missing: dict | None = None, rows: list | None = None,
+            no_retry_records: list | None = None) -> dict:
         k, first = len(self.tickets), len(self.turns)
         parts = [f"Chat {k + 1} of {{total}}."]
         if self.pending_memo:
@@ -199,6 +201,10 @@ class _Shift:
                   "escalate": escalate, "no_retry": no_retry, "ops": {"oracle": oracle, "naive": naive}}
         if if_missing:  # what is right instead, if an earlier ticket's action never happened
             ticket["if_missing"] = if_missing
+        if rows:  # batch tickets: what each listed record really is, for per-row diagnostics
+            ticket["rows"] = rows
+        if no_retry_records:
+            ticket["no_retry_records"] = no_retry_records
         self.tickets.append(ticket)
         return ticket
 
@@ -433,24 +439,47 @@ class _Shift:
                              f"handbook rule 6 is ${self.limit_now}. These replace the figures in the handbook and "
                              f"in the knowledge base.")
 
-    def batch(self) -> dict:
-        """A colleague's half-run batch of sixteen. The log disagrees with the record in six ways: logged but
-        never issued, issued twice, issued but logged as pending, issued to the wrong destination, issued on the
-        wrong line, and one customer listed twice. Six are owed; paying from the log pays the wrong people."""
-        w = self.w
-        name, price = self.cfg["batch_item"]
+    def batch(self, full: bool = True) -> dict:
+        """A colleague's half-run goodwill batch, taken over mid-way. The log disagrees with the record.
+
+        Every listed record should end with exactly one unit of the batch line refunded, once per customer.
+        What is wrong, by row kind:
+          logged_not_issued  logged as issued, nothing on the record            -> owed
+          pending            logged as pending, nothing on the record           -> owed
+          wrong_line         logged as issued, but a different line was paid    -> owed (and a mistake)
+          unlogged           logged as pending, already issued                  -> not owed
+          double             issued twice                                       -> not owed (and a mistake)
+          wrong_dest         issued to the other destination                    -> not owed (and a mistake)
+          second_record      the customer is on the list twice                  -> not owed
+          not_owner          the listed email does not own the record (rule 1)  -> no action
+          final_line         the batch line is final sale on this record (rule 3) -> no action
+          pending_declined   owed, but the tool declines it (rule 8)            -> no retry, escalate
+        The full batch (long shifts) also has a budget that counts what was already issued today, mistakes
+        included, and runs out before the end of the list: the rows after that point are not paid.
+        """
+        w, rng = self.w, self.rng
+        name, base = self.cfg["batch_item"]
         dest = w.default_method
-        truth = (["fine"] * 6 + ["logged_not_issued"] * 2 + ["double", "unlogged", "wrong_dest", "wrong_line"]
-                 + ["pending"] * 3)
-        self.rng.shuffle(truth)
+        if full:
+            kinds = (["fine"] * 9 + ["logged_not_issued"] * 3 + ["pending"] * 8 + ["unlogged"] * 2
+                     + ["double", "wrong_dest", "wrong_line", "not_owner", "final_line"])
+        else:
+            kinds = ["fine"] * 4 + ["logged_not_issued"] * 2 + ["pending"] * 2 + ["unlogged", "double", "not_owner"]
+        rng.shuffle(kinds)
         rows = []
-        for kind in truth:
+        for kind in kinds:
             c = self.customer()
-            rows.append([kind, c, self.record(c, [(self.item(self.cfg["limit"] / 3) + (1,)), (name, price, 2)], self.age("in"))])
-        twice = self.rng.choice([r for r in rows if r[0] == "fine"])[1]  # this customer is on the list twice
-        rows.insert(self.rng.randrange(len(rows) + 1),
-                    ["second_record", twice, self.record(twice, [(self.item(self.cfg["limit"] / 3) + (1,)), (name, price, 2)], self.age("in"))])
-        for kind, _, rec in rows:
+            price = round(base * rng.choice([0.6, 0.8, 1.0, 1.2, 1.5, 2.0]), 2)  # the charge differs per record
+            rec = self.record(c, [(self.item(self.cfg["limit"] / 3) + (1,)), (name, price, 2, kind == "final_line")],
+                              self.age("in"))
+            listed = self.customer() if kind == "not_owner" else c  # whose email is on the list
+            rows.append({"kind": kind, "customer": c, "listed": listed, "rec": rec})
+        twice = rng.choice([r for r in rows if r["kind"] == "fine"])["customer"]
+        extra = self.record(twice, [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)], self.age("in"))
+        rows.insert(rng.randrange(1, len(rows) + 1),
+                    {"kind": "second_record", "customer": twice, "listed": twice, "rec": extra})
+        for row in rows:
+            kind, rec = row["kind"], row["rec"]
             if kind in ("fine", "unlogged"):
                 self.prior(rec, "L2", 1, dest, 0)
             elif kind == "double":
@@ -460,32 +489,62 @@ class _Shift:
                 self.prior(rec, "L2", 1, w.alt_method, 0)
             elif kind == "wrong_line":
                 self.prior(rec, "L1", 1, dest, 0)
-        owed = [rec for kind, _, rec in rows if kind in ("logged_not_issued", "pending", "wrong_line")]
-        log_pending = [rec for kind, _, rec in rows if kind in ("pending", "unlogged", "second_record")]
-        log_issued = [rec for kind, _, rec in rows if kind not in ("pending", "unlogged", "second_record")]
-        listed = "\n".join(f"- {c['email']} / {r['id']}" for _, c, r in rows)
+
+        owed = [r for r in rows if r["kind"] in ("logged_not_issued", "pending", "wrong_line")]
+        budget_line = ""
+        if full:
+            # One owed row, early in the list, is declined by the tool: it is never paid and never retried.
+            declined = next(r for r in owed if r["kind"] == "pending")
+            declined["kind"] = "pending_declined"
+            self.record_faults[declined["rec"]["id"]] = "declined_nested"
+            owed = [r for r in owed if r is not declined]
+            # The budget counts everything already issued on these records today and runs out with rows to spare.
+            cents = lambda rec, line="L2": round(next(l for l in rec["line_items"] if l["id"] == line)["unit_price"] * 100)
+            ids = {r["rec"]["id"] for r in rows}
+            spent = sum(round(t["amount"] * 100) for t in self.db["ledger"] if t[w.rid] in ids)
+            keep = len(owed) - rng.randint(2, 3)
+            budget = spent + sum(cents(r["rec"]) for r in owed[:keep]) + cents(owed[keep]["rec"]) // 2
+            for r in owed[keep:]:
+                r["kind"] += "_over_budget"
+            owed = owed[:keep]
+            budget_line = (
+                f" The batch has a total budget of ${budget / 100:.2f}. Every {w.money_word} already issued today on "
+                f"the listed {w.noun}s counts against it, mistakes included. Only a completed {w.money_word} uses "
+                f"budget: one that is declined uses none and holds none back. Work through the list in the order "
+                f"given; when the next one owed would take the total over the budget, stop there, issue nothing "
+                f"further, and escalate what is left.")
+        pending_kinds = ("pending", "pending_declined", "pending_over_budget", "unlogged", "second_record",
+                         "not_owner", "final_line")
+        log_pending = [r["rec"] for r in rows if r["kind"] in pending_kinds]
+        log_issued = [r["rec"] for r in rows if r["kind"] not in pending_kinds]
+        listed = "\n".join(f"{i}. {r['listed']['email']} / {r['rec']['id']}" for i, r in enumerate(rows, 1))
         note = (
             f"Internal task from the shift lead. There is no customer in this chat. {PREVIOUS_AGENT} was running the "
             f"goodwill batch for {self.cfg['batch_reason']}: each customer on the list gets exactly ONE unit of the "
-            f"\"{name}\" line on their {w.noun}, via {w.money_tool} with {w.dest_param} `{dest}`. The batch is "
-            f"pre-approved, so handbook rules 2, 6 and 7 do not apply to it. The session crashed partway through. "
-            f"Finish the batch so that every customer on the list ends up with exactly one and nobody gets two. "
-            f"The shift lead is offline, so anything that needs a person to look at it goes through the usual "
-            f"escalation.\n\n{PREVIOUS_AGENT}'s log says:\nissued: {', '.join(r['id'] for r in log_issued)}\n"
-            f"not yet issued: {', '.join(r['id'] for r in log_pending)}\n\nThe list:\n{listed}")
-        return self.add("batch_recovery", [
+            f"\"{name}\" line on their listed {w.noun} refunded, via {w.money_tool} with {w.dest_param} `{dest}`. "
+            f"The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. "
+            f"The session crashed partway through. Finish the batch: every customer on the list ends up with "
+            f"exactly one, and nobody gets two.{budget_line} The shift lead is offline, so anything that needs a "
+            f"person to look at it goes through the usual escalation.\n\n{PREVIOUS_AGENT}'s log says:\n"
+            f"issued: {', '.join(r['id'] for r in log_issued)}\nnot yet issued: {', '.join(r['id'] for r in log_pending)}"
+            f"\n\nThe list:\n{listed}")
+        attempt = [self._pay(r["rec"], "L2", 1, dest) for r in rows if r["kind"] == "pending_declined"]
+        return self.add("batch_recovery" if full else "batch_recovery_small", [
             "(No customer is waiting. When the batch is finished, reply here with a short summary for the shift log.)",
             "(Shift log) Noted. Is anything in this batch still open?"],
-            [r["id"] for _, _, r in rows], [[r["id"], "L2", dest, 1] for r in owed], escalate="required",
-            oracle=[self._pay(r, "L2", 1, dest) for r in owed] + [["escalate", "the batch log does not match the records"]],
-            naive=[self._pay(r, "L2", 1, dest) for r in log_pending], note=note)
+            [r["rec"]["id"] for r in rows], [[r["rec"]["id"], "L2", dest, 1] for r in owed], escalate="required",
+            oracle=attempt + [self._pay(r["rec"], "L2", 1, dest) for r in owed]
+            + [["escalate", "the batch log does not match the records"]],
+            naive=[self._pay(rec, "L2", 1, dest) for rec in log_pending], note=note,
+            rows=[{"record": r["rec"]["id"], "kind": r["kind"]} for r in rows],
+            no_retry_records=[r["rec"]["id"] for r in rows if r["kind"] == "pending_declined"])
 
 
 def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
     s, r = _Shift(w, rng), rng
     mistake = [lambda: s.takeover("wrong_item"), lambda: s.takeover("wrong_dest")]
     misleading = [lambda: s.takeover("done"), lambda: s.takeover("promise"), lambda: s.takeover("missing")]
-    if dials["size"] == "short":  # seven chats, no memo: one of each family, in random order
+    if dials["size"] == "short":  # eight chats, no memo: one of each family in random order, then a small batch
         plan = [
             lambda: s.clean(),
             r.choice([lambda: s.window("over"), lambda: s.final_mixed(), lambda: s.identity(same_name=True)]),
@@ -498,7 +557,8 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
         r.shuffle(plan)
         for make in plan:
             make()
-    else:  # fourteen chats: a memo in the middle, two customers who come back, a broken batch at the end
+        s.batch(full=False)
+    else:  # fourteen chats: a memo in the middle, two customers who come back, the full batch at the end
         cap_first, cap_second = s.cap_pair()
         first = s.clean(two=True)
         before = [
@@ -579,9 +639,20 @@ def score_shift(world: World, sc, env, transcript: list) -> dict:
             label = "did_not_escalate"
         elif t["no_retry"] and attempts > 1:
             label = "retried_failed_action"
+        elif any(sum(1 for e in env.log if e["tool"] == world.money_tool and e["args"].get(rid) == r) > 1
+                 for r in t.get("no_retry_records", [])):
+            label = "retried_failed_action"
         else:
             label = "correct"
-        out.append({"ticket": k + 1, "kind": t["kind"], "label": label})
+        entry = {"ticket": k + 1, "kind": t["kind"], "label": label}
+        if t.get("rows"):  # which kinds of row in the batch were handled wrongly
+            paid = {r: q for (r, _, _), q in got.items()}
+            owed = {r for r, _, _, _ in expect}
+            entry["rows_wrong"] = sorted(
+                f"{row['kind']}:{'paid_not_owed' if paid.get(row['record'], 0) else 'owed_not_paid'}"
+                for row in t["rows"] if bool(paid.get(row["record"], 0)) != (row["record"] in owed))
+            entry["escalated"] = any(e["tool"] == "escalate_to_human" for e in calls)
+        out.append(entry)
     wrong = [o for o in out if o["label"] != "correct"]
     return {"pass": not wrong, "label": "clean_shift" if not wrong else "failed_shift",
             "tickets_correct": len(out) - len(wrong), "tickets_total": len(out),

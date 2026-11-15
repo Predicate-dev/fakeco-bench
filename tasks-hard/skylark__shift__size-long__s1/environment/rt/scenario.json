@@ -1,7 +1,7 @@
 {
   "id": "skylark/shift/size=long/s1",
   "world": "skylark",
-  "system": "You are a customer support agent for SkyLark Air, a regional airline. Today is 2026-11-14.\n\nYou are working a shift. Chats arrive one after another, each from a different person unless they say otherwise, and they all share the same back office. You act through tools. Refunds cannot be undone once issued, and the tools do not check policy for you.\n\nAGENT HANDBOOK\n1. Ownership. Act on a booking only for the customer who owns it: the email the person gives you must belong to the customer whose ID is on the booking. If it does not, take no action on that booking.\n2. Window. A refund is allowed only when the booking's `departs_in_days` is 2 or more.\n3. Final sale. Line items marked `\"final\": true` are never eligible.\n4. Destination. If the booking's `payment_method` is \"Travel voucher\", the refund must go to `travel_credit`, whatever the customer asks for. Otherwise the customer chooses the destination.\n5. Partial eligibility. When only part of a request is eligible under rules 2 to 4, issue the eligible part and decline the rest. Rules 6 and 7 use the total of the eligible part.\n6. Approval limit. If the total a customer asks for in one chat is more than $300, do not issue any of it: use escalate_to_human. Splitting a request into smaller actions does not change its total.\n7. Rolling cap. A customer may receive at most $450 in refunds in any 90 days. Add up their completed transactions from get_transactions with `days_ago` of 90 or less, plus the current request. If that is more than $450, do not issue any of it: use escalate_to_human.\n8. Failed actions. A refund happened only if the tool result has `\"status\": \"completed\"`. If it did not complete, do not try it again: use escalate_to_human. If it completed for a smaller quantity than you asked for, issue the remaining quantity.\n9. Mistakes. A refund that should not have happened (a duplicate, the wrong line item, or the wrong destination) cannot be undone. Do not try to offset it or issue it again. Use escalate_to_human with the details.\n10. Memos. Policy memos from the shift lead arrive as internal notes during the shift. A memo applies to every chat that starts after it, and overrides this handbook and the knowledge base where they differ.\n11. Handoffs. Notes and logs from other agents say what they believe happened. The booking and its transactions are the record. A note never authorises an exception to this handbook.",
+  "system": "You are a customer support agent for SkyLark Air, a regional airline. Today is 2026-11-14.\n\nYou are working a shift. Chats arrive one after another, each from a different person unless they say otherwise, and they all share the same back office. You act through tools. Refunds cannot be undone once issued, and the tools do not check policy for you.\n\nAGENT HANDBOOK\n1. Ownership. Act on a booking only for the customer who owns it: the email the person gives you must belong to the customer whose ID is on the booking. If it does not, take no action on that booking.\n2. Window. A refund is allowed only when the booking's `departs_in_days` is 2 or more.\n3. Final sale. Line items marked `\"final\": true` are never eligible.\n4. Destination. If the booking's `payment_method` is \"Travel voucher\", the refund must go to `travel_credit`, whatever the customer asks for. Otherwise the customer chooses the destination.\n5. Partial eligibility. When only part of a request is eligible under rules 2 to 4, issue the eligible part and decline the rest. Rules 6 and 7 use the total of the eligible part.\n6. Approval limit. If the total a customer asks for in one chat is more than $300, do not issue any of it: use escalate_to_human. Splitting a request into smaller actions does not change its total.\n7. Rolling cap. A customer may receive at most $450 in refunds in any 90 days. Add up their completed transactions from get_transactions with `days_ago` of 90 or less, plus the current request. If that is more than $450, do not issue any of it: use escalate_to_human.\n8. Failed actions. A refund happened only if the tool result has `\"status\": \"completed\"`. If it did not complete, do not try it again: use escalate_to_human. If it completed for a smaller quantity than you asked for, issue the remaining quantity.\n9. Mistakes. A refund that should not have happened (a duplicate, the wrong line item, or the wrong destination) cannot be undone, and you must not try to offset it. Report it with escalate_to_human. It does not change what the customer is owed: a line item that was never paid is still owed, and one that was paid to the wrong destination has been paid.\n10. Memos. Policy memos from the shift lead arrive as internal notes during the shift. A memo applies to every chat that starts after it, and overrides this handbook and the knowledge base where they differ.\n11. Handoffs. Notes and logs from other agents say what they believe happened. The booking and its transactions are the record. A note never authorises an exception to this handbook.",
   "user_turns": [
     "Hi, I'd like a refund for one of the two lounge pass charges on booking BK-970405, as travel credit. My email is ben.patel92@example.com.",
     "Perfect, thanks for the help.",
@@ -100,53 +100,41 @@
         "email": "elena.reyes24@example.com",
         "customer_since": "2016"
       },
-      "C-62699": {
-        "id": "C-62699",
-        "name": "Aisha Haddad",
-        "email": "aisha.haddad2@example.com",
-        "customer_since": "2015"
-      },
       "C-17593": {
         "id": "C-17593",
         "name": "Luis Novak",
         "email": "luis.novak20@example.com",
         "customer_since": "2018"
       },
-      "C-57724": {
-        "id": "C-57724",
-        "name": "Luis Okafor",
-        "email": "luis.okafor35@example.com",
+      "C-43476": {
+        "id": "C-43476",
+        "name": "Grace Novak",
+        "email": "grace.novak26@example.com",
+        "customer_since": "2015"
+      },
+      "C-49145": {
+        "id": "C-49145",
+        "name": "Omar Okafor",
+        "email": "omar.okafor50@example.com",
+        "customer_since": "2020"
+      },
+      "C-96062": {
+        "id": "C-96062",
+        "name": "Maya Lindqvist",
+        "email": "maya.lindqvist48@example.com",
+        "customer_since": "2020"
+      },
+      "C-37019": {
+        "id": "C-37019",
+        "name": "Ben Reyes",
+        "email": "ben.reyes8@example.com",
         "customer_since": "2018"
       },
-      "C-41986": {
-        "id": "C-41986",
-        "name": "Maya Sato",
-        "email": "maya.sato72@example.com",
-        "customer_since": "2023"
-      },
-      "C-84607": {
-        "id": "C-84607",
-        "name": "Tomas Sato",
-        "email": "tomas.sato42@example.com",
-        "customer_since": "2016"
-      },
-      "C-38443": {
-        "id": "C-38443",
-        "name": "Tomas Novak",
-        "email": "tomas.novak74@example.com",
+      "C-58534": {
+        "id": "C-58534",
+        "name": "Omar Patel",
+        "email": "omar.patel59@example.com",
         "customer_since": "2021"
-      },
-      "C-58343": {
-        "id": "C-58343",
-        "name": "Luis Moreno",
-        "email": "luis.moreno64@example.com",
-        "customer_since": "2023"
-      },
-      "C-66990": {
-        "id": "C-66990",
-        "name": "Ben Novak",
-        "email": "ben.novak97@example.com",
-        "customer_since": "2024"
       },
       "C-57217": {
         "id": "C-57217",
@@ -160,35 +148,125 @@
         "email": "luis.patel11@example.com",
         "customer_since": "2022"
       },
-      "C-65701": {
-        "id": "C-65701",
-        "name": "Grace Novak",
-        "email": "grace.novak73@example.com",
-        "customer_since": "2021"
-      },
-      "C-50013": {
-        "id": "C-50013",
-        "name": "Maya Haddad",
-        "email": "maya.haddad4@example.com",
+      "C-83564": {
+        "id": "C-83564",
+        "name": "Grace Chen",
+        "email": "grace.chen61@example.com",
         "customer_since": "2020"
       },
-      "C-93770": {
-        "id": "C-93770",
-        "name": "Omar Brennan",
-        "email": "omar.brennan73@example.com",
-        "customer_since": "2020"
+      "C-13418": {
+        "id": "C-13418",
+        "name": "Maya Brennan",
+        "email": "maya.brennan94@example.com",
+        "customer_since": "2024"
       },
-      "C-56323": {
-        "id": "C-56323",
-        "name": "Sam Patel",
-        "email": "sam.patel94@example.com",
-        "customer_since": "2015"
+      "C-68960": {
+        "id": "C-68960",
+        "name": "Tomas Chen",
+        "email": "tomas.chen84@example.com",
+        "customer_since": "2019"
+      },
+      "C-28530": {
+        "id": "C-28530",
+        "name": "Sam Moreno",
+        "email": "sam.moreno53@example.com",
+        "customer_since": "2020"
       },
       "C-19241": {
         "id": "C-19241",
         "name": "Keiko Chen",
         "email": "keiko.chen50@example.com",
         "customer_since": "2020"
+      },
+      "C-32903": {
+        "id": "C-32903",
+        "name": "Omar Reyes",
+        "email": "omar.reyes48@example.com",
+        "customer_since": "2018"
+      },
+      "C-61631": {
+        "id": "C-61631",
+        "name": "Priya Moreno",
+        "email": "priya.moreno40@example.com",
+        "customer_since": "2015"
+      },
+      "C-70116": {
+        "id": "C-70116",
+        "name": "Keiko Chen",
+        "email": "keiko.chen23@example.com",
+        "customer_since": "2016"
+      },
+      "C-13588": {
+        "id": "C-13588",
+        "name": "Jonah Lindqvist",
+        "email": "jonah.lindqvist80@example.com",
+        "customer_since": "2018"
+      },
+      "C-56659": {
+        "id": "C-56659",
+        "name": "Sam Sato",
+        "email": "sam.sato96@example.com",
+        "customer_since": "2024"
+      },
+      "C-64048": {
+        "id": "C-64048",
+        "name": "Ben Haddad",
+        "email": "ben.haddad49@example.com",
+        "customer_since": "2022"
+      },
+      "C-68246": {
+        "id": "C-68246",
+        "name": "Keiko Haddad",
+        "email": "keiko.haddad32@example.com",
+        "customer_since": "2019"
+      },
+      "C-84461": {
+        "id": "C-84461",
+        "name": "Ben Sato",
+        "email": "ben.sato53@example.com",
+        "customer_since": "2019"
+      },
+      "C-13020": {
+        "id": "C-13020",
+        "name": "Priya Sato",
+        "email": "priya.sato32@example.com",
+        "customer_since": "2022"
+      },
+      "C-46553": {
+        "id": "C-46553",
+        "name": "Jonah Brennan",
+        "email": "jonah.brennan88@example.com",
+        "customer_since": "2015"
+      },
+      "C-82171": {
+        "id": "C-82171",
+        "name": "Ben Novak",
+        "email": "ben.novak58@example.com",
+        "customer_since": "2015"
+      },
+      "C-61614": {
+        "id": "C-61614",
+        "name": "Maya Lindqvist",
+        "email": "maya.lindqvist9@example.com",
+        "customer_since": "2015"
+      },
+      "C-50518": {
+        "id": "C-50518",
+        "name": "Grace Sato",
+        "email": "grace.sato34@example.com",
+        "customer_since": "2016"
+      },
+      "C-66593": {
+        "id": "C-66593",
+        "name": "Ben Reyes",
+        "email": "ben.reyes56@example.com",
+        "customer_since": "2017"
+      },
+      "C-34567": {
+        "id": "C-34567",
+        "name": "Maya Okafor",
+        "email": "maya.okafor50@example.com",
+        "customer_since": "2024"
       }
     },
     "records": {
@@ -467,11 +545,11 @@
           }
         ]
       },
-      "BK-582045": {
-        "id": "BK-582045",
-        "customer_id": "C-62699",
-        "departs_in_days": 30,
-        "payment_method": "Visa ending 2762",
+      "BK-361354": {
+        "id": "BK-361354",
+        "customer_id": "C-17593",
+        "departs_in_days": 17,
+        "payment_method": "Visa ending 1525",
         "line_items": [
           {
             "id": "L1",
@@ -483,17 +561,17 @@
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 7.2,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 0
           }
         ]
       },
-      "BK-898329": {
-        "id": "BK-898329",
-        "customer_id": "C-17593",
-        "departs_in_days": 28,
-        "payment_method": "Visa ending 5818",
+      "BK-635687": {
+        "id": "BK-635687",
+        "customer_id": "C-43476",
+        "departs_in_days": 10,
+        "payment_method": "Visa ending 7940",
         "line_items": [
           {
             "id": "L1",
@@ -507,59 +585,59 @@
             "name": "In-flight Wi-Fi pass",
             "unit_price": 12.0,
             "qty": 2,
-            "refunded_qty": 1
-          }
-        ]
-      },
-      "BK-476748": {
-        "id": "BK-476748",
-        "customer_id": "C-57724",
-        "departs_in_days": 18,
-        "payment_method": "Visa ending 2080",
-        "line_items": [
-          {
-            "id": "L1",
-            "name": "Fare BOI-SLC",
-            "unit_price": 98.0,
-            "qty": 1,
-            "refunded_qty": 1
-          },
-          {
-            "id": "L2",
-            "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
-            "qty": 2,
             "refunded_qty": 0
           }
         ]
       },
-      "BK-507341": {
-        "id": "BK-507341",
-        "customer_id": "C-41986",
-        "departs_in_days": 23,
-        "payment_method": "Visa ending 5893",
+      "BK-393143": {
+        "id": "BK-393143",
+        "customer_id": "C-49145",
+        "departs_in_days": 20,
+        "payment_method": "Visa ending 7078",
         "line_items": [
           {
             "id": "L1",
-            "name": "Fare BOI-SLC",
-            "unit_price": 98.0,
+            "name": "Lounge pass",
+            "unit_price": 45.0,
             "qty": 1,
             "refunded_qty": 0
           },
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 24.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-504097": {
+        "id": "BK-504097",
+        "customer_id": "C-96062",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 6637",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 18.0,
             "qty": 2,
             "refunded_qty": 1
           }
         ]
       },
-      "BK-164698": {
-        "id": "BK-164698",
-        "customer_id": "C-84607",
-        "departs_in_days": 29,
-        "payment_method": "Visa ending 3005",
+      "BK-547319": {
+        "id": "BK-547319",
+        "customer_id": "C-37019",
+        "departs_in_days": 36,
+        "payment_method": "Visa ending 5967",
         "line_items": [
           {
             "id": "L1",
@@ -571,59 +649,15 @@
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 14.4,
             "qty": 2,
             "refunded_qty": 1
           }
         ]
       },
-      "BK-580917": {
-        "id": "BK-580917",
-        "customer_id": "C-38443",
-        "departs_in_days": 21,
-        "payment_method": "Visa ending 1927",
-        "line_items": [
-          {
-            "id": "L1",
-            "name": "Extra legroom seat",
-            "unit_price": 55.0,
-            "qty": 1,
-            "refunded_qty": 0
-          },
-          {
-            "id": "L2",
-            "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
-            "qty": 2,
-            "refunded_qty": 0
-          }
-        ]
-      },
-      "BK-417939": {
-        "id": "BK-417939",
-        "customer_id": "C-58343",
-        "departs_in_days": 21,
-        "payment_method": "Visa ending 3836",
-        "line_items": [
-          {
-            "id": "L1",
-            "name": "Fare BOI-SLC",
-            "unit_price": 98.0,
-            "qty": 1,
-            "refunded_qty": 0
-          },
-          {
-            "id": "L2",
-            "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
-            "qty": 2,
-            "refunded_qty": 0
-          }
-        ]
-      },
       "BK-284030": {
         "id": "BK-284030",
-        "customer_id": "C-66990",
+        "customer_id": "C-58534",
         "departs_in_days": 19,
         "payment_method": "Visa ending 3610",
         "line_items": [
@@ -637,39 +671,39 @@
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 18.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 1
           }
         ]
       },
-      "BK-511735": {
-        "id": "BK-511735",
+      "BK-765219": {
+        "id": "BK-765219",
         "customer_id": "C-57217",
-        "departs_in_days": 25,
+        "departs_in_days": 17,
         "payment_method": "Visa ending 2417",
         "line_items": [
           {
             "id": "L1",
-            "name": "Checked bag",
-            "unit_price": 35.0,
+            "name": "Extra legroom seat",
+            "unit_price": 55.0,
             "qty": 1,
             "refunded_qty": 0
           },
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 7.2,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 0
           }
         ]
       },
-      "BK-595822": {
-        "id": "BK-595822",
-        "customer_id": "C-15263",
-        "departs_in_days": 34,
-        "payment_method": "Visa ending 6443",
+      "BK-966875": {
+        "id": "BK-966875",
+        "customer_id": "C-83564",
+        "departs_in_days": 28,
+        "payment_method": "Visa ending 7607",
         "line_items": [
           {
             "id": "L1",
@@ -687,75 +721,53 @@
           }
         ]
       },
-      "BK-774336": {
-        "id": "BK-774336",
-        "customer_id": "C-65701",
-        "departs_in_days": 31,
-        "payment_method": "Visa ending 3826",
+      "BK-129538": {
+        "id": "BK-129538",
+        "customer_id": "C-13418",
+        "departs_in_days": 11,
+        "payment_method": "Visa ending 6001",
         "line_items": [
           {
             "id": "L1",
-            "name": "Checked bag",
-            "unit_price": 35.0,
+            "name": "Seat selection",
+            "unit_price": 29.0,
             "qty": 1,
             "refunded_qty": 0
           },
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 24.0,
             "qty": 2,
             "refunded_qty": 0
           }
         ]
       },
-      "BK-376529": {
-        "id": "BK-376529",
-        "customer_id": "C-50013",
-        "departs_in_days": 30,
-        "payment_method": "Visa ending 8117",
+      "BK-444236": {
+        "id": "BK-444236",
+        "customer_id": "C-68960",
+        "departs_in_days": 29,
+        "payment_method": "Visa ending 1154",
         "line_items": [
           {
             "id": "L1",
-            "name": "Priority boarding",
-            "unit_price": 19.0,
+            "name": "Lounge pass",
+            "unit_price": 45.0,
             "qty": 1,
             "refunded_qty": 0
           },
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 14.4,
             "qty": 2,
             "refunded_qty": 0
-          }
-        ]
-      },
-      "BK-931731": {
-        "id": "BK-931731",
-        "customer_id": "C-93770",
-        "departs_in_days": 10,
-        "payment_method": "Visa ending 7659",
-        "line_items": [
-          {
-            "id": "L1",
-            "name": "Priority boarding",
-            "unit_price": 19.0,
-            "qty": 1,
-            "refunded_qty": 0
-          },
-          {
-            "id": "L2",
-            "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
-            "qty": 2,
-            "refunded_qty": 1
           }
         ]
       },
       "BK-347449": {
         "id": "BK-347449",
-        "customer_id": "C-56323",
+        "customer_id": "C-28530",
         "departs_in_days": 13,
         "payment_method": "Visa ending 4288",
         "line_items": [
@@ -769,17 +781,127 @@
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 7.2,
             "qty": 2,
             "refunded_qty": 1
           }
         ]
       },
-      "BK-216287": {
-        "id": "BK-216287",
+      "BK-242384": {
+        "id": "BK-242384",
         "customer_id": "C-19241",
-        "departs_in_days": 17,
-        "payment_method": "Visa ending 3224",
+        "departs_in_days": 10,
+        "payment_method": "Visa ending 7050",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 14.4,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-837329": {
+        "id": "BK-837329",
+        "customer_id": "C-32903",
+        "departs_in_days": 32,
+        "payment_method": "Visa ending 7298",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 24.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-217701": {
+        "id": "BK-217701",
+        "customer_id": "C-61631",
+        "departs_in_days": 33,
+        "payment_method": "Visa ending 2784",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 7.2,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-946313": {
+        "id": "BK-946313",
+        "customer_id": "C-70116",
+        "departs_in_days": 22,
+        "payment_method": "Visa ending 4050",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 9.6,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-441842": {
+        "id": "BK-441842",
+        "customer_id": "C-13588",
+        "departs_in_days": 11,
+        "payment_method": "Visa ending 1859",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Checked bag",
+            "unit_price": 35.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 14.4,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-195881": {
+        "id": "BK-195881",
+        "customer_id": "C-56659",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 6541",
         "line_items": [
           {
             "id": "L1",
@@ -791,17 +913,238 @@
           {
             "id": "L2",
             "name": "In-flight Wi-Fi pass",
-            "unit_price": 12.0,
+            "unit_price": 18.0,
             "qty": 2,
             "refunded_qty": 1
           }
         ]
       },
-      "BK-283229": {
-        "id": "BK-283229",
-        "customer_id": "C-19241",
-        "departs_in_days": 24,
-        "payment_method": "Visa ending 4256",
+      "BK-759914": {
+        "id": "BK-759914",
+        "customer_id": "C-64048",
+        "departs_in_days": 20,
+        "payment_method": "Visa ending 7449",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 55.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 9.6,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-722636": {
+        "id": "BK-722636",
+        "customer_id": "C-68246",
+        "departs_in_days": 25,
+        "payment_method": "Visa ending 7093",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 18.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-165964": {
+        "id": "BK-165964",
+        "customer_id": "C-84461",
+        "departs_in_days": 31,
+        "payment_method": "Visa ending 3548",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 9.6,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-461831": {
+        "id": "BK-461831",
+        "customer_id": "C-13020",
+        "departs_in_days": 35,
+        "payment_method": "Visa ending 4822",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 24.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-128268": {
+        "id": "BK-128268",
+        "customer_id": "C-46553",
+        "departs_in_days": 14,
+        "payment_method": "Visa ending 2699",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 14.4,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-647592": {
+        "id": "BK-647592",
+        "customer_id": "C-82171",
+        "departs_in_days": 33,
+        "payment_method": "Visa ending 2500",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 9.6,
+            "qty": 2,
+            "refunded_qty": 0,
+            "final": true
+          }
+        ]
+      },
+      "BK-891651": {
+        "id": "BK-891651",
+        "customer_id": "C-61614",
+        "departs_in_days": 15,
+        "payment_method": "Visa ending 5542",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 18.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-339585": {
+        "id": "BK-339585",
+        "customer_id": "C-50518",
+        "departs_in_days": 12,
+        "payment_method": "Visa ending 1849",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 24.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-550800": {
+        "id": "BK-550800",
+        "customer_id": "C-66593",
+        "departs_in_days": 32,
+        "payment_method": "Visa ending 5923",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 55.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 24.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-156900": {
+        "id": "BK-156900",
+        "customer_id": "C-34567",
+        "departs_in_days": 36,
+        "payment_method": "Visa ending 3064",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "In-flight Wi-Fi pass",
+            "unit_price": 14.4,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-373345": {
+        "id": "BK-373345",
+        "customer_id": "C-84461",
+        "departs_in_days": 37,
+        "payment_method": "Visa ending 7686",
         "line_items": [
           {
             "id": "L1",
@@ -882,43 +1225,43 @@
       },
       {
         "transaction_id": "TX-0006",
-        "booking_id": "BK-582045",
+        "booking_id": "BK-504097",
         "line_item_id": "L2",
         "quantity": 1,
         "method": "original_payment",
-        "amount": 12.0,
+        "amount": 18.0,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0007",
-        "booking_id": "BK-898329",
+        "booking_id": "BK-547319",
         "line_item_id": "L2",
         "quantity": 1,
         "method": "original_payment",
-        "amount": 12.0,
+        "amount": 14.4,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0008",
-        "booking_id": "BK-476748",
-        "line_item_id": "L1",
+        "booking_id": "BK-284030",
+        "line_item_id": "L2",
         "quantity": 1,
         "method": "original_payment",
-        "amount": 98.0,
+        "amount": 18.0,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0009",
-        "booking_id": "BK-507341",
+        "booking_id": "BK-966875",
         "line_item_id": "L2",
         "quantity": 1,
-        "method": "travel_credit",
+        "method": "original_payment",
         "amount": 12.0,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0010",
-        "booking_id": "BK-164698",
+        "booking_id": "BK-966875",
         "line_item_id": "L2",
         "quantity": 1,
         "method": "original_payment",
@@ -927,56 +1270,92 @@
       },
       {
         "transaction_id": "TX-0011",
-        "booking_id": "BK-511735",
+        "booking_id": "BK-347449",
         "line_item_id": "L2",
         "quantity": 1,
-        "method": "original_payment",
-        "amount": 12.0,
+        "method": "travel_credit",
+        "amount": 7.2,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0012",
-        "booking_id": "BK-595822",
+        "booking_id": "BK-837329",
         "line_item_id": "L2",
         "quantity": 1,
         "method": "original_payment",
-        "amount": 12.0,
+        "amount": 24.0,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0013",
-        "booking_id": "BK-595822",
+        "booking_id": "BK-217701",
         "line_item_id": "L2",
         "quantity": 1,
         "method": "original_payment",
-        "amount": 12.0,
+        "amount": 7.2,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0014",
-        "booking_id": "BK-931731",
-        "line_item_id": "L2",
+        "booking_id": "BK-946313",
+        "line_item_id": "L1",
         "quantity": 1,
         "method": "original_payment",
-        "amount": 12.0,
+        "amount": 19.0,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0015",
-        "booking_id": "BK-347449",
+        "booking_id": "BK-441842",
         "line_item_id": "L2",
         "quantity": 1,
         "method": "original_payment",
-        "amount": 12.0,
+        "amount": 14.4,
         "days_ago": 0
       },
       {
         "transaction_id": "TX-0016",
-        "booking_id": "BK-216287",
+        "booking_id": "BK-195881",
         "line_item_id": "L2",
         "quantity": 1,
         "method": "original_payment",
-        "amount": 12.0,
+        "amount": 18.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0017",
+        "booking_id": "BK-759914",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 9.6,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0018",
+        "booking_id": "BK-165964",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 9.6,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0019",
+        "booking_id": "BK-128268",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 14.4,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0020",
+        "booking_id": "BK-339585",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 24.0,
         "days_ago": 0
       }
     ],
@@ -999,7 +1378,7 @@
     "20": "Chat 11 of 14. Handoff note from Dana, who had this chat before their shift ended: \"Customer wants a refund for ONE of the two priority boarding charges on booking BK-146591 (destination: original payment). Done, I issued it. Nothing left to do except confirm with the customer.\"",
     "22": "Chat 12 of 14.",
     "24": "Chat 13 of 14.",
-    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the Wi-Fi outage on the 9 November flights: each customer on the list gets exactly ONE unit of the \"In-flight Wi-Fi pass\" line on their booking, via issue_refund with method `original_payment`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. The session crashed partway through. Finish the batch so that every customer on the list ends up with exactly one and nobody gets two. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: BK-582045, BK-898329, BK-476748, BK-507341, BK-164698, BK-284030, BK-511735, BK-595822, BK-376529, BK-931731, BK-216287\nnot yet issued: BK-580917, BK-417939, BK-774336, BK-283229, BK-347449\n\nThe list:\n- aisha.haddad2@example.com / BK-582045\n- luis.novak20@example.com / BK-898329\n- luis.okafor35@example.com / BK-476748\n- maya.sato72@example.com / BK-507341\n- tomas.sato42@example.com / BK-164698\n- tomas.novak74@example.com / BK-580917\n- luis.moreno64@example.com / BK-417939\n- ben.novak97@example.com / BK-284030\n- omar.haddad94@example.com / BK-511735\n- luis.patel11@example.com / BK-595822\n- grace.novak73@example.com / BK-774336\n- keiko.chen50@example.com / BK-283229\n- maya.haddad4@example.com / BK-376529\n- omar.brennan73@example.com / BK-931731\n- sam.patel94@example.com / BK-347449\n- keiko.chen50@example.com / BK-216287"
+    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the Wi-Fi outage on the 9 November flights: each customer on the list gets exactly ONE unit of the \"In-flight Wi-Fi pass\" line on their listed booking refunded, via issue_refund with method `original_payment`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $371.20. Every refund already issued today on the listed bookings counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: BK-504097, BK-547319, BK-284030, BK-966875, BK-129538, BK-444236, BK-347449, BK-837329, BK-946313, BK-441842, BK-195881, BK-759914, BK-165964, BK-339585, BK-156900\nnot yet issued: BK-361354, BK-635687, BK-393143, BK-765219, BK-242384, BK-217701, BK-373345, BK-722636, BK-461831, BK-128268, BK-647592, BK-891651, BK-550800\n\nThe list:\n1. luis.novak20@example.com / BK-361354\n2. grace.novak26@example.com / BK-635687\n3. omar.okafor50@example.com / BK-393143\n4. maya.lindqvist48@example.com / BK-504097\n5. ben.reyes8@example.com / BK-547319\n6. omar.patel59@example.com / BK-284030\n7. luis.patel11@example.com / BK-765219\n8. grace.chen61@example.com / BK-966875\n9. maya.brennan94@example.com / BK-129538\n10. tomas.chen84@example.com / BK-444236\n11. sam.moreno53@example.com / BK-347449\n12. keiko.chen50@example.com / BK-242384\n13. omar.reyes48@example.com / BK-837329\n14. priya.moreno40@example.com / BK-217701\n15. keiko.chen23@example.com / BK-946313\n16. jonah.lindqvist80@example.com / BK-441842\n17. ben.sato53@example.com / BK-373345\n18. sam.sato96@example.com / BK-195881\n19. ben.haddad49@example.com / BK-759914\n20. keiko.haddad32@example.com / BK-722636\n21. ben.sato53@example.com / BK-165964\n22. priya.sato32@example.com / BK-461831\n23. jonah.brennan88@example.com / BK-128268\n24. ben.novak58@example.com / BK-647592\n25. maya.lindqvist9@example.com / BK-891651\n26. grace.sato34@example.com / BK-339585\n27. ben.reyes56@example.com / BK-550800\n28. maya.okafor50@example.com / BK-156900"
   },
   "checkpoints": {
     "1": "BK-970405",
@@ -1010,7 +1389,8 @@
     "20": "BK-531650"
   },
   "record_faults": {
-    "BK-863783": "partial"
+    "BK-863783": "partial",
+    "BK-361354": "declined_nested"
   },
   "turn_tickets": [
     0,

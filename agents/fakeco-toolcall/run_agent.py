@@ -131,7 +131,7 @@ def main() -> int:
     p.add_argument("instruction_path", type=Path)
     p.add_argument("--task-id", default="")
     p.add_argument("--model", required=True)
-    p.add_argument("--max-steps", type=int, default=40)
+    p.add_argument("--max-steps", type=int, default=100)
     p.add_argument("--effort", default="default")
     p.add_argument("--out", type=Path, default=Path(os.environ.get("AGENT_OUTPUT_ROOT", "/logs/agent")))
     args = p.parse_args()

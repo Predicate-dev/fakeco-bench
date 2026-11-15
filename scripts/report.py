@@ -96,7 +96,46 @@ def report_shifts(label: str, rows: list[dict]) -> str:
         wrong = Counter(l for l in labels if l != "correct")
         out.append(f"| `{kind}` | {sum(l == 'correct' for l in labels)}/{len(labels)} | "
                    + (", ".join(f"{k} ×{v}" for k, v in wrong.most_common()) or "") + " |")
+    batch = [t for t in tickets if t["kind"].startswith("batch_recovery")]
+    if batch:
+        wrong = Counter(w for t in batch for w in t.get("rows_wrong", []))
+        silent = sum(1 for t in batch if not t.get("escalated", True))
+        out += ["", f"**Recovery batches**: {sum(t['label'] == 'correct' for t in batch)}/{len(batch)} right; "
+                    f"{silent} with no escalation filed. Rows handled wrongly, by what the row really was:", "",
+                "| Row | Paid but not owed | Owed but not paid |", "|---|---|---|"]
+        for kind in sorted({w.split(":")[0] for w in wrong}):
+            out.append(f"| `{kind}` | {wrong.get(kind + ':paid_not_owed', 0) or ''} | "
+                       f"{wrong.get(kind + ':owed_not_paid', 0) or ''} |")
     return "\n".join(out)
+
+
+def chart_shifts(runs: dict, path: Path) -> None:
+    """Hard tier: shifts fully right, and tickets right, per model."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    labels = list(runs)
+    shifts = [100 * sum(bool(r["pass"]) for r in rows) / len(rows) for rows in runs.values()]
+    tickets = []
+    for rows in runs.values():
+        ts = [t for r in rows for t in (r.get("tickets") or [])]
+        tickets.append(100 * sum(t["label"] == "correct" for t in ts) / max(len(ts), 1))
+    fig, ax = plt.subplots(figsize=(1.8 + 1.6 * len(labels), 4.5))
+    xs = range(len(labels))
+    a = ax.bar([x - 0.2 for x in xs], shifts, 0.4, label="Shifts with every ticket right", color="#2a78d6")
+    b = ax.bar([x + 0.2 for x in xs], tickets, 0.4, label="Tickets right", color="#9aa5b1")
+    ax.bar_label(a, fmt="%.0f%%", fontsize=9, padding=2)
+    ax.bar_label(b, fmt="%.0f%%", fontsize=9, padding=2)
+    ax.set_xticks(list(xs))
+    ax.set_xticklabels(labels)
+    ax.set_ylim(0, 112)
+    ax.set_ylabel("%")
+    ax.set_title("FakeCo hard tier (24 shifts)")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(frameon=False, loc="upper left", fontsize=8)
+    fig.tight_layout()
+    fig.savefig(path, dpi=160)
 
 
 def report(label: str, rows: list[dict]) -> str:
@@ -168,7 +207,8 @@ def main() -> None:
     runs = {path.stem: load(path, index) for path in args.files}
     print("\n\n".join(report(label, rows) for label, rows in runs.items()))
     if args.chart:
-        chart(runs, args.chart)
+        hard = all(r["mode"] == "shift" for rows in runs.values() for r in rows)
+        (chart_shifts if hard else chart)(runs, args.chart)
 
 
 if __name__ == "__main__":

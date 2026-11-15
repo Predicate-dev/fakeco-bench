@@ -89,6 +89,11 @@ def score(scenario: dict, state: Path) -> dict:
     }
 
 
+def scenario_prior_ledger(path: Path) -> int:
+    """How many ledger entries existed before the agent started (earlier agents' work in takeover scenarios)."""
+    return len(json.loads(path.read_text())["db"]["ledger"])
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--state", type=Path, default=Path("/opt/fakeco/state"))
@@ -112,6 +117,9 @@ def main() -> int:
     # Full verdict first, then one greppable line last: run logs keep only the last 20,000 characters
     # of this output, so the printed copy is compact and clips long tool results (score.json has them whole).
     print(json.dumps(_printable(verdict)))
+    # Short and complete, after the clipped verdict, so it survives when a long shift overflows the log.
+    prior = scenario_prior_ledger(args.scenario)
+    print("FAKECO_STATE " + json.dumps({"new_ledger": verdict["ledger"][prior:], "escalations": verdict["escalations"]}))
     print("FAKECO_SCORE " + json.dumps({k: verdict[k] for k in ("id", "world", "mode", "dials", "score")}))
     return 0
 

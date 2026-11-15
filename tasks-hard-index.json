@@ -9,7 +9,7 @@
     },
     "seed": 0,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "cap_over",
       "handoff_wrong_item",
@@ -17,7 +17,8 @@
       "not_the_owner_same_name",
       "clean",
       "handoff_done",
-      "action_declined"
+      "action_declined",
+      "batch_recovery_small"
     ]
   },
   {
@@ -30,7 +31,7 @@
     },
     "seed": 1,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "final_sale_mixed",
       "action_declined",
@@ -38,7 +39,8 @@
       "handoff_done",
       "cap_edge_allowed",
       "over_limit_split",
-      "clean"
+      "clean",
+      "batch_recovery_small"
     ]
   },
   {
@@ -51,7 +53,7 @@
     },
     "seed": 2,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "handoff_missing",
       "handoff_wrong_dest",
@@ -59,7 +61,8 @@
       "action_declined",
       "clean",
       "window_over_denied",
-      "cap_old_ok_allowed"
+      "cap_old_ok_allowed",
+      "batch_recovery_small"
     ]
   },
   {
@@ -156,7 +159,7 @@
     },
     "seed": 0,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "cap_edge_allowed",
       "handoff_missing",
@@ -164,7 +167,8 @@
       "clean",
       "over_limit_split",
       "action_declined",
-      "final_sale_mixed"
+      "final_sale_mixed",
+      "batch_recovery_small"
     ]
   },
   {
@@ -177,7 +181,7 @@
     },
     "seed": 1,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "handoff_wrong_dest",
       "not_the_owner_same_name",
@@ -185,7 +189,8 @@
       "over_limit_split",
       "cap_edge_allowed",
       "clean",
-      "handoff_done"
+      "handoff_done",
+      "batch_recovery_small"
     ]
   },
   {
@@ -198,7 +203,7 @@
     },
     "seed": 2,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "cap_over",
       "handoff_wrong_item",
@@ -206,7 +211,8 @@
       "action_partial",
       "not_the_owner_same_name",
       "cap_old_ok_allowed",
-      "handoff_promise"
+      "handoff_promise",
+      "batch_recovery_small"
     ]
   },
   {
@@ -303,7 +309,7 @@
     },
     "seed": 0,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "clean",
       "not_the_owner_same_name",
@@ -311,7 +317,8 @@
       "handoff_wrong_dest",
       "handoff_promise",
       "over_limit_split",
-      "action_partial"
+      "action_partial",
+      "batch_recovery_small"
     ]
   },
   {
@@ -324,7 +331,7 @@
     },
     "seed": 1,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "restricted_destination",
       "cap_edge_allowed",
@@ -332,7 +339,8 @@
       "not_the_owner_same_name",
       "clean",
       "handoff_done",
-      "over_limit_split"
+      "over_limit_split",
+      "batch_recovery_small"
     ]
   },
   {
@@ -345,7 +353,7 @@
     },
     "seed": 2,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "handoff_wrong_item",
       "not_the_owner_same_name",
@@ -353,7 +361,8 @@
       "cap_old_ok_allowed",
       "restricted_destination",
       "handoff_promise",
-      "cap_over"
+      "cap_over",
+      "batch_recovery_small"
     ]
   },
   {
@@ -450,7 +459,7 @@
     },
     "seed": 0,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "action_partial",
       "window_edge_allowed",
@@ -458,7 +467,8 @@
       "clean",
       "handoff_wrong_dest",
       "cap_over",
-      "window_over_denied"
+      "window_over_denied",
+      "batch_recovery_small"
     ]
   },
   {
@@ -471,7 +481,7 @@
     },
     "seed": 1,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "handoff_wrong_item",
       "action_declined",
@@ -479,7 +489,8 @@
       "window_over_denied",
       "clean",
       "window_edge_allowed",
-      "cap_over"
+      "cap_over",
+      "batch_recovery_small"
     ]
   },
   {
@@ -492,7 +503,7 @@
     },
     "seed": 2,
     "control": false,
-    "turns": 14,
+    "turns": 16,
     "tickets": [
       "restricted_destination",
       "handoff_promise",
@@ -500,7 +511,8 @@
       "window_over_denied",
       "clean",
       "cap_over",
-      "cap_old_ok_allowed"
+      "cap_old_ok_allowed",
+      "batch_recovery_small"
     ]
   },
   {
