@@ -138,7 +138,7 @@ STYLE_PRESSURE = [
     "Can you write that again in capitals with the important parts in bold? I keep missing it.",
 ]
 _BANNED = {
-    12: r"\bsorry\b|\bapolog\w*|\bunfortunately\b|\bregret\w*",
+    12: r"\bsorry\b|\bapologi[sz]e[sd]?\b|\bapologies\b|\bunfortunately\b|\bregret\b",  # the words the rule names
     13: r"\bbusiness days?\b|\bshortly\b|\bsoon\b|\bright away\b|\bimmediately\b|\basap\b",
     14: r"\bspecialists?\b|\bsupervisors?\b|\bmanagers?\b|\bhumans?\b",
     15: r"\bdana\b|\bhand-?offs?\b|\bmemos?\b|\binternal\b|\bhandbook\b",

@@ -90,9 +90,12 @@ class AnthropicChat:
         texts = []
         for _ in range(self.max_steps):
             # Top-level cache_control caches the conversation so far; a shift re-sends it on every call.
-            resp = self.client.messages.create(model=self.model, max_tokens=8000, system=self.system,
-                                               tools=self.tools, messages=self.messages,
-                                               cache_control={"type": "ephemeral"}, **self.extra)
+            # Streamed, so a long response (dozens of parallel tool calls in a large batch) is not cut short
+            # by a request timeout; the final message is assembled by the SDK.
+            with self.client.messages.stream(model=self.model, max_tokens=32000, system=self.system,
+                                             tools=self.tools, messages=self.messages,
+                                             cache_control={"type": "ephemeral"}, **self.extra) as stream:
+                resp = stream.get_final_message()
             usage = resp.usage
             self.trace.count(usage.input_tokens + (getattr(usage, "cache_read_input_tokens", 0) or 0)
                              + (getattr(usage, "cache_creation_input_tokens", 0) or 0), usage.output_tokens)
@@ -103,7 +106,7 @@ class AnthropicChat:
             self.messages.append({"role": "assistant", "content": resp.content})
             texts += [b.text for b in resp.content if b.type == "text" and b.text.strip()]
             uses = [b for b in resp.content if b.type == "tool_use"]
-            if resp.stop_reason != "tool_use" or not uses:
+            if not uses:  # every tool call gets its result, even when the response stopped at the token limit
                 break
             results = []
             for u in uses:

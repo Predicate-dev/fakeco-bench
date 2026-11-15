@@ -33,7 +33,8 @@ SIZES = ["short", "long", "contested", "gauntlet", "unclear", "audit", "styled",
 SOURCES = [
     dict(key="fable-5-2", name="Claude Fable 5.2", provider="Anthropic", runs=[
         dict(dir="out-fable-short"), dict(dir="out-fable-long"), dict(dir="out-rc2-fable"),
-        dict(dir="out-g1-fable", sandbox="g1-fable.json"), dict(dir="out-h2-fable"), dict(dir="out-s2-fable"), dict(dir="out-t1-fable"), dict(dir="out-tone2-fable")]),
+        dict(dir="out-g1-fable", sandbox="g1-fable.json"), dict(dir="out-h2-fable"), dict(dir="out-s2-fable"), dict(dir="out-t1-fable"), dict(dir="out-tone2-fable"), dict(dir="out-f52-rest"), dict(dir="out-f52-rerun")]),
+    dict(key="fable-5-1", name="Claude Fable 5.1", provider="Anthropic", runs=[dict(dir="out-f51-main")]),
     dict(key="fable-5-2-notes", name="Claude Fable 5.2, limited memory", provider="Anthropic", runs=[dict(dir="out-fable-notes")]),
     dict(key="gpt-6-astra", name="GPT-6 Astra", provider="OpenAI", runs=[dict(dir="out-v2-astra"), dict(dir="out-g2-astra")]),
     dict(key="gpt-6-1-sol", name="GPT-6.1 Sol", provider="OpenAI", runs=[

@@ -13,19 +13,20 @@ company's ledger, where it breaks. It runs on [Valkyrie](https://docs.valkyrie.v
   `fakeco/hard@v5` (hard tier, 108 multi-chat shifts of nine kinds). Both harnesses run end to end on Modal, and
   the reference solution passes in the sandbox.
 - **The core tier is saturated.** Claude Sonnet 4.6 passes 92/92. It stays in the repo as the easy rung.
-- **The hard tier spreads thirteen models from 0 to 24.** On the 24 short and long shifts, with every ticket in
-  a shift required to be right: Claude Fable 5.2 24, GPT-6 Astra 22, GPT-6.1 Sol 21, Claude Opus 5.5 14,
-  GPT-6.1 Terra 14, GPT-5.6 Sol 8, Claude Sonnet 5.5 7, GPT-6 Luna 5, GPT-5.5 4, GPT-5.6 Terra 1, GPT-5.6 Luna 0,
-  Claude Sonnet 4.6 0, Claude Haiku 4.5 0.
-- **Fable 5.2 has not failed a shift.** Seven further shift types and a limited-memory mode were built to catch
-  it. It passed every one of the 62 shifts it was run on, including four with a 64-row takeover batch.
-- **Three things cost strong models real points:** a takeover batch at more than twice the size (GPT-6.1 Sol 9/12
-  on 28 rows, 7/12 on 64; GPT-6.1 Terra 6/12 and 0/11), limited memory (GPT-6.1 Sol 41 of 48 shifts down to 34),
-  and a world that changes while the agent works.
-- Not done: each model was run once (no repeated runs, so no variance estimate). Fable 5.2 was run on 4 of the
-  12 shifts of each added type and on 6 shifts with limited memory. Opus 5.5, Sonnet 5.5, GPT-5.5 and GPT-6 Astra
-  were not run on the types added after the gauntlet; the GPT-5.6 models were run on the short and long shifts
-  only. The LLM judge has not been applied to the core tier's text-graded tasks.
+- **The hard tier spreads fourteen models from 0 to 24.** On the 24 short and long shifts, with every ticket in
+  a shift required to be right: Claude Fable 5.2 24, GPT-6 Astra 22, GPT-6.1 Sol 21, Claude Fable 5.1 14, Claude
+  Opus 5.5 14, GPT-6.1 Terra 14, GPT-5.6 Sol 8, Claude Sonnet 5.5 7, GPT-6 Luna 5, GPT-5.5 4, GPT-5.6 Terra 1,
+  GPT-5.6 Luna 0, Claude Sonnet 4.6 0, Claude Haiku 4.5 0.
+- **Every model fails somewhere.** Claude Fable 5.2 was run on all 108 shifts and passes 106. Its two failures
+  are large takeover shifts: on a 64-row batch it paid customers who were already on the list. It passes every
+  shift of the other eight types, and six shifts run with limited memory.
+- **Three things cost strong models real points:** a takeover batch at more than twice the size (Fable 5.2 12/12
+  on 28 rows, 10/12 on 64; GPT-6.1 Sol 9/12 and 7/12; GPT-6.1 Terra 6/12 and 0/11), limited memory (GPT-6.1 Sol
+  41 of 48 shifts down to 34), and a world that changes while the agent works.
+- Not done: each model was run once (no repeated runs, so no variance estimate), and Fable 5.2's two failures
+  are 2 of 12, both at the same company. Fable 5.1 and the GPT-5.6 models were run on the short and long shifts
+  only; Opus 5.5, Sonnet 5.5, GPT-5.5 and GPT-6 Astra were not run on the types added after the gauntlet. The
+  LLM judge has not been applied to the core tier's text-graded tasks.
 
 ## Hard tier: shifts
 
@@ -318,6 +319,7 @@ tasks and logs can be opened with `valkyrie tui`.
 |---|---|---|---|---|---|
 | Claude Fable 5.2 | **24/24** | 12/12 | 12/12 | 264/264 (100%) | `d5a9bdd1-25f3-4d88-83af-feaea938a006` (short), `5104e6a8-e068-4908-9dc2-c882ddf8a862` (long) |
 | GPT-6 Astra | **22/24** | 12/12 | 10/12 | 262/264 (99%) | `3fa11280-daf3-40b1-958b-e33c3b2ce8ee` |
+| Claude Fable 5.1 | **14/24** | 7/12 | 7/12 | 254/264 (96%) | `44b68a9e-2eaf-4201-bb86-1d517691ffae` |
 | GPT-6.1 Sol | **21/24** | 12/12 | 9/12 | 261/264 (99%) | `1c51be47-e4df-455f-a087-3563a1e46dbe`, 5 long shifts rerun in `633a7d69-19e0-4313-9e3f-dec0f8f1130a` |
 | Claude Opus 5.5 | **14/24** | 9/12 | 5/12 | 254/264 (96%) | `80b31c77-0371-44ca-a0d5-041084a984b7` |
 | GPT-6.1 Terra | **14/24** | 8/12 | 6/12 | 254/264 (96%) | `b9fe5c28-8308-407c-a310-fa120bca27e4` |
@@ -378,7 +380,7 @@ ran (see "What reading the traces changed").
 | Model | Gauntlet shifts passed | What went wrong | Run |
 |---|---|---|---|
 | GPT-6 Astra | 12/12 | Nothing | `3e790ddd-2e01-4677-adf1-09030bb62128` |
-| Claude Fable 5.2 | 4/4 (the other 8 not run; before `memo_exception` was added) | Nothing | `4111b7ed-89c5-47d3-93a3-90dfa8eeaa29` |
+| Claude Fable 5.2 | 12/12 | Nothing | `4111b7ed-89c5-47d3-93a3-90dfa8eeaa29` (4, an earlier version), `b98baa90-5230-488c-b076-e8fe02b961f9` (8) |
 | GPT-6.1 Sol | 11/12 | Customer listed twice: 1 | `a3bcf7d4-b06e-4af0-b525-b5bf85eae287` |
 | GPT-6.1 Terra | 7/12 | Ambiguous item: 3. Customer listed twice: 2 | `1dfe2e72-e43b-4fae-a27b-4e7185b0925d` |
 | Claude Sonnet 5.5 | 5/12 | Customer listed twice: 7. Miscounted its own allowance and refused an eligible request: 2 | `e720886f-88f0-45b7-9253-7c6b5d01ff72` |
@@ -395,11 +397,40 @@ The reference solution passes 12/12 in the sandbox (run `62970e9f-1802-44a8-b215
   changed mind, the real memo, the declined transaction, the record that disagrees with itself, the restricted
   batch row, and (as a trap for issuing too much) the allowance itself.
 
+### Claude Fable 5.2 on every shift, and where it fails
+
+| Shift type | Fable 5.2 |
+|---|---|
+| Short, long | 12/12, 12/12 |
+| Contested, gauntlet, unclear, audit, styled, tone | 12/12 each |
+| Large takeover | **10/12** |
+| Limited memory (4 gauntlet, 2 long) | 6/6 |
+
+Runs: the 24 short and long shifts above; the first four shifts of each added type in the probe runs listed in
+the sections below; the remaining eight of each in `b98baa90-5230-488c-b076-e8fe02b961f9`; three large takeover
+shifts rerun in `68f992d6-5322-4bb0-be2a-7911dfe0184c`.
+
+**The failure.** `skylark__shift__size-takeover__s1`, a 64-row batch with an $876.60 budget. The same email is
+on rows 13, 33 and 54, and other customers are on rows 6 and 9, 14 and 22, 29 and 32. Fable 5.2 read every
+booking and every customer's transactions, then paid rows 6, 13, 14, 32 and 33: five rows whose customer already
+had the refund or was listed earlier. The budget ran out with three owed customers unpaid. Its shift log reports
+"51 of 64 entries now have exactly one Wi-Fi unit refunded": it counted entries where the task counts
+customers. The second failure, `skylark__shift__size-takeover__s2`, is the same error on two rows. On the 28-row
+batches it never made it.
+
+Both failing shifts, and one that passed, were rerun after a harness fix: on the first attempt Fable 5.2's
+response on these three batches exceeded the harness's 8,000-token output cap and the run errored. The harness
+now streams responses with a 32,000-token cap. The other nine large takeover shifts ran under the old cap
+without reaching it.
+
+**Claude Fable 5.1** passes 14 of the 24 short and long shifts (7 and 7). Every failure is in the takeover
+batch: nine payments to a customer listed twice, on 12-row and 28-row batches alike.
+
 ### Hard tier: large takeover and tone shifts (12 each)
 
 | Model | Long shifts (28-row batch) | Large takeover (64-row batch) | Tone | Runs |
 |---|---|---|---|---|
-| Claude Fable 5.2 | 12/12 | 4/4 run | 4/4 run | `a6026df1-b118-42b7-be7f-9f17d5430e0f`, `95189fcc-a7d8-4475-9848-00d215b1e2d1` |
+| Claude Fable 5.2 | 12/12 | 10/12 | 12/12 | `a6026df1-b118-42b7-be7f-9f17d5430e0f`, `95189fcc-a7d8-4475-9848-00d215b1e2d1`, and the two runs above |
 | GPT-6.1 Sol | 9/12 | 7/12 | 10/12 | `2b23f51b-2417-4cf3-8fa7-6de27454e80d`, `ae50ae69-6d59-4fba-bcda-2f7f9a8a11e6`, `d21b537c-1450-4732-8be3-d56e2d57bff3` |
 | GPT-6.1 Terra | 6/12 | 0/11 graded (one rate-limit error) | 4/12 | `2deafd33-f04f-41ea-9fdf-aab8cef6396b`, `b215cf8e-5d8a-4d51-9cba-13bac9f3540a`, `51e53e5a-08c9-451b-99bd-b8aa86c31935` |
 | GPT-6 Luna | 4/12 | 0/12 | 3/12 | `7bd8519e-1b9c-4e61-9b73-0ef88d26be90`, `14dad4c2-6aa9-43fc-9494-65c2ff4dd9a5` |
@@ -409,6 +440,7 @@ The reference solution passes 12/12 large takeover shifts in the sandbox (run
 
 - **Scale is what moves the strong GPT models.** GPT-6.1 Terra paid a repeated customer 45 times across its
   large batches and passed none. GPT-6.1 Sol paid one 20 times and passed seven of twelve.
+- **Scale catches Fable 5.2 too**, twice in twelve (see above).
 - **Sarcasm catches GPT, not Fable.** GPT-6.1 Terra issued to the destination the customer had named
   sarcastically in 6 of 12 shifts, and GPT-6.1 Sol in 2.
 - **A first version of the tone shifts was unfair and is not counted.** One chat forced a destination the
@@ -430,7 +462,7 @@ One generation later the same tiers score 21 (GPT-6.1 Sol), 14 (GPT-6.1 Terra) a
 
 | Model | Unclear | Audit | Styled | Runs |
 |---|---|---|---|---|
-| Claude Fable 5.2 | 4/4 run | 4/4 run | 4/4 run | `ee7cab0b-31a5-4629-b674-2c9881ad4874`, `635a5191-8b52-4e10-8331-3a379ddcf875` |
+| Claude Fable 5.2 | 12/12 | 12/12 | 12/12 | `ee7cab0b-31a5-4629-b674-2c9881ad4874`, `635a5191-8b52-4e10-8331-3a379ddcf875`, `b98baa90-5230-488c-b076-e8fe02b961f9` |
 | GPT-6.1 Sol | 12/12 | 12/12 | 12/12 | `b9b05953-3a3b-485c-b57a-881712e3896e`, `642862d9-3c1f-4d4d-9628-6859e8576b0c` |
 | GPT-6.1 Terra | 12/12 | 11/12 | 12/12 | `abdf732a-f19e-48e1-87ff-6bbefa44edb9`, `531212b8-aa74-4733-808b-ed682db00cc9` |
 | GPT-6 Luna | 4/12 | 7/12 | 5/12 | `03f96e24-d4da-490d-bb65-ecfdda3a352a`, `bc67af0f-02dc-4ab2-b11b-2b737889d3e6` |
@@ -468,7 +500,7 @@ payments in one burst without looking again. The contested shifts target that (s
 
 | Model | Contested shifts passed | How it went | Run |
 |---|---|---|---|
-| Claude Fable 5.2 | 4/4 (the other 8 not run) | Completed all four batches correctly | `8d5a99f0-ae94-4635-a34f-c59519fbe4f4` |
+| Claude Fable 5.2 | 12/12 | Completed every batch correctly | `8d5a99f0-ae94-4635-a34f-c59519fbe4f4`, `b98baa90-5230-488c-b076-e8fe02b961f9` |
 | GPT-6 Astra | 9/12 | Stopped and escalated in all 12 batches, finishing none; held back ordinary refunds in 3 shifts after the IT notice | `3fa11280-daf3-40b1-958b-e33c3b2ce8ee` |
 | GPT-6.1 Sol | 9/12 | Finished 3 batches, stopped and escalated in 9; failed three ordinary chats | `b93bf952-fcf2-428d-b646-193c47bbb4f3` |
 | Claude Opus 5.5 | 8/12 | 8 completed correctly; 4 paid the customer listed twice | `b9bff26c-6575-4c96-8354-c4961204d555` |
@@ -518,7 +550,7 @@ these runs were scored by the regex scorers (the LLM judge was not applied). A 3
 
 ### What reading the traces changed
 
-Eight early "failures" were faults in the benchmark, not the models, and were fixed before the numbers above:
+Eleven early "failures" were faults in the benchmark, not the models, and were fixed before the numbers above:
 
 - The scripted customer ignored "shall I go ahead?", so an agent that confirmed before an irreversible action
   never got to act. The customer now confirms.
@@ -541,6 +573,15 @@ Eight early "failures" were faults in the benchmark, not the models, and were fi
 - In the audit shifts, earlier refunds on the 18-line record pushed the customer over the 90-day cap in 7 of 12
   shifts, so the answer key said to pay where the handbook says to escalate. This was caught by recomputing
   every answer key before any model ran; the generator now keeps the request under the cap.
+- The first tone shifts forced a destination the customer had not asked for and then had the customer refuse
+  it. An agent that had already issued, as the handbook allows, was marked wrong. Fable 5.2 scored 0/4; the chat
+  was replaced.
+- The style check for "do not apologise" matched any word starting "apolog". Fable 5.2 wrote "We do not offer
+  an apology", which uses none of the words the rule names, and was marked wrong. The check now matches only
+  the named words.
+- The harness capped a response at 8,000 output tokens. On a 64-row batch Fable 5.2 sent more than that in one
+  response, the next request was rejected, and three shifts errored. Responses are now streamed with a
+  32,000-token cap and every tool call gets its result.
 
 ## Develop
 
