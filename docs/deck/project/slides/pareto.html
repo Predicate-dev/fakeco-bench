@@ -1,7 +1,7 @@
 <section id="pareto" data-transition="fade">
 <h2>What a passed shift costs</h2>
 <div class="plot">
-<svg aria-label="Scatter plot of shifts passed against estimated cost per shift for ten models. The frontier runs from GPT-6 Luna through GPT-6.1 Terra, GPT-6.1 Sol and GPT-6 Astra to Claude Fable 5.2." width="1664" height="590" viewBox="0 0 1664 590" style="position:absolute; left:0; top:0; width:1664px; height:590px">
+<svg aria-label="Scatter plot of shifts passed against estimated cost per shift for twelve models. The frontier runs from GPT-6 Luna through GPT-6.1 Terra, GPT-6.1 Sol and GPT-6 Astra to Claude Fable 5.2." width="1664" height="590" viewBox="0 0 1664 590" style="position:absolute; left:0; top:0; width:1664px; height:590px">
 <g stroke="#CBD2DD" stroke-width="2" fill="none">
 <line x1="120" y1="40" x2="1480" y2="40"/><line x1="120" y1="155" x2="1480" y2="155"/><line x1="120" y1="270" x2="1480" y2="270"/><line x1="120" y1="385" x2="1480" y2="385"/>
 <line x1="178" y1="40" x2="178" y2="500" stroke-dasharray="4 8"/><line x1="463" y1="40" x2="463" y2="500" stroke-dasharray="4 8"/><line x1="776" y1="40" x2="776" y2="500" stroke-dasharray="4 8"/><line x1="1062" y1="40" x2="1062" y2="500" stroke-dasharray="4 8"/><line x1="1375" y1="40" x2="1375" y2="500" stroke-dasharray="4 8"/>
@@ -9,7 +9,7 @@
 <line x1="120" y1="500" x2="1480" y2="500" stroke="#4A5568" stroke-width="2"/>
 <polyline points="203,404 708,232 895,97.5 1313,78 1397,40" fill="none" stroke="#2A78D6" stroke-width="4" stroke-linejoin="round"/>
 <g fill="#8A94A6" stroke="#F5F6F8" stroke-width="3">
-<circle cx="862" cy="500" r="11"/><circle cx="1016" cy="366" r="11"/><circle cx="1134" cy="500" r="11"/><circle cx="1198" cy="232" r="11"/><circle cx="1286" cy="423" r="11"/>
+<circle cx="862" cy="500" r="11"/><circle cx="1450" cy="232" r="11"/><circle cx="1097" cy="347" r="11"/><circle cx="1016" cy="366" r="11"/><circle cx="1134" cy="500" r="11"/><circle cx="1198" cy="232" r="11"/><circle cx="1286" cy="423" r="11"/>
 </g>
 <g fill="#2A78D6" stroke="#F5F6F8" stroke-width="3">
 <circle cx="203" cy="404" r="13"/><circle cx="708" cy="232" r="13"/><circle cx="895" cy="97.5" r="13"/><circle cx="1313" cy="78" r="13"/><circle cx="1397" cy="40" r="13"/>
@@ -34,10 +34,12 @@
 <p class="pt" style="left:1034px; top:350px">Sonnet 5.5</p>
 <p class="pt" style="left:221px; top:388px">GPT-6 Luna</p>
 <p class="pt" style="left:1304px; top:407px">GPT-5.5</p>
+<p class="pt" style="left:1468px; top:216px">Fable 5.1</p>
+<p class="pt" style="left:1115px; top:300px">GPT-5.6 Sol</p>
 <p class="pt" style="left:800px; top:452px">Haiku 4.5</p>
 <p class="pt" style="left:1066px; top:452px">Sonnet 4.6</p>
 </div>
-<p class="small">Blue points are the frontier: no model is both cheaper and better. GPT-6.1 Terra matches Claude Opus 5.5 at about one seventh of the cost, and GPT-6.1 Sol is within one shift of GPT-6 Astra at a fifth of it. Costs are estimated from token counts.</p>
+<p class="small">Blue points are the frontier: no model is both cheaper and better. GPT-6.1 Terra matches Claude Opus 5.5 at about one seventh of the cost, and GPT-6.1 Sol is within one shift of GPT-6 Astra at a fifth of it. Costs are estimated from token counts. GPT-5.6 Terra and Luna (1 and 0 shifts) are not shown.</p>
 <div class="foot"><p class="small">FakeCo Bench</p><p class="small">6</p></div>
 <aside>Vals reports cost beside accuracy, so we did too. The frontier runs from Luna at about a cent a shift to Fable at about a dollar. Opus 5.5 and GPT-5.5 are both off it: something cheaper does at least as well. These are estimates from token counts at list prices, not billed amounts.</aside>
 </section>

@@ -29,6 +29,7 @@ COMPANIES = {"shopright": "ShopRight", "skylark": "SkyLark Air", "clouddesk": "C
 MONEY = ("issue_refund", "issue_credit", "reverse_fee")
 GAME_SHIFT = "harbor__shift__size-short__s0"
 REPLAY = ("opus-5-5__long.json", "harbor__shift__size-long__s0", "Claude Opus 5.5")
+REPEAT = ("fable-5-2__takeover.json", "skylark__shift__size-takeover__s1", "Claude Fable 5.2")
 
 
 def dashboard_index() -> dict:
@@ -162,8 +163,82 @@ def replay() -> dict | None:
             ["quote", first, f"{model}, to the shift log"],
             ["quote", stopped.rstrip(":"), ""]]},
     ]
-    return {"model": model, "where": f"Harbor Bank, long shift, chat {len(shift['tickets'])} of {len(shift['tickets'])}",
+    return {"key": "duplicate", "model": model, "title": f"how {model.replace('Claude ', '')} paid one customer twice",
+            "where": f"Harbor Bank, long shift, chat {len(shift['tickets'])} of {len(shift['tickets'])}",
             "rows": len(note["rows"]), "steps": steps}
+
+
+def replay_repeat() -> dict | None:
+    """A large batch in which the agent pays customers who are on the list more than once. Every figure is read from
+    the saved run and checked against the task's answer key; returns None if any of it is not there."""
+    name, tid, model = REPEAT
+    path, key = DASH / "data" / name, TASKS / tid / "tests" / "scenario.json"
+    if not path.exists() or not key.exists():
+        return None
+    shift = json.loads(path.read_text()).get(tid)
+    sc = json.loads(key.read_text())
+    if not shift or shift["tickets"][-1]["label"] == "correct":
+        return None
+    w = WORLDS[sc["world"]]
+    ev = shift["tickets"][-1]["events"]
+    raw = next((e[2] for e in ev if e[0] == "c" and "The list:" in (e[2] or "")), None)
+    if not raw:
+        return None
+    note = parse_note(raw)
+    row_of = {r[2]: r for r in note["rows"]}
+    emails = [r[1] for r in note["rows"]]
+    repeats = {e: [r for r in note["rows"] if r[1] == e] for e in dict.fromkeys(emails) if emails.count(e) > 1}
+    answer = sc["meta"]["tickets"][-1]
+    kinds = {r["record"]: r["kind"] for r in answer["rows"]}
+    owed = {e[0] for e in answer["expect"]}
+    tools = [e for e in ev if e[0] == "t"]
+    paid = {e[2].get(w.rid): e[3] for e in tools if e[1] == w.money_tool and isinstance(e[3], dict) and e[3].get("status") == "completed"}
+    wrong = sorted((row_of[r] for r in paid if r not in owed), key=lambda r: r[0])
+    missed = sorted((row_of[r] for r in owed if r not in paid), key=lambda r: r[0])
+    if not wrong or any(kinds[r[2]] != "second_record" for r in wrong):
+        return None
+    seen = {}
+    for e in tools:  # what the agent saw the first time it read each repeated record
+        rec = e[2].get(w.rid)
+        if e[1] == f"get_{w.noun}" and isinstance(e[3], dict) and rec in row_of and row_of[rec][1] in repeats and rec not in seen:
+            seen[rec] = next(l for l in e[3]["line_items"] if l["id"] == "L2")["refunded_qty"]
+    summary = next((e[1] for e in ev if e[0] == "a" and "entries now have exactly one" in e[1]), "").replace("**", "")
+    budget = re.search(r"total budget of \$(\d+\.\d\d)", raw)
+    headline = re.search(r"The batch is not complete: [^\n]*?exactly \$\d+\.\d\d\.", summary)
+    chose = re.search(r"Four customers appear on the list more than once[^\n]*?has one unit\.", summary)
+    if not (budget and headline and chose and len(seen) == sum(len(v) for v in repeats.values())) or f"exactly ${budget.group(1)}" not in headline.group(0):
+        return None
+    money = lambda v: f"${float(v):.2f}"
+    price = lambda rec: next(l["unit_price"] for l in sc["db"]["records"][rec]["line_items"] if l["id"] == "L2")
+    spent, short = sum(paid[r[2]]["amount"] for r in wrong), sum(price(r[2]) for r in missed)
+    rows_text = lambda rs: ", ".join(str(r[0]) for r in rs[:-1]) + (" and " if len(rs) > 1 else "") + str(rs[-1][0])
+    rule = next(x.strip() for x in re.split(r"(?<=\.)\s+", note["brief"]) if "nobody gets two" in x)
+    had = [r for rs in repeats.values() for r in rs if seen[r[2]]]
+    steps = [
+        {"title": "The job", "blocks": [
+            ["p", f"A colleague's batch crashed halfway. {len(note['rows'])} customers, one refund each, a budget of {money(budget.group(1))}."],
+            ["quote", rule, "From the task"]]},
+        {"title": f"{len(repeats)} emails repeat", "blocks": [
+            ["p", f"{len(repeats)} customers are on the list more than once. One is on it {max(len(v) for v in repeats.values())} times."],
+            ["mono", [[f"{r[0]:>2}. {r[1]} / {r[2]}", False] for rs in repeats.values() for r in rs]]]},
+        {"title": "What the records showed", "blocks": [
+            ["p", f"The agent read every record. {len(had)} of these already showed a refund."],
+            ["mono", [[f"row {r[0]:>2}  {r[2]}  refunded_qty {seen[r[2]]}", bool(seen[r[2]])] for rs in repeats.values() for r in rs]]]},
+        {"title": "It pays them anyway", "stamp": ["Paid twice", "red"], "blocks": [
+            ["p", f"Rows {rows_text(wrong)}: {len(wrong)} payments, {money(spent)}, to customers already covered."],
+            ["mono", [[f"{paid[r[2]]['transaction_id']}  row {r[0]:>2}  {r[2]}  {money(paid[r[2]]['amount'])}", True] for r in wrong]]]},
+        {"title": "The budget runs out", "stamp": ["Owed, unpaid", "red"], "blocks": [
+            ["p", f"{len(missed)} customers who were owed got nothing." + (" Without the repeats, they fit." if short <= spent else "")],
+            ["mono", [[f"budget {money(budget.group(1))}, fully used", False]] + [[f"row {r[0]:>2}  {r[2]}  {money(price(r[2]))}  not issued", True] for r in missed]
+             + [[f"spent on repeats {money(spent)}   left unpaid {money(short)}", False]]]]},
+        {"title": "It noticed, and chose", "blocks": [
+            ["quote", chose.group(0), f"{model}, to the shift log"],
+            ["p", "The task had already answered that: nobody gets two."]]},
+        {"title": "Its own summary", "blocks": [["quote", headline.group(0), f"{model}, to the shift log"]]},
+    ]
+    return {"key": "repeat", "model": model, "title": f"how {model.replace('Claude ', '')} failed its first shift",
+            "where": f"{COMPANIES[sc['world']]}, large takeover, chat {len(shift['tickets'])} of {len(shift['tickets'])}",
+            "rows": len(note["rows"]), "wrong": len(wrong), "missed": len(missed), "steps": steps}
 
 
 def memo_check(notes_key: str) -> dict | None:
@@ -224,12 +299,14 @@ def main() -> None:
         models.append({k: m[k] for k in ("key", "name", "provider", "tiers", "main", "tickets", "finished")}
                       | {"cost": p.get("cost_shift"), "minutes": p.get("min_shift"), "style": m.get("style", {}),
                          "marks": {size: [int(s["pass"]) for s in order if s["size"] == size] for size in index["sizes"]},
-                         "small_batch": m["kinds"].get("batch_recovery_small")})
+                         "small_batch": m["kinds"].get("batch_recovery_small"),
+                         "fails": [[x["world"], x["size"]] for x in order if not x["pass"]]})
     shift_ids = {s["id"] for m in index["models"] for s in m["shifts"]}
     totals = {"models": len(models), "shifts": len(shift_ids), "companies": len({s.split("__")[0] for s in shift_ids}),
               "types": len(index["sizes"]), "chats": sum(f[1] for m in index["models"] for f in m["families"].values())}
     data = {"built": datetime.date.today().isoformat(), "totals": totals, "models": models, "sizes": index["sizes"],
-            "style": index.get("style", []), "memory": memory_pairs(index), "game": game(), "replay": replay()}
+            "style": index.get("style", []), "memory": memory_pairs(index), "game": game(),
+            "replays": [r for r in (replay_repeat(), replay()) if r]}
     body = (ROOT / "scripts" / "site_template.html").read_text().replace(
         "/*DATA*/null", json.dumps(data, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/"))
     OUT.mkdir(parents=True, exist_ok=True)
@@ -239,7 +316,7 @@ def main() -> None:
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n<style>body{margin:0}</style>\n</head>\n<body>\n'
         + body + "\n</body>\n</html>\n")
     print(f"wrote {OUT}: {totals}; game {'yes' if data['game'] else 'MISSING'}, replay "
-          f"{len(data['replay']['steps']) if data['replay'] else 'MISSING'} steps, page {len(body) / 1e3:.0f} KB")
+          f"{[(r['key'], len(r['steps'])) for r in data['replays']]}, page {len(body) / 1e3:.0f} KB")
     for pair in data["memory"]:
         print(f"  limited memory: {pair['name']} {pair['full']} -> {pair['notes']} of {pair['n']} {pair['sizes']} memo {pair['memo']}")
     if data["game"]:

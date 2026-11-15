@@ -5,11 +5,11 @@
   "format": {"v": 1, "shared": ["project/deck.css"]},
   "title": "FakeCo Bench",
   "cover": "cover",
-  "order": ["cover", "problem", "shift", "grading", "leaderboard", "pareto", "duplicate", "moving", "gauntlet", "harder", "map", "trust", "fit", "limits", "close"],
+  "order": ["cover", "problem", "shift", "grading", "leaderboard", "pareto", "duplicate", "moving", "gauntlet", "harder", "fable", "map", "trust", "fit", "limits", "close"],
   "sections": {
     "what": {"description": "What FakeCo is and why a chat-level benchmark is no longer enough.", "start": "cover"},
-    "results": {"description": "How ten models score, and what that costs.", "start": "leaderboard"},
-    "failures": {"description": "Three ways agents fail, each shown from a real run.", "start": "duplicate"},
+    "results": {"description": "How fourteen models score, and what that costs.", "start": "leaderboard"},
+    "failures": {"description": "Four ways agents fail, each shown from a real run, and the harder variants.", "start": "duplicate"},
     "case": {"description": "Why the numbers can be trusted, how the benchmark fits what Vals values, and what is still open.", "start": "trust"}
   },
   "faces": {

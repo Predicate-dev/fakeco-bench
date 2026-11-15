@@ -6,9 +6,9 @@
 <tr><td>Long-horizon agents that use tools</td><td>5 to 14 chats per shift and about 55 model calls, with six tools that do not enforce policy.</td></tr>
 <tr><td>Test sets that cannot leak into training</td><td>Every shift is generated from a seed. A fresh private test set is one command, and the answer key never enters the agent’s sandbox.</td></tr>
 <tr><td>Accuracy with error bars, plus cost and latency</td><td>Ledger-exact pass rate with standard errors, $0.01 to $1.09 and 2 to 3 minutes per shift.</td></tr>
-<tr><td>Error types, not only a score</td><td>A verdict for each of 6,504 chats in ten families, and a viewer that opens any of them.</td></tr>
+<tr><td>Error types, not only a score</td><td>A verdict for every chat of every graded shift, in eleven families, and a viewer that opens any of them.</td></tr>
 <tr><td>One fixed harness for every model</td><td>A bare tool-calling loop. The same tasks also run unchanged under Claude Code.</td></tr>
 </table>
-<div class="foot"><p class="small">Left column paraphrases vals.ai/methodology</p><p class="small">13</p></div>
+<div class="foot"><p class="small">Left column paraphrases vals.ai/methodology</p><p class="small">14</p></div>
 <aside>We read how Vals describes its own benchmarks and held ours to it. Realistic work with money at stake. Long-horizon and tool-using. Generated from seeds, so the test set can stay private and be replaced. Cost and latency reported beside accuracy. And failure types you can drill into, down to the individual chat.</aside>
 </section>

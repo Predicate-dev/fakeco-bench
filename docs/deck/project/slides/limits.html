@@ -1,20 +1,20 @@
 <section id="limits" data-transition="fade">
 <p class="eyebrow">Limits and next steps</p>
-<h2>The strongest model has not failed a shift yet</h2>
+<h2>Every model fails somewhere, and one run is not enough</h2>
 <div class="row">
 <div class="col grow">
 <h3>What is not done</h3>
-<p class="body">Claude Fable 5.2 passed all 52 shifts it was given, across seven shift types and more than forty kinds of trap.</p>
 <p class="body">Each model was run once. The error bars come from 24 shifts, not from repeated runs.</p>
-<p class="body">Fable 5.2 was run on 4 of the 12 shifts of each harder type, and no Claude model has been run with limited memory.</p>
+<p class="body">Fable 5.2’s two failures are 2 of 12 large takeover shifts, both at the airline. That is a small sample.</p>
+<p class="body">Fable 5.1 and the GPT-5.6 models were run on the short and long shifts only. Costs are estimates from token counts.</p>
 </div>
 <div class="col grow">
 <h3>What comes next</h3>
-<p class="body"><b>Limited memory on the top models.</b> It is the one variant that cost GPT-6.1 Sol real points: 41 shifts to 34.</p>
-<p class="body"><b>Bigger shifts.</b> The generator has dials for batch size and chat count.</p>
+<p class="body"><b>More seeds of the large takeover.</b> It is the rung that reaches the top model, and every shift is generated.</p>
+<p class="body"><b>Limited memory on every model.</b> It cost GPT-6.1 Sol seven shifts in 48.</p>
 <p class="body"><b>Three runs per model</b>, the way Vals averages its own agent benchmarks.</p>
 </div>
 </div>
-<div class="foot"><p class="small">FakeCo Bench</p><p class="small">14</p></div>
-<aside>To be straightforward about it: the best model we ran has not failed. Fable 5.2 is at the ceiling on everything we built. The benchmark separates the other nine clearly. The lever that worked on the next strongest model was memory, and that is where we would go next.</aside>
+<div class="foot"><p class="small">FakeCo Bench</p><p class="small">15</p></div>
+<aside>To be straightforward about it: one run per model, and the top model’s failures are two shifts out of twelve. The next steps are more seeds of the large takeover, since every shift is generated from a seed, limited memory across all models, and three runs each.</aside>
 </section>
