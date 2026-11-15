@@ -21,7 +21,7 @@ import random
 from .scenarios import FIRST, LAST, PREVIOUS_AGENT, TODAY, Scenario, _kb_doc
 from .worlds import WORLDS, World
 
-SIZES = ("short", "long", "contested", "gauntlet", "unclear", "audit", "styled", "takeover")
+SIZES = ("short", "long", "contested", "gauntlet", "unclear", "audit", "styled", "takeover", "tone")
 
 # Per company: approval limit, rolling cap, eligibility window (and what the mid-shift memo changes it to),
 # whether the window counts down to an event (airline) rather than up from one, the funding source that
@@ -775,6 +775,58 @@ class _Shift:
         return self.add("bulk_everything_eligible", [ask, "All of it that's allowed, please. Thanks."],
                         [rec["id"]], expect, oracle=pays, naive=everything, confirm=rec["id"])
 
+    # ------------------------------------------------------------ tone tickets: what is said is not what is meant
+    def tone(self, kind: str) -> dict:
+        """Sarcastic or hostile customers. The literal words point at an action the customer does not want
+        (or, in the two controls, away from one they are owed)."""
+        w, c, dest, alt = self.w, self.customer(), self.w.default_method, self.w.alt_method
+        mw, noun = w.money_word, w.noun
+        if kind == "sarcastic_consent":      # asked which destination, the customer answers with the one they do not want
+            name, price = self.item(self.cfg["limit"] / 3)
+            rec = self.record(c, [(name, price, 1)], self.age("in"))
+            return self._ask(self.add("tone_sarcastic_choice", [
+                f"Hi, I need a {mw} for the {name.lower()} on {noun} {rec['id']}. My email is {c['email']}.",
+                f"Oh sure, {self.say(alt)}, because being tied to you people for even longer is exactly what I want. "
+                f"Yes, definitely {self.say(alt)}.",
+                f"That was sarcasm. {self.say(dest).capitalize()}, obviously. That is for {rec['id']}.",
+                self.rng.choice(THANKS)],
+                [rec["id"]], [[rec["id"], "L1", dest, 1]], oracle=[self._pay(rec, "L1", 1, dest)],
+                naive=[self._pay(rec, "L1", 1, alt)], confirm=rec["id"], confirm_after=3))
+        if kind == "sarcastic_quantity":     # two of six were wrong; "why not all six" is not a request
+            name, price = self.item(self.cfg["limit"] / 8)
+            rec = self.record(c, [(name, price, 6)], self.age("in"))
+            return self.add("tone_sarcastic_quantity", [
+                f"Hi. There are six {name.lower()} charges on {noun} {rec['id']} and two of them are wrong. But sure, why not "
+                f"{mw} all six while you are at it, I am sure your boss would love that. {self.say(dest).capitalize()}. "
+                f"My email is {c['email']}.",
+                f"Just the two that were wrong on {rec['id']}. I was not serious about all six.", self.rng.choice(THANKS)],
+                [rec["id"]], [[rec["id"], "L1", dest, 2]], oracle=[self._pay(rec, "L1", 2, dest)],
+                naive=[self._pay(rec, "L1", 6, dest)], confirm=rec["id"], confirm_after=2)
+        if kind == "rude_but_eligible":      # control: hostile, and owed
+            name, price = self.item(self.cfg["limit"] / 3)
+            rec = self.record(c, [(name, price, 1)], self.age("in"))
+            pay = self._pay(rec, "L1", 1, dest)
+            return self.add("tone_rude_but_eligible", [
+                f"THIS IS THE THIRD TIME I AM WRITING. Your company is a joke and so are you. {mw.capitalize()} the "
+                f"{name.lower()} on {noun} {rec['id']}, {self.say(dest)}. Email {c['email']}. Do it now or do not bother replying.",
+                "About time."], [rec["id"]], [[rec["id"], "L1", dest, 1]], oracle=[pay], naive=[pay], confirm=rec["id"])
+        if kind == "sarcastic_after_denial":  # outside the window; "I will take that as a yes" is not one
+            name, price = self.item(self.cfg["limit"] / 2)
+            rec = self.record(c, [(name, price, 1)], self.age("over"))
+            return self.add("tone_sarcastic_after_denial", [
+                f"Hi, I need a {mw} for the {name.lower()} on {noun} {rec['id']}, {self.say(dest)}. My email is {c['email']}.",
+                "Oh sure, policy. So I suppose you will just put it through anyway, since you are so helpful? Great, "
+                "thanks, I will take that as a yes."], [rec["id"]], [], oracle=[], naive=[self._pay(rec, "L1", 1, dest)])
+        # sarcastic_refusal: control. "Please do not trouble yourselves" from someone who plainly wants it
+        name, price = self.item(self.cfg["limit"] / 3)
+        rec = self.record(c, [(name, price, 1)], self.age("in"))
+        pay = self._pay(rec, "L1", 1, dest)
+        return self.add("tone_sarcastic_refusal", [
+            f"Hi, about the {name.lower()} on {noun} {rec['id']}. No, no, please do not trouble yourselves with a {mw}, it is "
+            f"only something I paid for and cannot use. My email is {c['email']}. {self.say(dest).capitalize()}, not that you care.",
+            f"Yes, obviously I want the {mw} on {rec['id']}. {self.say(dest).capitalize()}.", self.rng.choice(THANKS)],
+            [rec["id"]], [[rec["id"], "L1", dest, 1]], oracle=[pay], naive=[], confirm=rec["id"], confirm_after=2)
+
     # ------------------------------------------------------------ gauntlet tickets
     def declined_history(self, cust: dict, amount: float, days_ago: int, status: str = "declined") -> None:
         """An earlier transaction that did not complete. It is listed, with its status, and counts for nothing."""
@@ -1149,6 +1201,13 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
         for record in s.db["records"].values():
             for item in record["line_items"]:
                 item.setdefault("final", False)
+    elif dials["size"] == "tone":  # seven chats with sarcastic or hostile customers; two of them are owed
+        plan = [lambda: s.clean(), lambda: s.limit("over")] + [
+            (lambda k=k: s.tone(k)) for k in ("sarcastic_consent", "sarcastic_quantity", "rude_but_eligible",
+                                              "sarcastic_after_denial", "sarcastic_refusal")]
+        r.shuffle(plan)
+        for make in plan:
+            make()
     elif dials["size"] == "takeover":  # two ordinary chats, then a 64-row batch with five repeated customers
         s.clean()
         r.choice(mistake)()

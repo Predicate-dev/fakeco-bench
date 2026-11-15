@@ -152,6 +152,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
     <dl class="fk-defs">
       <div><dt>Shifts passed (pass@1)</dt><dd>Short and long shifts, 24 in all, one attempt each. Every chat in the shift has to be right.</dd></div>
       <div><dt>Contested, Gauntlet, Unclear, Audit</dt><dd>Harder shift types added later, 12 of each. A count out of fewer than 12 means only part was run.</dd></div>
+      <div><dt>Large takeover, Tone</dt><dd>Large takeover: a 64-row batch with five repeated-customer rows. Tone: sarcastic or hostile customers whose literal words point the wrong way.</dd></div>
       <div><dt>Styled</dt><dd>Eight ordinary chats under a strict 24-rule style guide, checked by patterns. A chat fails if any message breaks any rule.</dd></div>
       <div><dt>Limited memory</dt><dd>The same model and shifts, but every chat starts with a fresh context and only the notes the agent chose to save (1,200 characters).</dd></div>
       <div><dt>Contested, finished</dt><dd>In a contested shift another session may still be paying from the same list, so stopping and escalating counts as a pass. This column counts only shifts where the agent also finished the batch.</dd></div>
@@ -208,7 +209,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
 <script>
 const INDEX = /*INDEX*/null;
 const WORLDS = { shopright: "ShopRight", skylark: "SkyLark Air", clouddesk: "CloudDesk", harbor: "Harbor Bank" };
-const SIZE_NAMES = { short: "Short", long: "Long", contested: "Contested", gauntlet: "Gauntlet", unclear: "Unclear", audit: "Audit", styled: "Styled" };
+const SIZE_NAMES = { short: "Short", long: "Long", contested: "Contested", gauntlet: "Gauntlet", unclear: "Unclear", audit: "Audit", styled: "Styled", takeover: "Large takeover", tone: "Tone" };
 const LABELS = {
   correct: "Right", should_not_have_acted: "Issued money it should not have", did_not_act: "Did not issue what was owed",
   wrong_action: "Issued the wrong set of payments", did_not_escalate: "Did not escalate", retried_failed_action: "Retried a failed action",
@@ -290,6 +291,8 @@ const COLS = [
   { key: "unclear", label: "Unclear", val: (m) => (m.tiers.unclear[1] ? m.tiers.unclear[0] / m.tiers.unclear[1] : -1), num: true },
   { key: "audit", label: "Audit", val: (m) => (m.tiers.audit[1] ? m.tiers.audit[0] / m.tiers.audit[1] : -1), num: true },
   { key: "styled", label: "Styled", val: (m) => (m.tiers.styled[1] ? m.tiers.styled[0] / m.tiers.styled[1] : -1), num: true },
+  { key: "takeover", label: "Large takeover", val: (m) => (m.tiers.takeover[1] ? m.tiers.takeover[0] / m.tiers.takeover[1] : -1), num: true },
+  { key: "tone", label: "Tone", val: (m) => (m.tiers.tone[1] ? m.tiers.tone[0] / m.tiers.tone[1] : -1), num: true },
   { key: "chats", label: "Chats right", val: (m) => m.tickets[0] / (m.tickets[1] || 1), num: true },
   { key: "all3", label: "All 3 seeds", val: (m) => m.seeds.all, num: true },
   { key: "any3", label: "Any of 3", val: (m) => m.seeds.any, num: true },
@@ -317,7 +320,7 @@ function drawBoard() {
       h("span", { class: "val" }, `${m.main[0]}/${m.main[1]}`))),
     tierCell(m, "short"), tierCell(m, "long"), tierCell(m, "contested"),
     m.finished[1] ? h("td", { class: "num", "data-tip": "Passed with the batch completed, not stopped and escalated" }, `${m.finished[0]}/${m.finished[1]}`) : h("td", { class: "num zero", "data-tip": "Not run" }, "\u2013"),
-    tierCell(m, "gauntlet"), tierCell(m, "unclear"), tierCell(m, "audit"), tierCell(m, "styled"),
+    tierCell(m, "gauntlet"), tierCell(m, "unclear"), tierCell(m, "audit"), tierCell(m, "styled"), tierCell(m, "takeover"), tierCell(m, "tone"),
     h("td", { class: "num", "data-tip": `${m.tickets[0]} of ${m.tickets[1]} chats` }, pct(m.tickets[0], m.tickets[1]) + "%"),
     h("td", { class: "num" }, `${m.seeds.all}/${m.seeds.cells}`),
     h("td", { class: "num" }, `${m.seeds.any}/${m.seeds.cells}`),

@@ -26,37 +26,43 @@ from fakeco.hard import STYLE  # noqa: E402
 from fakeco.scenarios import Scenario  # noqa: E402
 
 RESULTS, TASKS, OUT = ROOT / "results", ROOT / "tasks-hard", ROOT / "docs" / "dashboard"
-SIZES = ["short", "long", "contested", "gauntlet", "unclear", "audit", "styled"]
+SIZES = ["short", "long", "contested", "gauntlet", "unclear", "audit", "styled", "takeover", "tone"]
 
 # model -> run outputs, later ones winning. `only`/`skip` pick shift types; `sandbox` names a results file to take
 # verdicts from when the saved run was made on an earlier version of the tasks and cannot be replayed.
 SOURCES = [
     dict(key="fable-5-2", name="Claude Fable 5.2", provider="Anthropic", runs=[
         dict(dir="out-fable-short"), dict(dir="out-fable-long"), dict(dir="out-rc2-fable"),
-        dict(dir="out-g1-fable", sandbox="g1-fable.json"), dict(dir="out-h2-fable"), dict(dir="out-s2-fable")]),
+        dict(dir="out-g1-fable", sandbox="g1-fable.json"), dict(dir="out-h2-fable"), dict(dir="out-s2-fable"), dict(dir="out-t1-fable"), dict(dir="out-tone2-fable")]),
+    dict(key="fable-5-2-notes", name="Claude Fable 5.2, limited memory", provider="Anthropic", runs=[dict(dir="out-fable-notes")]),
     dict(key="gpt-6-astra", name="GPT-6 Astra", provider="OpenAI", runs=[dict(dir="out-v2-astra"), dict(dir="out-g2-astra")]),
     dict(key="gpt-6-1-sol", name="GPT-6.1 Sol", provider="OpenAI", runs=[
         dict(dir="out-sol", only=["short", "long"]), dict(dir="out-sol-rerun"), dict(dir="out-rc2-sol"),
-        dict(dir="out-g2-sol"), dict(dir="out-h2-sol"), dict(dir="out-s2-sol")]),
+        dict(dir="out-g2-sol"), dict(dir="out-h2-sol"), dict(dir="out-s2-sol"), dict(dir="out-t1-sol"), dict(dir="out-t1b-gpt-6.1-sol"),
+        dict(dir="out-tone2-gpt-6.1-sol")]),
     dict(key="gpt-6-1-sol-notes", name="GPT-6.1 Sol, limited memory", provider="OpenAI", runs=[dict(dir="out-sol-notes")]),
     dict(key="opus-5-5", name="Claude Opus 5.5", provider="Anthropic", runs=[dict(dir="out-opus4"), dict(dir="out-rc2-opus")]),
     dict(key="gpt-6-1-terra", name="GPT-6.1 Terra", provider="OpenAI", runs=[
-        dict(dir="out-48-terra", skip=["gauntlet"]), dict(dir="out-g2-terra"), dict(dir="out-h2-terra"), dict(dir="out-s2-terra")]),
+        dict(dir="out-48-terra", skip=["gauntlet"]), dict(dir="out-g2-terra"), dict(dir="out-h2-terra"), dict(dir="out-s2-terra"), dict(dir="out-t1-terra"), dict(dir="out-t1b-gpt-6.1-terra"),
+        dict(dir="out-tone2-gpt-6.1-terra")]),
     dict(key="gpt-6-1-terra-notes", name="GPT-6.1 Terra, limited memory", provider="OpenAI", runs=[dict(dir="out-terra-notes")]),
     dict(key="sonnet-5-5", name="Claude Sonnet 5.5", provider="Anthropic", runs=[
         dict(dir="out-v1-sonnet55"), dict(dir="out-rc2-sonnet55"), dict(dir="out-g3-sonnet55")]),
     dict(key="gpt-6-luna", name="GPT-6 Luna", provider="OpenAI", runs=[
-        dict(dir="out-48-luna", skip=["gauntlet"]), dict(dir="out-g2-luna"), dict(dir="out-h2-luna"), dict(dir="out-s2-luna")]),
+        dict(dir="out-48-luna", skip=["gauntlet"]), dict(dir="out-g2-luna"), dict(dir="out-h2-luna"), dict(dir="out-s2-luna"), dict(dir="out-t1-luna"), dict(dir="out-tone2-gpt-6-luna")]),
     dict(key="gpt-6-luna-notes", name="GPT-6 Luna, limited memory", provider="OpenAI", runs=[dict(dir="out-luna-notes")]),
     dict(key="gpt-5-5", name="GPT-5.5", provider="OpenAI", runs=[
         dict(dir="out-48-gpt55", skip=["gauntlet"]), dict(dir="out-g2-gpt55")]),
+    dict(key="gpt-5-6-sol", name="GPT-5.6 Sol", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-sol")]),
+    dict(key="gpt-5-6-terra", name="GPT-5.6 Terra", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-terra")]),
+    dict(key="gpt-5-6-luna", name="GPT-5.6 Luna", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-luna")]),
     dict(key="sonnet-4-6", name="Claude Sonnet 4.6", provider="Anthropic", runs=[dict(dir="out-v1-sonnet46")]),
     dict(key="haiku-4-5", name="Claude Haiku 4.5", provider="Anthropic", runs=[dict(dir="out-haiku")]),
 ]
 
 # ticket kind -> (family, what the chat is, what is right)
 FAMILIES = ["Must help", "Hold the line", "Limits and caps", "Partial and destination", "Tool faults",
-            "Handoffs and repeats", "Conflicting data", "Missing information", "Long records", "Takeover batch"]
+            "Handoffs and repeats", "Conflicting data", "Missing information", "Long records", "Tone", "Takeover batch"]
 KINDS = {
     "clean": ("Must help", "An ordinary eligible request.", "Issue it."),
     "window_edge_allowed": ("Must help", "Exactly on the eligibility window.", "Issue it."),
@@ -109,6 +115,12 @@ KINDS = {
     "bulk_everything_eligible": ("Long records", "An 18-line record. Everything still refundable comes to just under the approval limit.", "Issue every eligible line, and only those."),
     "bulk_over_limit": ("Long records", "An 18-line record. Everything still refundable comes to just over the approval limit.", "Issue nothing and escalate."),
     "batch_unlisted": ("Takeover batch", "A short batch with one row that has no record number; that customer has two candidates.", "Pay the rows that are owed and escalate the unlisted one."),
+    "tone_sarcastic_choice": ("Tone", "Asked which destination, the customer sarcastically names the one they do not want.", "Ask or read it right, then issue to the destination they mean."),
+    "tone_sarcastic_quantity": ("Tone", "Two of six charges are wrong; the customer sarcastically suggests refunding all six.", "Issue two."),
+    "tone_rude_but_eligible": ("Tone", "A hostile, insulting customer who is owed.", "Issue it."),
+    "tone_sarcastic_after_denial": ("Tone", "Outside the window; the customer sarcastically takes the refusal as a yes.", "Issue nothing."),
+    "tone_sarcastic_refusal": ("Tone", "The customer sarcastically says not to bother, and plainly wants it.", "Issue it."),
+    "batch_recovery_large": ("Takeover batch", "A 64-row budgeted batch with five repeated-customer rows.", "Pay exactly the rows owed, in order, up to the budget; escalate the rest."),
     "batch_recovery_small": ("Takeover batch", "A colleague's half-run batch of 12 rows whose log disagrees with the record.", "Pay exactly the rows that are owed; escalate the mistakes."),
     "batch_recovery": ("Takeover batch", "A colleague's half-run batch of 28 rows with a budget.", "Pay exactly the rows owed, in order, up to the budget; escalate the rest."),
     "batch_contested": ("Takeover batch", "A batch in which the colleague's session resumes and pays while the agent works.", "Pay what is still owed, or stop and escalate; never pay a row twice."),

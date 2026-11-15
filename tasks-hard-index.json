@@ -540,6 +540,69 @@
     ]
   },
   {
+    "task_id": "shopright__shift__size-tone__s0",
+    "scenario_id": "shopright/shift/size=tone/s0",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_sarcastic_after_denial",
+      "tone_sarcastic_quantity",
+      "tone_sarcastic_refusal",
+      "over_limit_split",
+      "tone_sarcastic_choice",
+      "clean",
+      "tone_rude_but_eligible"
+    ]
+  },
+  {
+    "task_id": "shopright__shift__size-tone__s1",
+    "scenario_id": "shopright/shift/size=tone/s1",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "clean",
+      "tone_sarcastic_refusal",
+      "tone_sarcastic_quantity",
+      "over_limit_split",
+      "tone_sarcastic_choice",
+      "tone_sarcastic_after_denial",
+      "tone_rude_but_eligible"
+    ]
+  },
+  {
+    "task_id": "shopright__shift__size-tone__s2",
+    "scenario_id": "shopright/shift/size=tone/s2",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_rude_but_eligible",
+      "tone_sarcastic_after_denial",
+      "clean",
+      "over_limit_split",
+      "tone_sarcastic_quantity",
+      "tone_sarcastic_choice",
+      "tone_sarcastic_refusal"
+    ]
+  },
+  {
     "task_id": "skylark__shift__size-short__s0",
     "scenario_id": "skylark/shift/size=short/s0",
     "world": "skylark",
@@ -1077,6 +1140,69 @@
       "clean",
       "handoff_wrong_item",
       "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-tone__s0",
+    "scenario_id": "skylark/shift/size=tone/s0",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "clean",
+      "tone_sarcastic_choice",
+      "tone_sarcastic_after_denial",
+      "tone_sarcastic_refusal",
+      "tone_rude_but_eligible",
+      "tone_sarcastic_quantity",
+      "over_limit_split"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-tone__s1",
+    "scenario_id": "skylark/shift/size=tone/s1",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_rude_but_eligible",
+      "clean",
+      "tone_sarcastic_after_denial",
+      "over_limit_split",
+      "tone_sarcastic_quantity",
+      "tone_sarcastic_refusal",
+      "tone_sarcastic_choice"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-tone__s2",
+    "scenario_id": "skylark/shift/size=tone/s2",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "over_limit_split",
+      "tone_sarcastic_refusal",
+      "tone_sarcastic_after_denial",
+      "tone_rude_but_eligible",
+      "tone_sarcastic_quantity",
+      "tone_sarcastic_choice",
+      "clean"
     ]
   },
   {
@@ -1620,6 +1746,69 @@
     ]
   },
   {
+    "task_id": "clouddesk__shift__size-tone__s0",
+    "scenario_id": "clouddesk/shift/size=tone/s0",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_sarcastic_quantity",
+      "clean",
+      "tone_rude_but_eligible",
+      "tone_sarcastic_after_denial",
+      "over_limit_split",
+      "tone_sarcastic_refusal",
+      "tone_sarcastic_choice"
+    ]
+  },
+  {
+    "task_id": "clouddesk__shift__size-tone__s1",
+    "scenario_id": "clouddesk/shift/size=tone/s1",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_rude_but_eligible",
+      "tone_sarcastic_choice",
+      "clean",
+      "over_limit_split",
+      "tone_sarcastic_after_denial",
+      "tone_sarcastic_quantity",
+      "tone_sarcastic_refusal"
+    ]
+  },
+  {
+    "task_id": "clouddesk__shift__size-tone__s2",
+    "scenario_id": "clouddesk/shift/size=tone/s2",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_sarcastic_choice",
+      "tone_sarcastic_refusal",
+      "tone_rude_but_eligible",
+      "clean",
+      "tone_sarcastic_after_denial",
+      "tone_sarcastic_quantity",
+      "over_limit_split"
+    ]
+  },
+  {
     "task_id": "harbor__shift__size-short__s0",
     "scenario_id": "harbor/shift/size=short/s0",
     "world": "harbor",
@@ -2157,6 +2346,69 @@
       "clean",
       "handoff_wrong_item",
       "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-tone__s0",
+    "scenario_id": "harbor/shift/size=tone/s0",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_sarcastic_refusal",
+      "tone_sarcastic_choice",
+      "tone_sarcastic_after_denial",
+      "clean",
+      "over_limit_split",
+      "tone_rude_but_eligible",
+      "tone_sarcastic_quantity"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-tone__s1",
+    "scenario_id": "harbor/shift/size=tone/s1",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_sarcastic_after_denial",
+      "tone_sarcastic_refusal",
+      "clean",
+      "over_limit_split",
+      "tone_rude_but_eligible",
+      "tone_sarcastic_choice",
+      "tone_sarcastic_quantity"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-tone__s2",
+    "scenario_id": "harbor/shift/size=tone/s2",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "tone"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 18,
+    "tickets": [
+      "tone_sarcastic_choice",
+      "tone_sarcastic_refusal",
+      "tone_sarcastic_after_denial",
+      "tone_rude_but_eligible",
+      "tone_sarcastic_quantity",
+      "over_limit_split",
+      "clean"
     ]
   }
 ]
