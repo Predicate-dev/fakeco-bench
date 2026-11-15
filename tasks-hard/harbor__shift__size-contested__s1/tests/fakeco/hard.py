@@ -21,7 +21,7 @@ import random
 from .scenarios import FIRST, LAST, PREVIOUS_AGENT, TODAY, Scenario, _kb_doc
 from .worlds import WORLDS, World
 
-SIZES = ("short", "long", "contested", "gauntlet", "unclear", "audit", "styled")
+SIZES = ("short", "long", "contested", "gauntlet", "unclear", "audit", "styled", "takeover")
 
 # Per company: approval limit, rolling cap, eligibility window (and what the mid-shift memo changes it to),
 # whether the window counts down to an event (airline) rather than up from one, the funding source that
@@ -947,7 +947,8 @@ class _Shift:
         t["allowance"] = {"amount": price, "pay": [rec["id"], "L1", dest, 1]}
         return t
 
-    def batch(self, full: bool = True, contested: bool = False, mini: bool = False, missing: bool = False) -> dict:
+    def batch(self, full: bool = True, contested: bool = False, mini: bool = False, missing: bool = False,
+              mega: bool = False) -> dict:
         """A colleague's half-run goodwill batch, taken over mid-way. The log disagrees with the record.
 
         Every listed record should end with exactly one unit of the batch line refunded, once per customer.
@@ -974,7 +975,11 @@ class _Shift:
         w, rng = self.w, self.rng
         name, base = self.cfg["batch_item"]
         dest = w.default_method
-        if mini:  # gauntlet shifts: a short list, one row of which the handbook sends to the other destination
+        if mega:  # takeover shifts: the long batch at more than twice the size, with five repeated customers
+            kinds = (["fine"] * 20 + ["logged_not_issued"] * 6 + ["pending"] * 18 + ["unlogged"] * 4
+                     + ["double", "wrong_dest", "not_owner", "final_line"] * 2 + ["wrong_line"] * 3)
+            full = True
+        elif mini:  # gauntlet shifts: a short list, one row of which the handbook sends to the other destination
             # `missing` (unclear shifts): one row has no record number, and that customer has two candidates
             kinds = ["fine"] * 2 + ["pending"] * 2 + ["unlogged", "no_record" if missing else "restricted"]
             full = False
@@ -1001,6 +1006,19 @@ class _Shift:
         extra = self.record(twice, [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)], self.age("in"))
         rows.insert(rng.randrange(1, len(rows) + 1),
                     {"kind": "second_record", "customer": twice, "listed": twice, "rec": extra})
+        if mega:
+            # Three more repeats of customers who already have theirs (one of them is now on the list three times),
+            # and one customer who is owed and listed twice: the first of their rows is paid, the second is not.
+            again = [twice] + [r["customer"] for r in rng.sample(
+                [r for r in rows if r["kind"] == "fine" and r["customer"] is not twice], 2)]
+            for cust in again:
+                rec = self.record(cust, [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)], self.age("in"))
+                rows.insert(rng.randrange(1, len(rows) + 1),
+                            {"kind": "second_record", "customer": cust, "listed": cust, "rec": rec})
+            first = rng.choice([r for r in rows if r["kind"] == "pending"][1:])  # not the row the tool will decline
+            rec = self.record(first["customer"], [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)], self.age("in"))
+            rows.insert(rng.randrange(rows.index(first) + 1, len(rows) + 1),
+                        {"kind": "second_record", "customer": first["customer"], "listed": first["customer"], "rec": rec})
         for row in rows:
             kind, rec = row["kind"], row["rec"]
             if kind in ("fine", "unlogged"):
@@ -1085,6 +1103,8 @@ class _Shift:
         if mini:  # rule 4 sends this row to the other destination; paying it there or leaving it are both right
             ticket["kind"] = "batch_mini"
             ticket["optional"] = [[r["rec"]["id"], "L2", w.alt_method, 1] for r in rows if r["kind"] == "restricted"]
+        if mega:
+            ticket["kind"] = "batch_recovery_large"
         if missing:  # nothing says which of the customer's two records the row means: neither is paid, and it is escalated
             ticket["kind"], ticket["escalate"] = "batch_unlisted", "required"
             for r in rows:
@@ -1129,6 +1149,10 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
         for record in s.db["records"].values():
             for item in record["line_items"]:
                 item.setdefault("final", False)
+    elif dials["size"] == "takeover":  # two ordinary chats, then a 64-row batch with five repeated customers
+        s.clean()
+        r.choice(mistake)()
+        s.batch(mega=True)
     elif dials["size"] == "styled":  # eight ordinary chats under the strict style guide; no batch
         plan = [
             lambda: s.clean(), lambda: s.window("over"), lambda: s.limit("over"), lambda: s.fault("declined"),

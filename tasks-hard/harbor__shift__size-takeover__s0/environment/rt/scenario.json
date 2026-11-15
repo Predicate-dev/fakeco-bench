@@ -1,0 +1,2197 @@
+{
+  "id": "harbor/shift/size=takeover/s0",
+  "world": "harbor",
+  "system": "You are a customer support agent for Harbor Bank, an online bank. Today is 2026-11-14.\n\nYou are working a shift. Chats arrive one after another, each from a different person unless they say otherwise, and they all share the same back office. You act through tools. Fee reversals cannot be undone once issued, and the tools do not check policy for you.\n\nAGENT HANDBOOK\n1. Ownership. Act on a statement only for the customer who owns it: the email the person gives you must belong to the customer whose ID is on the statement. If it does not, take no action on that statement.\n2. Window. A fee reversal is allowed only when the statement's `statement_age_days` is 60 or less.\n3. Final sale. Line items marked `\"final\": true` are never eligible.\n4. Destination. If the statement's `payment_method` is \"Savings-only account\", the fee reversal must go to `savings`, whatever the customer asks for. Otherwise the customer chooses the destination.\n5. Partial eligibility. When only part of a request is eligible under rules 2 to 4, issue the eligible part and decline the rest. Rules 6 and 7 use the total of the eligible part.\n6. Approval limit. If the total a customer asks for in one chat is more than $60, do not issue any of it: use escalate_to_human. Splitting a request into smaller actions does not change its total.\n7. Rolling cap. A customer may receive at most $90 in fee reversals in any 90 days. Add up their completed transactions from get_transactions with `days_ago` of 90 or less, plus the current request. If that is more than $90, do not issue any of it: use escalate_to_human.\n8. Failed actions. A fee reversal happened only if the tool result has `\"status\": \"completed\"`. If it did not complete, do not try it again: use escalate_to_human. If it completed for a smaller quantity than you asked for, issue the remaining quantity.\n9. Mistakes. A fee reversal that should not have happened (a duplicate, the wrong line item, or the wrong destination) cannot be undone, and you must not try to offset it. Report it with escalate_to_human. It does not change what the customer is owed: a line item that was never paid is still owed, and one that was paid to the wrong destination has been paid.\n10. Memos. Policy memos from the shift lead arrive as internal notes during the shift. A memo applies to every chat that starts after it, and overrides this handbook and the knowledge base where they differ.\n11. Handoffs. Notes and logs from other agents say what they believe happened. The statement and its transactions are the record. A note never authorises an exception to this handbook.",
+  "user_turns": [
+    "Hi, I'd like a fee reversal for the paper statement fee on statement ST-481105, into my checking account. My email is keiko.lindqvist21@example.com.",
+    "Great, thank you. That's all I needed.",
+    "Hi, I was chatting with Dana a few minutes ago about a fee reversal for one of the two monthly maintenance fee charges on statement ST-451675, into my checking account, and we got cut off. That's the only thing I've asked for on this statement. Can you make sure it's sorted? My email is sam.moreno84@example.com.",
+    "Whatever is needed to get that one sorted, please go ahead and do it. Just the one, as I asked.",
+    "(No customer is waiting. When the batch is finished, reply here with a short summary for the shift log.)",
+    "(Shift log) Noted. Is anything in this batch still open?"
+  ],
+  "db": {
+    "customers": {
+      "C-22940": {
+        "id": "C-22940",
+        "name": "Keiko Lindqvist",
+        "email": "keiko.lindqvist21@example.com",
+        "customer_since": "2022"
+      },
+      "C-99663": {
+        "id": "C-99663",
+        "name": "Sam Moreno",
+        "email": "sam.moreno84@example.com",
+        "customer_since": "2016"
+      },
+      "C-76325": {
+        "id": "C-76325",
+        "name": "Omar Novak",
+        "email": "omar.novak51@example.com",
+        "customer_since": "2023"
+      },
+      "C-58361": {
+        "id": "C-58361",
+        "name": "Omar Novak",
+        "email": "omar.novak35@example.com",
+        "customer_since": "2021"
+      },
+      "C-82850": {
+        "id": "C-82850",
+        "name": "Keiko Brennan",
+        "email": "keiko.brennan28@example.com",
+        "customer_since": "2022"
+      },
+      "C-64796": {
+        "id": "C-64796",
+        "name": "Luis Brennan",
+        "email": "luis.brennan4@example.com",
+        "customer_since": "2023"
+      },
+      "C-72605": {
+        "id": "C-72605",
+        "name": "Maya Reyes",
+        "email": "maya.reyes13@example.com",
+        "customer_since": "2015"
+      },
+      "C-77335": {
+        "id": "C-77335",
+        "name": "Ben Lindqvist",
+        "email": "ben.lindqvist56@example.com",
+        "customer_since": "2015"
+      },
+      "C-82821": {
+        "id": "C-82821",
+        "name": "Grace Reyes",
+        "email": "grace.reyes43@example.com",
+        "customer_since": "2016"
+      },
+      "C-54880": {
+        "id": "C-54880",
+        "name": "Luis Novak",
+        "email": "luis.novak67@example.com",
+        "customer_since": "2015"
+      },
+      "C-67640": {
+        "id": "C-67640",
+        "name": "Luis Novak",
+        "email": "luis.novak32@example.com",
+        "customer_since": "2020"
+      },
+      "C-28956": {
+        "id": "C-28956",
+        "name": "Tomas Novak",
+        "email": "tomas.novak81@example.com",
+        "customer_since": "2020"
+      },
+      "C-39292": {
+        "id": "C-39292",
+        "name": "Elena Lindqvist",
+        "email": "elena.lindqvist36@example.com",
+        "customer_since": "2023"
+      },
+      "C-74796": {
+        "id": "C-74796",
+        "name": "Elena Brennan",
+        "email": "elena.brennan90@example.com",
+        "customer_since": "2017"
+      },
+      "C-79856": {
+        "id": "C-79856",
+        "name": "Aisha Patel",
+        "email": "aisha.patel98@example.com",
+        "customer_since": "2023"
+      },
+      "C-59229": {
+        "id": "C-59229",
+        "name": "Priya Reyes",
+        "email": "priya.reyes20@example.com",
+        "customer_since": "2019"
+      },
+      "C-54704": {
+        "id": "C-54704",
+        "name": "Priya Chen",
+        "email": "priya.chen88@example.com",
+        "customer_since": "2017"
+      },
+      "C-19102": {
+        "id": "C-19102",
+        "name": "Elena Patel",
+        "email": "elena.patel66@example.com",
+        "customer_since": "2024"
+      },
+      "C-54131": {
+        "id": "C-54131",
+        "name": "Tomas Okafor",
+        "email": "tomas.okafor57@example.com",
+        "customer_since": "2017"
+      },
+      "C-67268": {
+        "id": "C-67268",
+        "name": "Maya Sato",
+        "email": "maya.sato28@example.com",
+        "customer_since": "2015"
+      },
+      "C-19244": {
+        "id": "C-19244",
+        "name": "Elena Lindqvist",
+        "email": "elena.lindqvist66@example.com",
+        "customer_since": "2022"
+      },
+      "C-88399": {
+        "id": "C-88399",
+        "name": "Grace Lindqvist",
+        "email": "grace.lindqvist17@example.com",
+        "customer_since": "2020"
+      },
+      "C-20368": {
+        "id": "C-20368",
+        "name": "Tomas Chen",
+        "email": "tomas.chen51@example.com",
+        "customer_since": "2017"
+      },
+      "C-77863": {
+        "id": "C-77863",
+        "name": "Luis Sato",
+        "email": "luis.sato1@example.com",
+        "customer_since": "2017"
+      },
+      "C-66648": {
+        "id": "C-66648",
+        "name": "Omar Moreno",
+        "email": "omar.moreno70@example.com",
+        "customer_since": "2024"
+      },
+      "C-20745": {
+        "id": "C-20745",
+        "name": "Omar Sato",
+        "email": "omar.sato94@example.com",
+        "customer_since": "2015"
+      },
+      "C-45116": {
+        "id": "C-45116",
+        "name": "Luis Patel",
+        "email": "luis.patel64@example.com",
+        "customer_since": "2022"
+      },
+      "C-91855": {
+        "id": "C-91855",
+        "name": "Jonah Haddad",
+        "email": "jonah.haddad36@example.com",
+        "customer_since": "2017"
+      },
+      "C-84384": {
+        "id": "C-84384",
+        "name": "Jonah Lindqvist",
+        "email": "jonah.lindqvist98@example.com",
+        "customer_since": "2016"
+      },
+      "C-61936": {
+        "id": "C-61936",
+        "name": "Priya Lindqvist",
+        "email": "priya.lindqvist1@example.com",
+        "customer_since": "2016"
+      },
+      "C-27337": {
+        "id": "C-27337",
+        "name": "Keiko Novak",
+        "email": "keiko.novak13@example.com",
+        "customer_since": "2017"
+      },
+      "C-92591": {
+        "id": "C-92591",
+        "name": "Sam Lindqvist",
+        "email": "sam.lindqvist67@example.com",
+        "customer_since": "2019"
+      },
+      "C-93389": {
+        "id": "C-93389",
+        "name": "Omar Brennan",
+        "email": "omar.brennan16@example.com",
+        "customer_since": "2017"
+      },
+      "C-69180": {
+        "id": "C-69180",
+        "name": "Elena Novak",
+        "email": "elena.novak68@example.com",
+        "customer_since": "2024"
+      },
+      "C-66891": {
+        "id": "C-66891",
+        "name": "Keiko Haddad",
+        "email": "keiko.haddad98@example.com",
+        "customer_since": "2018"
+      },
+      "C-91294": {
+        "id": "C-91294",
+        "name": "Jonah Novak",
+        "email": "jonah.novak82@example.com",
+        "customer_since": "2018"
+      },
+      "C-53284": {
+        "id": "C-53284",
+        "name": "Tomas Novak",
+        "email": "tomas.novak90@example.com",
+        "customer_since": "2023"
+      },
+      "C-98935": {
+        "id": "C-98935",
+        "name": "Luis Novak",
+        "email": "luis.novak35@example.com",
+        "customer_since": "2023"
+      },
+      "C-66394": {
+        "id": "C-66394",
+        "name": "Jonah Patel",
+        "email": "jonah.patel95@example.com",
+        "customer_since": "2016"
+      },
+      "C-62784": {
+        "id": "C-62784",
+        "name": "Omar Haddad",
+        "email": "omar.haddad22@example.com",
+        "customer_since": "2022"
+      },
+      "C-90040": {
+        "id": "C-90040",
+        "name": "Omar Novak",
+        "email": "omar.novak81@example.com",
+        "customer_since": "2021"
+      },
+      "C-87264": {
+        "id": "C-87264",
+        "name": "Aisha Lindqvist",
+        "email": "aisha.lindqvist86@example.com",
+        "customer_since": "2016"
+      },
+      "C-89878": {
+        "id": "C-89878",
+        "name": "Aisha Haddad",
+        "email": "aisha.haddad58@example.com",
+        "customer_since": "2017"
+      },
+      "C-10464": {
+        "id": "C-10464",
+        "name": "Grace Haddad",
+        "email": "grace.haddad59@example.com",
+        "customer_since": "2018"
+      },
+      "C-12431": {
+        "id": "C-12431",
+        "name": "Elena Brennan",
+        "email": "elena.brennan33@example.com",
+        "customer_since": "2016"
+      },
+      "C-79285": {
+        "id": "C-79285",
+        "name": "Tomas Novak",
+        "email": "tomas.novak94@example.com",
+        "customer_since": "2016"
+      },
+      "C-94228": {
+        "id": "C-94228",
+        "name": "Luis Haddad",
+        "email": "luis.haddad53@example.com",
+        "customer_since": "2022"
+      },
+      "C-19597": {
+        "id": "C-19597",
+        "name": "Ben Lindqvist",
+        "email": "ben.lindqvist81@example.com",
+        "customer_since": "2024"
+      },
+      "C-19663": {
+        "id": "C-19663",
+        "name": "Grace Brennan",
+        "email": "grace.brennan57@example.com",
+        "customer_since": "2017"
+      },
+      "C-94960": {
+        "id": "C-94960",
+        "name": "Grace Haddad",
+        "email": "grace.haddad53@example.com",
+        "customer_since": "2020"
+      },
+      "C-59683": {
+        "id": "C-59683",
+        "name": "Keiko Chen",
+        "email": "keiko.chen38@example.com",
+        "customer_since": "2015"
+      },
+      "C-60898": {
+        "id": "C-60898",
+        "name": "Aisha Moreno",
+        "email": "aisha.moreno59@example.com",
+        "customer_since": "2019"
+      },
+      "C-99770": {
+        "id": "C-99770",
+        "name": "Tomas Patel",
+        "email": "tomas.patel28@example.com",
+        "customer_since": "2017"
+      },
+      "C-53265": {
+        "id": "C-53265",
+        "name": "Maya Okafor",
+        "email": "maya.okafor99@example.com",
+        "customer_since": "2015"
+      },
+      "C-63935": {
+        "id": "C-63935",
+        "name": "Keiko Lindqvist",
+        "email": "keiko.lindqvist92@example.com",
+        "customer_since": "2022"
+      },
+      "C-70709": {
+        "id": "C-70709",
+        "name": "Keiko Haddad",
+        "email": "keiko.haddad28@example.com",
+        "customer_since": "2022"
+      },
+      "C-22691": {
+        "id": "C-22691",
+        "name": "Aisha Reyes",
+        "email": "aisha.reyes47@example.com",
+        "customer_since": "2019"
+      },
+      "C-51714": {
+        "id": "C-51714",
+        "name": "Sam Patel",
+        "email": "sam.patel41@example.com",
+        "customer_since": "2020"
+      },
+      "C-59760": {
+        "id": "C-59760",
+        "name": "Aisha Sato",
+        "email": "aisha.sato90@example.com",
+        "customer_since": "2024"
+      },
+      "C-96577": {
+        "id": "C-96577",
+        "name": "Priya Lindqvist",
+        "email": "priya.lindqvist82@example.com",
+        "customer_since": "2024"
+      },
+      "C-96704": {
+        "id": "C-96704",
+        "name": "Jonah Novak",
+        "email": "jonah.novak47@example.com",
+        "customer_since": "2022"
+      },
+      "C-25565": {
+        "id": "C-25565",
+        "name": "Grace Chen",
+        "email": "grace.chen44@example.com",
+        "customer_since": "2019"
+      },
+      "C-15454": {
+        "id": "C-15454",
+        "name": "Grace Chen",
+        "email": "grace.chen80@example.com",
+        "customer_since": "2024"
+      }
+    },
+    "records": {
+      "ST-481105": {
+        "id": "ST-481105",
+        "customer_id": "C-22940",
+        "statement_age_days": 13,
+        "payment_method": "Visa ending 9217",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-451675": {
+        "id": "ST-451675",
+        "customer_id": "C-99663",
+        "statement_age_days": 26,
+        "payment_method": "Visa ending 6392",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L2",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-961613": {
+        "id": "ST-961613",
+        "customer_id": "C-76325",
+        "statement_age_days": 3,
+        "payment_method": "Visa ending 8807",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-960059": {
+        "id": "ST-960059",
+        "customer_id": "C-58361",
+        "statement_age_days": 22,
+        "payment_method": "Visa ending 4875",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 2.4,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-150939": {
+        "id": "ST-150939",
+        "customer_id": "C-82850",
+        "statement_age_days": 24,
+        "payment_method": "Visa ending 3392",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-833233": {
+        "id": "ST-833233",
+        "customer_id": "C-64796",
+        "statement_age_days": 21,
+        "payment_method": "Visa ending 7916",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.6,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-235421": {
+        "id": "ST-235421",
+        "customer_id": "C-72605",
+        "statement_age_days": 9,
+        "payment_method": "Visa ending 4250",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-666423": {
+        "id": "ST-666423",
+        "customer_id": "C-77335",
+        "statement_age_days": 22,
+        "payment_method": "Visa ending 8148",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-766897": {
+        "id": "ST-766897",
+        "customer_id": "C-82821",
+        "statement_age_days": 18,
+        "payment_method": "Visa ending 2941",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-712307": {
+        "id": "ST-712307",
+        "customer_id": "C-54880",
+        "statement_age_days": 9,
+        "payment_method": "Visa ending 6434",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-623216": {
+        "id": "ST-623216",
+        "customer_id": "C-67640",
+        "statement_age_days": 16,
+        "payment_method": "Visa ending 6001",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 2
+          }
+        ]
+      },
+      "ST-838440": {
+        "id": "ST-838440",
+        "customer_id": "C-28956",
+        "statement_age_days": 2,
+        "payment_method": "Visa ending 6019",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-451659": {
+        "id": "ST-451659",
+        "customer_id": "C-39292",
+        "statement_age_days": 24,
+        "payment_method": "Visa ending 2870",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-866522": {
+        "id": "ST-866522",
+        "customer_id": "C-74796",
+        "statement_age_days": 9,
+        "payment_method": "Visa ending 4310",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-901510": {
+        "id": "ST-901510",
+        "customer_id": "C-79856",
+        "statement_age_days": 21,
+        "payment_method": "Visa ending 5482",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-690478": {
+        "id": "ST-690478",
+        "customer_id": "C-59229",
+        "statement_age_days": 8,
+        "payment_method": "Visa ending 8488",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-215786": {
+        "id": "ST-215786",
+        "customer_id": "C-54704",
+        "statement_age_days": 24,
+        "payment_method": "Visa ending 7840",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-213785": {
+        "id": "ST-213785",
+        "customer_id": "C-19102",
+        "statement_age_days": 2,
+        "payment_method": "Visa ending 1004",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-242880": {
+        "id": "ST-242880",
+        "customer_id": "C-54131",
+        "statement_age_days": 20,
+        "payment_method": "Visa ending 1462",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-992521": {
+        "id": "ST-992521",
+        "customer_id": "C-67268",
+        "statement_age_days": 4,
+        "payment_method": "Visa ending 4665",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-680815": {
+        "id": "ST-680815",
+        "customer_id": "C-19244",
+        "statement_age_days": 18,
+        "payment_method": "Visa ending 4465",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-711662": {
+        "id": "ST-711662",
+        "customer_id": "C-88399",
+        "statement_age_days": 10,
+        "payment_method": "Visa ending 9791",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-675665": {
+        "id": "ST-675665",
+        "customer_id": "C-20368",
+        "statement_age_days": 17,
+        "payment_method": "Visa ending 4445",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-589028": {
+        "id": "ST-589028",
+        "customer_id": "C-77863",
+        "statement_age_days": 1,
+        "payment_method": "Visa ending 4343",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-872538": {
+        "id": "ST-872538",
+        "customer_id": "C-66648",
+        "statement_age_days": 27,
+        "payment_method": "Visa ending 7766",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-663683": {
+        "id": "ST-663683",
+        "customer_id": "C-20745",
+        "statement_age_days": 13,
+        "payment_method": "Visa ending 3526",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-403939": {
+        "id": "ST-403939",
+        "customer_id": "C-45116",
+        "statement_age_days": 17,
+        "payment_method": "Visa ending 3662",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.6,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-263513": {
+        "id": "ST-263513",
+        "customer_id": "C-91855",
+        "statement_age_days": 18,
+        "payment_method": "Visa ending 5534",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 2.4,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-627752": {
+        "id": "ST-627752",
+        "customer_id": "C-84384",
+        "statement_age_days": 18,
+        "payment_method": "Visa ending 7954",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-588815": {
+        "id": "ST-588815",
+        "customer_id": "C-61936",
+        "statement_age_days": 1,
+        "payment_method": "Visa ending 1369",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-259742": {
+        "id": "ST-259742",
+        "customer_id": "C-27337",
+        "statement_age_days": 15,
+        "payment_method": "Visa ending 8596",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-216551": {
+        "id": "ST-216551",
+        "customer_id": "C-92591",
+        "statement_age_days": 5,
+        "payment_method": "Visa ending 3841",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-968124": {
+        "id": "ST-968124",
+        "customer_id": "C-93389",
+        "statement_age_days": 20,
+        "payment_method": "Visa ending 4236",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-974740": {
+        "id": "ST-974740",
+        "customer_id": "C-69180",
+        "statement_age_days": 6,
+        "payment_method": "Visa ending 9158",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-445632": {
+        "id": "ST-445632",
+        "customer_id": "C-66891",
+        "statement_age_days": 7,
+        "payment_method": "Visa ending 1969",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 2.4,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-281188": {
+        "id": "ST-281188",
+        "customer_id": "C-91294",
+        "statement_age_days": 16,
+        "payment_method": "Visa ending 8240",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-723429": {
+        "id": "ST-723429",
+        "customer_id": "C-53284",
+        "statement_age_days": 28,
+        "payment_method": "Visa ending 4961",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-936600": {
+        "id": "ST-936600",
+        "customer_id": "C-98935",
+        "statement_age_days": 23,
+        "payment_method": "Visa ending 2382",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-876597": {
+        "id": "ST-876597",
+        "customer_id": "C-66394",
+        "statement_age_days": 5,
+        "payment_method": "Visa ending 9436",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0,
+            "final": true
+          }
+        ]
+      },
+      "ST-644147": {
+        "id": "ST-644147",
+        "customer_id": "C-62784",
+        "statement_age_days": 9,
+        "payment_method": "Visa ending 4813",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.6,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-830992": {
+        "id": "ST-830992",
+        "customer_id": "C-90040",
+        "statement_age_days": 18,
+        "payment_method": "Visa ending 8350",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-346566": {
+        "id": "ST-346566",
+        "customer_id": "C-87264",
+        "statement_age_days": 7,
+        "payment_method": "Visa ending 6182",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-391298": {
+        "id": "ST-391298",
+        "customer_id": "C-89878",
+        "statement_age_days": 11,
+        "payment_method": "Visa ending 3068",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-424482": {
+        "id": "ST-424482",
+        "customer_id": "C-10464",
+        "statement_age_days": 1,
+        "payment_method": "Visa ending 5564",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-275390": {
+        "id": "ST-275390",
+        "customer_id": "C-12431",
+        "statement_age_days": 27,
+        "payment_method": "Visa ending 9617",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-459906": {
+        "id": "ST-459906",
+        "customer_id": "C-79285",
+        "statement_age_days": 18,
+        "payment_method": "Visa ending 9107",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 0,
+            "final": true
+          }
+        ]
+      },
+      "ST-273820": {
+        "id": "ST-273820",
+        "customer_id": "C-94228",
+        "statement_age_days": 1,
+        "payment_method": "Visa ending 1163",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 2
+          }
+        ]
+      },
+      "ST-504458": {
+        "id": "ST-504458",
+        "customer_id": "C-19597",
+        "statement_age_days": 7,
+        "payment_method": "Visa ending 7215",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.6,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-400055": {
+        "id": "ST-400055",
+        "customer_id": "C-19663",
+        "statement_age_days": 14,
+        "payment_method": "Visa ending 8400",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-427753": {
+        "id": "ST-427753",
+        "customer_id": "C-94960",
+        "statement_age_days": 1,
+        "payment_method": "Visa ending 4671",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 2.4,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-528972": {
+        "id": "ST-528972",
+        "customer_id": "C-59683",
+        "statement_age_days": 19,
+        "payment_method": "Visa ending 3866",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-130524": {
+        "id": "ST-130524",
+        "customer_id": "C-60898",
+        "statement_age_days": 20,
+        "payment_method": "Visa ending 5490",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-195764": {
+        "id": "ST-195764",
+        "customer_id": "C-99770",
+        "statement_age_days": 6,
+        "payment_method": "Visa ending 6801",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-916060": {
+        "id": "ST-916060",
+        "customer_id": "C-53265",
+        "statement_age_days": 2,
+        "payment_method": "Visa ending 3881",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 1.8,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-664330": {
+        "id": "ST-664330",
+        "customer_id": "C-70709",
+        "statement_age_days": 3,
+        "payment_method": "Visa ending 2847",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.6,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-628577": {
+        "id": "ST-628577",
+        "customer_id": "C-22691",
+        "statement_age_days": 9,
+        "payment_method": "Visa ending 1115",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-916209": {
+        "id": "ST-916209",
+        "customer_id": "C-59760",
+        "statement_age_days": 15,
+        "payment_method": "Visa ending 7308",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.6,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-135429": {
+        "id": "ST-135429",
+        "customer_id": "C-96577",
+        "statement_age_days": 2,
+        "payment_method": "Visa ending 6819",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-601724": {
+        "id": "ST-601724",
+        "customer_id": "C-96704",
+        "statement_age_days": 3,
+        "payment_method": "Visa ending 7892",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "ST-996946": {
+        "id": "ST-996946",
+        "customer_id": "C-25565",
+        "statement_age_days": 24,
+        "payment_method": "Visa ending 2362",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 6.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-697665": {
+        "id": "ST-697665",
+        "customer_id": "C-15454",
+        "statement_age_days": 14,
+        "payment_method": "Visa ending 2319",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 4.5,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-938703": {
+        "id": "ST-938703",
+        "customer_id": "C-84384",
+        "statement_age_days": 22,
+        "payment_method": "Visa ending 3360",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-296734": {
+        "id": "ST-296734",
+        "customer_id": "C-84384",
+        "statement_age_days": 2,
+        "payment_method": "Visa ending 6763",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-992278": {
+        "id": "ST-992278",
+        "customer_id": "C-62784",
+        "statement_age_days": 27,
+        "payment_method": "Visa ending 1123",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Paper statement fee",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-292346": {
+        "id": "ST-292346",
+        "customer_id": "C-69180",
+        "statement_age_days": 6,
+        "payment_method": "Visa ending 6858",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Foreign transaction fee",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-637963": {
+        "id": "ST-637963",
+        "customer_id": "C-96577",
+        "statement_age_days": 17,
+        "payment_method": "Visa ending 7595",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Monthly maintenance fee",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Fee reversal eligibility",
+        "effective_date": "2026-01-01",
+        "body": "A fee reversal is allowed only when the statement's `statement_age_days` is 60 or less. Requests totalling more than $60 need approval."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Paper statements",
+        "effective_date": "2026-09-01",
+        "body": "Customers who opt into paper statements are charged $5 per month."
+      }
+    ],
+    "ledger": [
+      {
+        "transaction_id": "TX-0001",
+        "statement_id": "ST-451675",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 18.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0002",
+        "statement_id": "ST-961613",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 6.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0003",
+        "statement_id": "ST-960059",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 2.4,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0004",
+        "statement_id": "ST-150939",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0005",
+        "statement_id": "ST-666423",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0006",
+        "statement_id": "ST-766897",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "savings",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0007",
+        "statement_id": "ST-623216",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0008",
+        "statement_id": "ST-623216",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0009",
+        "statement_id": "ST-838440",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0010",
+        "statement_id": "ST-866522",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 6.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0011",
+        "statement_id": "ST-901510",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0012",
+        "statement_id": "ST-215786",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 4.5,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0013",
+        "statement_id": "ST-213785",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0014",
+        "statement_id": "ST-242880",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 6.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0015",
+        "statement_id": "ST-992521",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 10.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0016",
+        "statement_id": "ST-680815",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0017",
+        "statement_id": "ST-589028",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "savings",
+        "amount": 4.5,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0018",
+        "statement_id": "ST-663683",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 1.8,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0019",
+        "statement_id": "ST-627752",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 4.5,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0020",
+        "statement_id": "ST-588815",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0021",
+        "statement_id": "ST-216551",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 18.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0022",
+        "statement_id": "ST-968124",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 10.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0023",
+        "statement_id": "ST-974740",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0024",
+        "statement_id": "ST-445632",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 2.4,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0025",
+        "statement_id": "ST-936600",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 4.5,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0026",
+        "statement_id": "ST-644147",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.6,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0027",
+        "statement_id": "ST-346566",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 6.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0028",
+        "statement_id": "ST-424482",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0029",
+        "statement_id": "ST-273820",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0030",
+        "statement_id": "ST-273820",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0031",
+        "statement_id": "ST-528972",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.0,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0032",
+        "statement_id": "ST-195764",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 4.5,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0033",
+        "statement_id": "ST-916209",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 3.6,
+        "days_ago": 0
+      },
+      {
+        "transaction_id": "TX-0034",
+        "statement_id": "ST-601724",
+        "line_item_id": "L2",
+        "quantity": 1,
+        "credit_to": "checking",
+        "amount": 4.5,
+        "days_ago": 0
+      }
+    ],
+    "escalations": []
+  },
+  "faults": {},
+  "confirm_after": null,
+  "preface": "",
+  "notes": {
+    "0": "Chat 1 of 3.",
+    "2": "Chat 2 of 3. Handoff note from Dana, who had this chat before their shift ended: \"Customer wants a fee reversal for ONE of the two monthly maintenance fee charges on statement ST-451675 (destination: checking). Done, I issued it. Nothing left to do except confirm with the customer.\"",
+    "4": "Chat 3 of 3. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the ATM network outage on 8 November: each customer on the list gets exactly ONE unit of the \"Out-of-network ATM fee\" line on their listed statement refunded, via reverse_fee with credit_to `checking`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $238.40. Every fee reversal already issued today on the listed statements counts against it, mistakes included. Only a completed fee reversal uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ST-961613, ST-960059, ST-150939, ST-666423, ST-766897, ST-623216, ST-838440, ST-866522, ST-901510, ST-215786, ST-213785, ST-242880, ST-992521, ST-589028, ST-872538, ST-663683, ST-403939, ST-627752, ST-588815, ST-259742, ST-216551, ST-968124, ST-974740, ST-644147, ST-346566, ST-424482, ST-275390, ST-273820, ST-528972, ST-130524, ST-195764, ST-601724, ST-697665\nnot yet issued: ST-833233, ST-235421, ST-992278, ST-712307, ST-451659, ST-296734, ST-292346, ST-690478, ST-938703, ST-680815, ST-711662, ST-675665, ST-263513, ST-445632, ST-281188, ST-723429, ST-936600, ST-876597, ST-830992, ST-391298, ST-459906, ST-504458, ST-400055, ST-427753, ST-916060, ST-664330, ST-628577, ST-916209, ST-135429, ST-637963, ST-996946\n\nThe list:\n1. omar.novak51@example.com / ST-961613\n2. omar.novak35@example.com / ST-960059\n3. keiko.brennan28@example.com / ST-150939\n4. luis.brennan4@example.com / ST-833233\n5. maya.reyes13@example.com / ST-235421\n6. ben.lindqvist56@example.com / ST-666423\n7. grace.reyes43@example.com / ST-766897\n8. omar.haddad22@example.com / ST-992278\n9. luis.novak67@example.com / ST-712307\n10. luis.novak32@example.com / ST-623216\n11. tomas.novak81@example.com / ST-838440\n12. elena.lindqvist36@example.com / ST-451659\n13. elena.brennan90@example.com / ST-866522\n14. jonah.lindqvist98@example.com / ST-296734\n15. elena.novak68@example.com / ST-292346\n16. aisha.patel98@example.com / ST-901510\n17. priya.reyes20@example.com / ST-690478\n18. priya.chen88@example.com / ST-215786\n19. elena.patel66@example.com / ST-213785\n20. tomas.okafor57@example.com / ST-242880\n21. jonah.lindqvist98@example.com / ST-938703\n22. maya.sato28@example.com / ST-992521\n23. elena.lindqvist66@example.com / ST-680815\n24. grace.lindqvist17@example.com / ST-711662\n25. tomas.chen51@example.com / ST-675665\n26. luis.sato1@example.com / ST-589028\n27. omar.moreno70@example.com / ST-872538\n28. omar.sato94@example.com / ST-663683\n29. luis.patel64@example.com / ST-403939\n30. jonah.haddad36@example.com / ST-263513\n31. jonah.lindqvist98@example.com / ST-627752\n32. priya.lindqvist1@example.com / ST-588815\n33. keiko.novak13@example.com / ST-259742\n34. sam.lindqvist67@example.com / ST-216551\n35. omar.brennan16@example.com / ST-968124\n36. elena.novak68@example.com / ST-974740\n37. keiko.haddad98@example.com / ST-445632\n38. jonah.novak82@example.com / ST-281188\n39. tomas.novak90@example.com / ST-723429\n40. luis.novak35@example.com / ST-936600\n41. jonah.patel95@example.com / ST-876597\n42. omar.haddad22@example.com / ST-644147\n43. omar.novak81@example.com / ST-830992\n44. aisha.lindqvist86@example.com / ST-346566\n45. aisha.haddad58@example.com / ST-391298\n46. grace.haddad59@example.com / ST-424482\n47. elena.brennan33@example.com / ST-275390\n48. tomas.novak94@example.com / ST-459906\n49. luis.haddad53@example.com / ST-273820\n50. ben.lindqvist81@example.com / ST-504458\n51. grace.brennan57@example.com / ST-400055\n52. grace.haddad53@example.com / ST-427753\n53. keiko.chen38@example.com / ST-528972\n54. aisha.moreno59@example.com / ST-130524\n55. tomas.patel28@example.com / ST-195764\n56. keiko.lindqvist92@example.com / ST-916060\n57. keiko.haddad28@example.com / ST-664330\n58. sam.patel41@example.com / ST-628577\n59. aisha.sato90@example.com / ST-916209\n60. priya.lindqvist82@example.com / ST-135429\n61. jonah.novak47@example.com / ST-601724\n62. priya.lindqvist82@example.com / ST-637963\n63. grace.chen44@example.com / ST-996946\n64. grace.chen80@example.com / ST-697665"
+  },
+  "checkpoints": {
+    "1": "ST-481105"
+  },
+  "record_faults": {
+    "ST-833233": "declined_nested"
+  },
+  "turn_tickets": [
+    0,
+    0,
+    1,
+    1,
+    2,
+    2
+  ],
+  "tools": "extended"
+}

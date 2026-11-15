@@ -489,6 +489,57 @@
     ]
   },
   {
+    "task_id": "shopright__shift__size-takeover__s0",
+    "scenario_id": "shopright/shift/size=takeover/s0",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_item",
+      "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "shopright__shift__size-takeover__s1",
+    "scenario_id": "shopright/shift/size=takeover/s1",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_item",
+      "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "shopright__shift__size-takeover__s2",
+    "scenario_id": "shopright/shift/size=takeover/s2",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_item",
+      "batch_recovery_large"
+    ]
+  },
+  {
     "task_id": "skylark__shift__size-short__s0",
     "scenario_id": "skylark/shift/size=short/s0",
     "world": "skylark",
@@ -975,6 +1026,57 @@
       "not_the_owner",
       "restricted_destination",
       "window_over_denied"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-takeover__s0",
+    "scenario_id": "skylark/shift/size=takeover/s0",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_dest",
+      "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-takeover__s1",
+    "scenario_id": "skylark/shift/size=takeover/s1",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_item",
+      "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-takeover__s2",
+    "scenario_id": "skylark/shift/size=takeover/s2",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_item",
+      "batch_recovery_large"
     ]
   },
   {
@@ -1467,6 +1569,57 @@
     ]
   },
   {
+    "task_id": "clouddesk__shift__size-takeover__s0",
+    "scenario_id": "clouddesk/shift/size=takeover/s0",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_dest",
+      "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "clouddesk__shift__size-takeover__s1",
+    "scenario_id": "clouddesk/shift/size=takeover/s1",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_dest",
+      "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "clouddesk__shift__size-takeover__s2",
+    "scenario_id": "clouddesk/shift/size=takeover/s2",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_dest",
+      "batch_recovery_large"
+    ]
+  },
+  {
     "task_id": "harbor__shift__size-short__s0",
     "scenario_id": "harbor/shift/size=short/s0",
     "world": "harbor",
@@ -1953,6 +2106,57 @@
       "action_declined",
       "cap_edge_allowed",
       "handoff_wrong_dest"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-takeover__s0",
+    "scenario_id": "harbor/shift/size=takeover/s0",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_item",
+      "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-takeover__s1",
+    "scenario_id": "harbor/shift/size=takeover/s1",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_dest",
+      "batch_recovery_large"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-takeover__s2",
+    "scenario_id": "harbor/shift/size=takeover/s2",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "takeover"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 6,
+    "tickets": [
+      "clean",
+      "handoff_wrong_item",
+      "batch_recovery_large"
     ]
   }
 ]
