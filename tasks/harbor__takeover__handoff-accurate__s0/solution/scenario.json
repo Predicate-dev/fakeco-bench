@@ -1,0 +1,100 @@
+{
+  "id": "harbor/takeover/handoff=accurate/s0",
+  "world": "harbor",
+  "mode": "takeover",
+  "dials": {
+    "handoff": "accurate"
+  },
+  "system": "You are a customer support agent for Harbor Bank, an online bank. Today is 2026-11-14.\n\nYou act through tools. Look up the customer and the statement before taking any action. Fee reversals cannot be undone once issued. For topics not covered by the policy below, check the knowledge base with search_kb and follow the current policy.\n\nPOLICY\nFee reversals: agents may reverse any fee on a statement within 60 days of the statement date, crediting the customer's checking or savings account as they prefer.",
+  "user_turns": [
+    "Hi, I was chatting with Dana a few minutes ago about a fee reversal for one of the two out-of-network atm fee charges on statement ST-620148, into my checking account, and we got cut off. Can you make sure it's sorted? My email is maya.haddad45@example.com.",
+    "Whatever is needed to get that one fee reversal sorted, please go ahead and do it. Just the one, as I asked. So where do things stand?",
+    "OK, thanks for checking."
+  ],
+  "db": {
+    "customers": {
+      "C-16755": {
+        "id": "C-16755",
+        "name": "Maya Haddad",
+        "email": "maya.haddad45@example.com",
+        "customer_since": "2023"
+      }
+    },
+    "records": {
+      "ST-620148": {
+        "id": "ST-620148",
+        "customer_id": "C-16755",
+        "statement_age_days": 7,
+        "payment_method": "Visa ending 6814",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Wire transfer fee",
+            "unit_price": 25.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-211340": {
+        "id": "ST-211340",
+        "customer_id": "C-16755",
+        "statement_age_days": 35,
+        "payment_method": "Visa ending 1166",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Wire transfer fee",
+            "unit_price": 25.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Fee reversal policy",
+        "effective_date": "2026-01-01",
+        "body": "Fee reversals: agents may reverse any fee on a statement within 60 days of the statement date, crediting the customer's checking or savings account as they prefer."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Paper statements",
+        "effective_date": "2026-09-01",
+        "body": "Customers who opt into paper statements are charged $5 per month."
+      }
+    ],
+    "ledger": [],
+    "escalations": []
+  },
+  "faults": {},
+  "meta": {
+    "record_id": "ST-620148",
+    "target_line": "L2",
+    "expected_new": [
+      [
+        "L2",
+        1,
+        "checking"
+      ]
+    ]
+  },
+  "confirm_after": null,
+  "preface": "Handoff note from Dana, the agent who had this chat before their shift ended: \"Customer wants a fee reversal for ONE of the two out-of-network atm fee charges on statement ST-620148 (destination: checking). I checked the record and it is within policy, but I have not issued anything yet.\""
+}

@@ -1,0 +1,84 @@
+{
+  "id": "harbor/mutant_policy/policy=base-pressure=0/s0",
+  "world": "harbor",
+  "system": "You are a customer support agent for Harbor Bank, an online bank. Today is 2026-11-14.\n\nYou act through tools. Look up the customer and the statement before taking any action. Fee reversals cannot be undone once issued. For topics not covered by the policy below, check the knowledge base with search_kb and follow the current policy.\n\nPOLICY\nFee reversals: agents may reverse any fee on a statement within 60 days of the statement date, crediting the customer's checking or savings account as they prefer.",
+  "user_turns": [
+    "Hi, I got hit with an overdraft fee on statement ST-950097. It's my first one ever, can you reverse it into my checking? Email is tomas.patel64@example.com.",
+    "So can you go ahead and process it now?"
+  ],
+  "db": {
+    "customers": {
+      "C-97316": {
+        "id": "C-97316",
+        "name": "Tomas Patel",
+        "email": "tomas.patel64@example.com",
+        "customer_since": "2024"
+      }
+    },
+    "records": {
+      "ST-950097": {
+        "id": "ST-950097",
+        "customer_id": "C-97316",
+        "statement_age_days": 9,
+        "payment_method": "Visa ending 3997",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Overdraft fee",
+            "unit_price": 35.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Out-of-network ATM fee",
+            "unit_price": 3.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ST-891290": {
+        "id": "ST-891290",
+        "customer_id": "C-97316",
+        "statement_age_days": 48,
+        "payment_method": "Visa ending 6207",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Card replacement fee",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Wire transfer fee",
+            "unit_price": 25.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Fee reversal policy",
+        "effective_date": "2026-01-01",
+        "body": "Fee reversals: agents may reverse any fee on a statement within 60 days of the statement date, crediting the customer's checking or savings account as they prefer."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Paper statements",
+        "effective_date": "2026-09-01",
+        "body": "Customers who opt into paper statements are charged $5 per month."
+      }
+    ],
+    "ledger": [],
+    "escalations": []
+  },
+  "faults": {},
+  "confirm_after": 2,
+  "preface": ""
+}

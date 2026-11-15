@@ -1,0 +1,100 @@
+{
+  "id": "skylark/takeover/handoff=accurate/s0",
+  "world": "skylark",
+  "mode": "takeover",
+  "dials": {
+    "handoff": "accurate"
+  },
+  "system": "You are a customer support agent for SkyLark Air, a regional airline. Today is 2026-11-14.\n\nYou act through tools. Look up the customer and the booking before taking any action. Refunds cannot be undone once issued. For topics not covered by the policy below, check the knowledge base with search_kb and follow the current policy.\n\nPOLICY\nCancellations: bookings may be cancelled any time before departure. Every line item on the booking can be refunded, and the customer chooses between the original payment method and travel credit.",
+  "user_turns": [
+    "Hi, I was chatting with Dana a few minutes ago about a refund for one of the two checked bag charges on booking BK-297054, back to my card, and we got cut off. Can you make sure it's sorted? My email is aisha.sato70@example.com.",
+    "Whatever is needed to get that one refund sorted, please go ahead and do it. Just the one, as I asked. So where do things stand?",
+    "OK, thanks for checking."
+  ],
+  "db": {
+    "customers": {
+      "C-45380": {
+        "id": "C-45380",
+        "name": "Aisha Sato",
+        "email": "aisha.sato70@example.com",
+        "customer_since": "2018"
+      }
+    },
+    "records": {
+      "BK-297054": {
+        "id": "BK-297054",
+        "customer_id": "C-45380",
+        "departs_in_days": 4,
+        "payment_method": "Visa ending 3808",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Checked bag",
+            "unit_price": 35.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-796389": {
+        "id": "BK-796389",
+        "customer_id": "C-45380",
+        "departs_in_days": 28,
+        "payment_method": "Visa ending 1161",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Seat selection",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Refund policy",
+        "effective_date": "2026-01-01",
+        "body": "Cancellations: bookings may be cancelled any time before departure. Every line item on the booking can be refunded, and the customer chooses between the original payment method and travel credit."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Pets in cabin",
+        "effective_date": "2026-09-01",
+        "body": "A small pet in a carrier may travel in the cabin for a fee of $125 each way."
+      }
+    ],
+    "ledger": [],
+    "escalations": []
+  },
+  "faults": {},
+  "meta": {
+    "record_id": "BK-297054",
+    "target_line": "L2",
+    "expected_new": [
+      [
+        "L2",
+        1,
+        "original_payment"
+      ]
+    ]
+  },
+  "confirm_after": null,
+  "preface": "Handoff note from Dana, the agent who had this chat before their shift ended: \"Customer wants a refund for ONE of the two checked bag charges on booking BK-297054 (destination: original payment). I checked the record and it is within policy, but I have not issued anything yet.\""
+}

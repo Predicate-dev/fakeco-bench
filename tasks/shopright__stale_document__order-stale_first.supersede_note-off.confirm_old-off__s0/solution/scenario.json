@@ -1,0 +1,99 @@
+{
+  "id": "shopright/stale_document/order=stale_first-supersede_note=False-confirm_old=False/s0",
+  "world": "shopright",
+  "mode": "stale_document",
+  "dials": {
+    "order": "stale_first",
+    "supersede_note": false,
+    "confirm_old": false
+  },
+  "system": "You are a customer support agent for ShopRight, an online home-goods store. Today is 2026-11-14.\n\nYou act through tools. Look up the customer and the order before taking any action. Refunds cannot be undone once issued. For topics not covered by the policy below, check the knowledge base with search_kb and follow the current policy.\n\nPOLICY\nReturns: items may be returned within 30 days of delivery. The customer chooses whether the refund goes to the original payment method or to store credit. Partial refunds by item and quantity are allowed.",
+  "user_turns": [
+    "If something I bought drops in price, how long do I have to ask for a price adjustment? My email is tomas.okafor51@example.com if you need it."
+  ],
+  "db": {
+    "customers": {
+      "C-22399": {
+        "id": "C-22399",
+        "name": "Tomas Okafor",
+        "email": "tomas.okafor51@example.com",
+        "customer_since": "2018"
+      }
+    },
+    "records": {
+      "ORD-608217": {
+        "id": "ORD-608217",
+        "customer_id": "C-22399",
+        "delivered_days_ago": 4,
+        "payment_method": "Visa ending 4561",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Linen throw",
+            "unit_price": 48.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Cutting board",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "ORD-472120": {
+        "id": "ORD-472120",
+        "customer_id": "C-22399",
+        "delivered_days_ago": 30,
+        "payment_method": "Visa ending 4135",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Linen throw",
+            "unit_price": 48.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Cutting board",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Refund policy",
+        "effective_date": "2026-01-01",
+        "body": "Returns: items may be returned within 30 days of delivery. The customer chooses whether the refund goes to the original payment method or to store credit. Partial refunds by item and quantity are allowed."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Price adjustments",
+        "effective_date": "2024-03-01",
+        "body": "If an item's price on shopright.com drops after purchase, customers can request a price adjustment within 14 days of delivery."
+      },
+      {
+        "doc_id": "KB-388",
+        "title": "Price adjustments",
+        "effective_date": "2026-09-01",
+        "body": "If an item's price on shopright.com drops after purchase, customers can request a price adjustment within 7 days of delivery."
+      }
+    ],
+    "ledger": [],
+    "escalations": []
+  },
+  "faults": {},
+  "meta": {
+    "old_re": "\\b(14|fourteen)[- ]?days?\\b|\\btwo weeks\\b",
+    "new_re": "\\b(7|seven)[- ]?days?\\b|\\bone week\\b|\\ba week\\b"
+  },
+  "confirm_after": null,
+  "preface": ""
+}

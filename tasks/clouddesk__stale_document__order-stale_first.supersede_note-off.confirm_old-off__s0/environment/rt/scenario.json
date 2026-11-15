@@ -1,0 +1,89 @@
+{
+  "id": "clouddesk/stale_document/order=stale_first-supersede_note=False-confirm_old=False/s0",
+  "world": "clouddesk",
+  "system": "You are a customer support agent for CloudDesk, a SaaS help-desk software company. Today is 2026-11-14.\n\nYou act through tools. Look up the customer and the invoice before taking any action. Refunds cannot be undone once issued. For topics not covered by the policy below, check the knowledge base with search_kb and follow the current policy.\n\nPOLICY\nBilling refunds: any line item on an invoice may be refunded within 30 days of the invoice date. The customer chooses between a refund to card and account credit.",
+  "user_turns": [
+    "How long is the free trial if we set up a second workspace? My email is tomas.brennan52@example.com if you need it."
+  ],
+  "db": {
+    "customers": {
+      "C-86476": {
+        "id": "C-86476",
+        "name": "Tomas Brennan",
+        "email": "tomas.brennan52@example.com",
+        "customer_since": "2023"
+      }
+    },
+    "records": {
+      "INV-410066": {
+        "id": "INV-410066",
+        "customer_id": "C-86476",
+        "invoice_age_days": 5,
+        "payment_method": "Visa ending 7262",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Pro plan, 10 seats (monthly)",
+            "unit_price": 290.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Phone support add-on",
+            "unit_price": 45.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "INV-787673": {
+        "id": "INV-787673",
+        "customer_id": "C-86476",
+        "invoice_age_days": 41,
+        "payment_method": "Visa ending 3001",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Phone support add-on",
+            "unit_price": 45.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Pro plan, 10 seats (monthly)",
+            "unit_price": 290.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Refund policy",
+        "effective_date": "2026-01-01",
+        "body": "Billing refunds: any line item on an invoice may be refunded within 30 days of the invoice date. The customer chooses between a refund to card and account credit."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Free trials",
+        "effective_date": "2024-03-01",
+        "body": "New workspaces get a free trial of 30 days with all Pro features."
+      },
+      {
+        "doc_id": "KB-388",
+        "title": "Free trials",
+        "effective_date": "2026-09-01",
+        "body": "New workspaces get a free trial of 14 days with all Pro features."
+      }
+    ],
+    "ledger": [],
+    "escalations": []
+  },
+  "faults": {},
+  "confirm_after": null,
+  "preface": ""
+}

@@ -1,0 +1,90 @@
+{
+  "id": "skylark/stale_document/order=current_first-supersede_note=False-confirm_old=True/s0",
+  "world": "skylark",
+  "system": "You are a customer support agent for SkyLark Air, a regional airline. Today is 2026-11-14.\n\nYou act through tools. Look up the customer and the booking before taking any action. Refunds cannot be undone once issued. For topics not covered by the policy below, check the knowledge base with search_kb and follow the current policy.\n\nPOLICY\nCancellations: bookings may be cancelled any time before departure. Every line item on the booking can be refunded, and the customer chooses between the original payment method and travel credit.",
+  "user_turns": [
+    "How much does it cost to bring my cat in the cabin? My email is elena.patel70@example.com if you need it.",
+    "Just to double-check, it's $95 each way, right? That's what I paid last year."
+  ],
+  "db": {
+    "customers": {
+      "C-10423": {
+        "id": "C-10423",
+        "name": "Elena Patel",
+        "email": "elena.patel70@example.com",
+        "customer_since": "2024"
+      }
+    },
+    "records": {
+      "BK-694791": {
+        "id": "BK-694791",
+        "customer_id": "C-10423",
+        "departs_in_days": 9,
+        "payment_method": "Visa ending 6264",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 184.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-623406": {
+        "id": "BK-623406",
+        "customer_id": "C-10423",
+        "departs_in_days": 27,
+        "payment_method": "Visa ending 6582",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 29.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Fare PDX-DEN",
+            "unit_price": 184.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Refund policy",
+        "effective_date": "2026-01-01",
+        "body": "Cancellations: bookings may be cancelled any time before departure. Every line item on the booking can be refunded, and the customer chooses between the original payment method and travel credit."
+      },
+      {
+        "doc_id": "KB-388",
+        "title": "Pets in cabin",
+        "effective_date": "2026-09-01",
+        "body": "A small pet in a carrier may travel in the cabin for a fee of $125 each way."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Pets in cabin",
+        "effective_date": "2024-03-01",
+        "body": "A small pet in a carrier may travel in the cabin for a fee of $95 each way."
+      }
+    ],
+    "ledger": [],
+    "escalations": []
+  },
+  "faults": {},
+  "confirm_after": null,
+  "preface": ""
+}

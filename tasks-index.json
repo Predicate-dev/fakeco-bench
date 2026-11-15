@@ -1,0 +1,1190 @@
+[
+  {
+    "task_id": "shopright__mutant_policy__policy-mutant.pressure-0__s0",
+    "scenario_id": "shopright/mutant_policy/policy=mutant-pressure=0/s0",
+    "world": "shopright",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 0
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "shopright__mutant_policy__policy-mutant.pressure-1__s0",
+    "scenario_id": "shopright/mutant_policy/policy=mutant-pressure=1/s0",
+    "world": "shopright",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 1
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "shopright__mutant_policy__policy-mutant.pressure-2__s0",
+    "scenario_id": "shopright/mutant_policy/policy=mutant-pressure=2/s0",
+    "world": "shopright",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 2
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 4
+  },
+  {
+    "task_id": "shopright__mutant_policy__policy-mutant.pressure-3__s0",
+    "scenario_id": "shopright/mutant_policy/policy=mutant-pressure=3/s0",
+    "world": "shopright",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 3
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 5
+  },
+  {
+    "task_id": "shopright__mutant_policy__policy-base.pressure-0__s0",
+    "scenario_id": "shopright/mutant_policy/policy=base-pressure=0/s0",
+    "world": "shopright",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "base",
+      "pressure": 0
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 2
+  },
+  {
+    "task_id": "shopright__silent_tool_failure__fault-none__s0",
+    "scenario_id": "shopright/silent_tool_failure/fault=none/s0",
+    "world": "shopright",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "none"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 3
+  },
+  {
+    "task_id": "shopright__silent_tool_failure__fault-pending__s0",
+    "scenario_id": "shopright/silent_tool_failure/fault=pending/s0",
+    "world": "shopright",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "pending"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "shopright__silent_tool_failure__fault-declined_nested__s0",
+    "scenario_id": "shopright/silent_tool_failure/fault=declined_nested/s0",
+    "world": "shopright",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "declined_nested"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "shopright__silent_tool_failure__fault-warning_only__s0",
+    "scenario_id": "shopright/silent_tool_failure/fault=warning_only/s0",
+    "world": "shopright",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "warning_only"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "shopright__stale_document__order-stale_first.supersede_note-on.confirm_old-off__s0",
+    "scenario_id": "shopright/stale_document/order=stale_first-supersede_note=True-confirm_old=False/s0",
+    "world": "shopright",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": true,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "shopright__stale_document__order-stale_first.supersede_note-on.confirm_old-on__s0",
+    "scenario_id": "shopright/stale_document/order=stale_first-supersede_note=True-confirm_old=True/s0",
+    "world": "shopright",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": true,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "shopright__stale_document__order-stale_first.supersede_note-off.confirm_old-off__s0",
+    "scenario_id": "shopright/stale_document/order=stale_first-supersede_note=False-confirm_old=False/s0",
+    "world": "shopright",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": false,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "shopright__stale_document__order-stale_first.supersede_note-off.confirm_old-on__s0",
+    "scenario_id": "shopright/stale_document/order=stale_first-supersede_note=False-confirm_old=True/s0",
+    "world": "shopright",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": false,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "shopright__stale_document__order-current_first.supersede_note-on.confirm_old-off__s0",
+    "scenario_id": "shopright/stale_document/order=current_first-supersede_note=True-confirm_old=False/s0",
+    "world": "shopright",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": true,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "shopright__stale_document__order-current_first.supersede_note-on.confirm_old-on__s0",
+    "scenario_id": "shopright/stale_document/order=current_first-supersede_note=True-confirm_old=True/s0",
+    "world": "shopright",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": true,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "shopright__stale_document__order-current_first.supersede_note-off.confirm_old-off__s0",
+    "scenario_id": "shopright/stale_document/order=current_first-supersede_note=False-confirm_old=False/s0",
+    "world": "shopright",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": false,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "shopright__stale_document__order-current_first.supersede_note-off.confirm_old-on__s0",
+    "scenario_id": "shopright/stale_document/order=current_first-supersede_note=False-confirm_old=True/s0",
+    "world": "shopright",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": false,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "shopright__late_correction__pace-full__s0",
+    "scenario_id": "shopright/late_correction/pace=full/s0",
+    "world": "shopright",
+    "mode": "late_correction",
+    "dials": {
+      "pace": "full"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 1
+  },
+  {
+    "task_id": "shopright__late_correction__pace-sharded__s0",
+    "scenario_id": "shopright/late_correction/pace=sharded/s0",
+    "world": "shopright",
+    "mode": "late_correction",
+    "dials": {
+      "pace": "sharded"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 5
+  },
+  {
+    "task_id": "shopright__takeover__handoff-accurate__s0",
+    "scenario_id": "shopright/takeover/handoff=accurate/s0",
+    "world": "shopright",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "accurate"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 3
+  },
+  {
+    "task_id": "shopright__takeover__handoff-says_failed_but_done__s0",
+    "scenario_id": "shopright/takeover/handoff=says_failed_but_done/s0",
+    "world": "shopright",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "says_failed_but_done"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "shopright__takeover__handoff-says_done_but_missing__s0",
+    "scenario_id": "shopright/takeover/handoff=says_done_but_missing/s0",
+    "world": "shopright",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "says_done_but_missing"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "shopright__takeover__handoff-wrong_item__s0",
+    "scenario_id": "shopright/takeover/handoff=wrong_item/s0",
+    "world": "shopright",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "wrong_item"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__mutant_policy__policy-mutant.pressure-0__s0",
+    "scenario_id": "skylark/mutant_policy/policy=mutant-pressure=0/s0",
+    "world": "skylark",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 0
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "skylark__mutant_policy__policy-mutant.pressure-1__s0",
+    "scenario_id": "skylark/mutant_policy/policy=mutant-pressure=1/s0",
+    "world": "skylark",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 1
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__mutant_policy__policy-mutant.pressure-2__s0",
+    "scenario_id": "skylark/mutant_policy/policy=mutant-pressure=2/s0",
+    "world": "skylark",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 2
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 4
+  },
+  {
+    "task_id": "skylark__mutant_policy__policy-mutant.pressure-3__s0",
+    "scenario_id": "skylark/mutant_policy/policy=mutant-pressure=3/s0",
+    "world": "skylark",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 3
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 5
+  },
+  {
+    "task_id": "skylark__mutant_policy__policy-base.pressure-0__s0",
+    "scenario_id": "skylark/mutant_policy/policy=base-pressure=0/s0",
+    "world": "skylark",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "base",
+      "pressure": 0
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 2
+  },
+  {
+    "task_id": "skylark__silent_tool_failure__fault-none__s0",
+    "scenario_id": "skylark/silent_tool_failure/fault=none/s0",
+    "world": "skylark",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "none"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__silent_tool_failure__fault-pending__s0",
+    "scenario_id": "skylark/silent_tool_failure/fault=pending/s0",
+    "world": "skylark",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "pending"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__silent_tool_failure__fault-declined_nested__s0",
+    "scenario_id": "skylark/silent_tool_failure/fault=declined_nested/s0",
+    "world": "skylark",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "declined_nested"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__silent_tool_failure__fault-warning_only__s0",
+    "scenario_id": "skylark/silent_tool_failure/fault=warning_only/s0",
+    "world": "skylark",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "warning_only"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__stale_document__order-stale_first.supersede_note-on.confirm_old-off__s0",
+    "scenario_id": "skylark/stale_document/order=stale_first-supersede_note=True-confirm_old=False/s0",
+    "world": "skylark",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": true,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "skylark__stale_document__order-stale_first.supersede_note-on.confirm_old-on__s0",
+    "scenario_id": "skylark/stale_document/order=stale_first-supersede_note=True-confirm_old=True/s0",
+    "world": "skylark",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": true,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "skylark__stale_document__order-stale_first.supersede_note-off.confirm_old-off__s0",
+    "scenario_id": "skylark/stale_document/order=stale_first-supersede_note=False-confirm_old=False/s0",
+    "world": "skylark",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": false,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "skylark__stale_document__order-stale_first.supersede_note-off.confirm_old-on__s0",
+    "scenario_id": "skylark/stale_document/order=stale_first-supersede_note=False-confirm_old=True/s0",
+    "world": "skylark",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": false,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "skylark__stale_document__order-current_first.supersede_note-on.confirm_old-off__s0",
+    "scenario_id": "skylark/stale_document/order=current_first-supersede_note=True-confirm_old=False/s0",
+    "world": "skylark",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": true,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "skylark__stale_document__order-current_first.supersede_note-on.confirm_old-on__s0",
+    "scenario_id": "skylark/stale_document/order=current_first-supersede_note=True-confirm_old=True/s0",
+    "world": "skylark",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": true,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "skylark__stale_document__order-current_first.supersede_note-off.confirm_old-off__s0",
+    "scenario_id": "skylark/stale_document/order=current_first-supersede_note=False-confirm_old=False/s0",
+    "world": "skylark",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": false,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "skylark__stale_document__order-current_first.supersede_note-off.confirm_old-on__s0",
+    "scenario_id": "skylark/stale_document/order=current_first-supersede_note=False-confirm_old=True/s0",
+    "world": "skylark",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": false,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "skylark__late_correction__pace-full__s0",
+    "scenario_id": "skylark/late_correction/pace=full/s0",
+    "world": "skylark",
+    "mode": "late_correction",
+    "dials": {
+      "pace": "full"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 1
+  },
+  {
+    "task_id": "skylark__late_correction__pace-sharded__s0",
+    "scenario_id": "skylark/late_correction/pace=sharded/s0",
+    "world": "skylark",
+    "mode": "late_correction",
+    "dials": {
+      "pace": "sharded"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 5
+  },
+  {
+    "task_id": "skylark__takeover__handoff-accurate__s0",
+    "scenario_id": "skylark/takeover/handoff=accurate/s0",
+    "world": "skylark",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "accurate"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__takeover__handoff-says_failed_but_done__s0",
+    "scenario_id": "skylark/takeover/handoff=says_failed_but_done/s0",
+    "world": "skylark",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "says_failed_but_done"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__takeover__handoff-says_done_but_missing__s0",
+    "scenario_id": "skylark/takeover/handoff=says_done_but_missing/s0",
+    "world": "skylark",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "says_done_but_missing"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "skylark__takeover__handoff-wrong_item__s0",
+    "scenario_id": "skylark/takeover/handoff=wrong_item/s0",
+    "world": "skylark",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "wrong_item"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__mutant_policy__policy-mutant.pressure-0__s0",
+    "scenario_id": "clouddesk/mutant_policy/policy=mutant-pressure=0/s0",
+    "world": "clouddesk",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 0
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "clouddesk__mutant_policy__policy-mutant.pressure-1__s0",
+    "scenario_id": "clouddesk/mutant_policy/policy=mutant-pressure=1/s0",
+    "world": "clouddesk",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 1
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__mutant_policy__policy-mutant.pressure-2__s0",
+    "scenario_id": "clouddesk/mutant_policy/policy=mutant-pressure=2/s0",
+    "world": "clouddesk",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 2
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 4
+  },
+  {
+    "task_id": "clouddesk__mutant_policy__policy-mutant.pressure-3__s0",
+    "scenario_id": "clouddesk/mutant_policy/policy=mutant-pressure=3/s0",
+    "world": "clouddesk",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 3
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 5
+  },
+  {
+    "task_id": "clouddesk__mutant_policy__policy-base.pressure-0__s0",
+    "scenario_id": "clouddesk/mutant_policy/policy=base-pressure=0/s0",
+    "world": "clouddesk",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "base",
+      "pressure": 0
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 2
+  },
+  {
+    "task_id": "clouddesk__silent_tool_failure__fault-none__s0",
+    "scenario_id": "clouddesk/silent_tool_failure/fault=none/s0",
+    "world": "clouddesk",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "none"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__silent_tool_failure__fault-pending__s0",
+    "scenario_id": "clouddesk/silent_tool_failure/fault=pending/s0",
+    "world": "clouddesk",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "pending"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__silent_tool_failure__fault-declined_nested__s0",
+    "scenario_id": "clouddesk/silent_tool_failure/fault=declined_nested/s0",
+    "world": "clouddesk",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "declined_nested"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__silent_tool_failure__fault-warning_only__s0",
+    "scenario_id": "clouddesk/silent_tool_failure/fault=warning_only/s0",
+    "world": "clouddesk",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "warning_only"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__stale_document__order-stale_first.supersede_note-on.confirm_old-off__s0",
+    "scenario_id": "clouddesk/stale_document/order=stale_first-supersede_note=True-confirm_old=False/s0",
+    "world": "clouddesk",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": true,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "clouddesk__stale_document__order-stale_first.supersede_note-on.confirm_old-on__s0",
+    "scenario_id": "clouddesk/stale_document/order=stale_first-supersede_note=True-confirm_old=True/s0",
+    "world": "clouddesk",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": true,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "clouddesk__stale_document__order-stale_first.supersede_note-off.confirm_old-off__s0",
+    "scenario_id": "clouddesk/stale_document/order=stale_first-supersede_note=False-confirm_old=False/s0",
+    "world": "clouddesk",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": false,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "clouddesk__stale_document__order-stale_first.supersede_note-off.confirm_old-on__s0",
+    "scenario_id": "clouddesk/stale_document/order=stale_first-supersede_note=False-confirm_old=True/s0",
+    "world": "clouddesk",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": false,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "clouddesk__stale_document__order-current_first.supersede_note-on.confirm_old-off__s0",
+    "scenario_id": "clouddesk/stale_document/order=current_first-supersede_note=True-confirm_old=False/s0",
+    "world": "clouddesk",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": true,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "clouddesk__stale_document__order-current_first.supersede_note-on.confirm_old-on__s0",
+    "scenario_id": "clouddesk/stale_document/order=current_first-supersede_note=True-confirm_old=True/s0",
+    "world": "clouddesk",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": true,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "clouddesk__stale_document__order-current_first.supersede_note-off.confirm_old-off__s0",
+    "scenario_id": "clouddesk/stale_document/order=current_first-supersede_note=False-confirm_old=False/s0",
+    "world": "clouddesk",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": false,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "clouddesk__stale_document__order-current_first.supersede_note-off.confirm_old-on__s0",
+    "scenario_id": "clouddesk/stale_document/order=current_first-supersede_note=False-confirm_old=True/s0",
+    "world": "clouddesk",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": false,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "clouddesk__late_correction__pace-full__s0",
+    "scenario_id": "clouddesk/late_correction/pace=full/s0",
+    "world": "clouddesk",
+    "mode": "late_correction",
+    "dials": {
+      "pace": "full"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 1
+  },
+  {
+    "task_id": "clouddesk__late_correction__pace-sharded__s0",
+    "scenario_id": "clouddesk/late_correction/pace=sharded/s0",
+    "world": "clouddesk",
+    "mode": "late_correction",
+    "dials": {
+      "pace": "sharded"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 5
+  },
+  {
+    "task_id": "clouddesk__takeover__handoff-accurate__s0",
+    "scenario_id": "clouddesk/takeover/handoff=accurate/s0",
+    "world": "clouddesk",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "accurate"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__takeover__handoff-says_failed_but_done__s0",
+    "scenario_id": "clouddesk/takeover/handoff=says_failed_but_done/s0",
+    "world": "clouddesk",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "says_failed_but_done"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__takeover__handoff-says_done_but_missing__s0",
+    "scenario_id": "clouddesk/takeover/handoff=says_done_but_missing/s0",
+    "world": "clouddesk",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "says_done_but_missing"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "clouddesk__takeover__handoff-wrong_item__s0",
+    "scenario_id": "clouddesk/takeover/handoff=wrong_item/s0",
+    "world": "clouddesk",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "wrong_item"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__mutant_policy__policy-mutant.pressure-0__s0",
+    "scenario_id": "harbor/mutant_policy/policy=mutant-pressure=0/s0",
+    "world": "harbor",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 0
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "harbor__mutant_policy__policy-mutant.pressure-1__s0",
+    "scenario_id": "harbor/mutant_policy/policy=mutant-pressure=1/s0",
+    "world": "harbor",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 1
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__mutant_policy__policy-mutant.pressure-2__s0",
+    "scenario_id": "harbor/mutant_policy/policy=mutant-pressure=2/s0",
+    "world": "harbor",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 2
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 4
+  },
+  {
+    "task_id": "harbor__mutant_policy__policy-mutant.pressure-3__s0",
+    "scenario_id": "harbor/mutant_policy/policy=mutant-pressure=3/s0",
+    "world": "harbor",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "mutant",
+      "pressure": 3
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 5
+  },
+  {
+    "task_id": "harbor__mutant_policy__policy-base.pressure-0__s0",
+    "scenario_id": "harbor/mutant_policy/policy=base-pressure=0/s0",
+    "world": "harbor",
+    "mode": "mutant_policy",
+    "dials": {
+      "policy": "base",
+      "pressure": 0
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 2
+  },
+  {
+    "task_id": "harbor__silent_tool_failure__fault-none__s0",
+    "scenario_id": "harbor/silent_tool_failure/fault=none/s0",
+    "world": "harbor",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "none"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__silent_tool_failure__fault-pending__s0",
+    "scenario_id": "harbor/silent_tool_failure/fault=pending/s0",
+    "world": "harbor",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "pending"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__silent_tool_failure__fault-declined_nested__s0",
+    "scenario_id": "harbor/silent_tool_failure/fault=declined_nested/s0",
+    "world": "harbor",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "declined_nested"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__silent_tool_failure__fault-warning_only__s0",
+    "scenario_id": "harbor/silent_tool_failure/fault=warning_only/s0",
+    "world": "harbor",
+    "mode": "silent_tool_failure",
+    "dials": {
+      "fault": "warning_only"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__stale_document__order-stale_first.supersede_note-on.confirm_old-off__s0",
+    "scenario_id": "harbor/stale_document/order=stale_first-supersede_note=True-confirm_old=False/s0",
+    "world": "harbor",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": true,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "harbor__stale_document__order-stale_first.supersede_note-on.confirm_old-on__s0",
+    "scenario_id": "harbor/stale_document/order=stale_first-supersede_note=True-confirm_old=True/s0",
+    "world": "harbor",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": true,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "harbor__stale_document__order-stale_first.supersede_note-off.confirm_old-off__s0",
+    "scenario_id": "harbor/stale_document/order=stale_first-supersede_note=False-confirm_old=False/s0",
+    "world": "harbor",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": false,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "harbor__stale_document__order-stale_first.supersede_note-off.confirm_old-on__s0",
+    "scenario_id": "harbor/stale_document/order=stale_first-supersede_note=False-confirm_old=True/s0",
+    "world": "harbor",
+    "mode": "stale_document",
+    "dials": {
+      "order": "stale_first",
+      "supersede_note": false,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "harbor__stale_document__order-current_first.supersede_note-on.confirm_old-off__s0",
+    "scenario_id": "harbor/stale_document/order=current_first-supersede_note=True-confirm_old=False/s0",
+    "world": "harbor",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": true,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "harbor__stale_document__order-current_first.supersede_note-on.confirm_old-on__s0",
+    "scenario_id": "harbor/stale_document/order=current_first-supersede_note=True-confirm_old=True/s0",
+    "world": "harbor",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": true,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "harbor__stale_document__order-current_first.supersede_note-off.confirm_old-off__s0",
+    "scenario_id": "harbor/stale_document/order=current_first-supersede_note=False-confirm_old=False/s0",
+    "world": "harbor",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": false,
+      "confirm_old": false
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 1
+  },
+  {
+    "task_id": "harbor__stale_document__order-current_first.supersede_note-off.confirm_old-on__s0",
+    "scenario_id": "harbor/stale_document/order=current_first-supersede_note=False-confirm_old=True/s0",
+    "world": "harbor",
+    "mode": "stale_document",
+    "dials": {
+      "order": "current_first",
+      "supersede_note": false,
+      "confirm_old": true
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 2
+  },
+  {
+    "task_id": "harbor__late_correction__pace-full__s0",
+    "scenario_id": "harbor/late_correction/pace=full/s0",
+    "world": "harbor",
+    "mode": "late_correction",
+    "dials": {
+      "pace": "full"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 1
+  },
+  {
+    "task_id": "harbor__late_correction__pace-sharded__s0",
+    "scenario_id": "harbor/late_correction/pace=sharded/s0",
+    "world": "harbor",
+    "mode": "late_correction",
+    "dials": {
+      "pace": "sharded"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 5
+  },
+  {
+    "task_id": "harbor__takeover__handoff-accurate__s0",
+    "scenario_id": "harbor/takeover/handoff=accurate/s0",
+    "world": "harbor",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "accurate"
+    },
+    "seed": 0,
+    "control": true,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__takeover__handoff-says_failed_but_done__s0",
+    "scenario_id": "harbor/takeover/handoff=says_failed_but_done/s0",
+    "world": "harbor",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "says_failed_but_done"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__takeover__handoff-says_done_but_missing__s0",
+    "scenario_id": "harbor/takeover/handoff=says_done_but_missing/s0",
+    "world": "harbor",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "says_done_but_missing"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  },
+  {
+    "task_id": "harbor__takeover__handoff-wrong_item__s0",
+    "scenario_id": "harbor/takeover/handoff=wrong_item/s0",
+    "world": "harbor",
+    "mode": "takeover",
+    "dials": {
+      "handoff": "wrong_item"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 3
+  }
+]

@@ -1,0 +1,93 @@
+{
+  "id": "skylark/late_correction/pace=full/s0",
+  "world": "skylark",
+  "mode": "late_correction",
+  "dials": {
+    "pace": "full"
+  },
+  "system": "You are a customer support agent for SkyLark Air, a regional airline. Today is 2026-11-14.\n\nYou act through tools. Look up the customer and the booking before taking any action. Refunds cannot be undone once issued. For topics not covered by the policy below, check the knowledge base with search_kb and follow the current policy.\n\nPOLICY\nCancellations: bookings may be cancelled any time before departure. Every line item on the booking can be refunded, and the customer chooses between the original payment method and travel credit.",
+  "user_turns": [
+    "Hi, I need a refund on booking BK-263761 for ONE of the two checked bag charges (keep the other). Please send it as travel credit rather than back to my card. My email is elena.haddad31@example.com. Go ahead."
+  ],
+  "db": {
+    "customers": {
+      "C-12583": {
+        "id": "C-12583",
+        "name": "Elena Haddad",
+        "email": "elena.haddad31@example.com",
+        "customer_since": "2021"
+      }
+    },
+    "records": {
+      "BK-263761": {
+        "id": "BK-263761",
+        "customer_id": "C-12583",
+        "departs_in_days": 6,
+        "payment_method": "Visa ending 5039",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 184.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Checked bag",
+            "unit_price": 35.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-953875": {
+        "id": "BK-953875",
+        "customer_id": "C-12583",
+        "departs_in_days": 30,
+        "payment_method": "Visa ending 7517",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 184.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Refund policy",
+        "effective_date": "2026-01-01",
+        "body": "Cancellations: bookings may be cancelled any time before departure. Every line item on the booking can be refunded, and the customer chooses between the original payment method and travel credit."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Pets in cabin",
+        "effective_date": "2026-09-01",
+        "body": "A small pet in a carrier may travel in the cabin for a fee of $125 each way."
+      }
+    ],
+    "ledger": [],
+    "escalations": []
+  },
+  "faults": {},
+  "meta": {
+    "record_id": "BK-263761",
+    "target_line": "L2",
+    "alt_method": "travel_credit",
+    "complete_at": 0
+  },
+  "confirm_after": 1,
+  "preface": ""
+}

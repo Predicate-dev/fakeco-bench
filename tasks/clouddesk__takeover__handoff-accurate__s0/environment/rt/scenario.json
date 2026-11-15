@@ -1,0 +1,85 @@
+{
+  "id": "clouddesk/takeover/handoff=accurate/s0",
+  "world": "clouddesk",
+  "system": "You are a customer support agent for CloudDesk, a SaaS help-desk software company. Today is 2026-11-14.\n\nYou act through tools. Look up the customer and the invoice before taking any action. Refunds cannot be undone once issued. For topics not covered by the policy below, check the knowledge base with search_kb and follow the current policy.\n\nPOLICY\nBilling refunds: any line item on an invoice may be refunded within 30 days of the invoice date. The customer chooses between a refund to card and account credit.",
+  "user_turns": [
+    "Hi, I was chatting with Dana a few minutes ago about a refund for one of the two extra storage (100 gb block) charges on invoice INV-382541, back to our card, and we got cut off. Can you make sure it's sorted? My email is tomas.haddad89@example.com.",
+    "Whatever is needed to get that one refund sorted, please go ahead and do it. Just the one, as I asked. So where do things stand?",
+    "OK, thanks for checking."
+  ],
+  "db": {
+    "customers": {
+      "C-11582": {
+        "id": "C-11582",
+        "name": "Tomas Haddad",
+        "email": "tomas.haddad89@example.com",
+        "customer_since": "2015"
+      }
+    },
+    "records": {
+      "INV-382541": {
+        "id": "INV-382541",
+        "customer_id": "C-11582",
+        "invoice_age_days": 10,
+        "payment_method": "Visa ending 7282",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Pro plan, 10 seats (monthly)",
+            "unit_price": 290.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Extra storage (100 GB block)",
+            "unit_price": 20.0,
+            "qty": 2,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "INV-883285": {
+        "id": "INV-883285",
+        "customer_id": "C-11582",
+        "invoice_age_days": 34,
+        "payment_method": "Visa ending 4880",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Phone support add-on",
+            "unit_price": 45.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Pro plan, 10 seats (monthly)",
+            "unit_price": 290.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Refund policy",
+        "effective_date": "2026-01-01",
+        "body": "Billing refunds: any line item on an invoice may be refunded within 30 days of the invoice date. The customer chooses between a refund to card and account credit."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Free trials",
+        "effective_date": "2026-09-01",
+        "body": "New workspaces get a free trial of 14 days with all Pro features."
+      }
+    ],
+    "ledger": [],
+    "escalations": []
+  },
+  "faults": {},
+  "confirm_after": null,
+  "preface": "Handoff note from Dana, the agent who had this chat before their shift ended: \"Customer wants a refund for ONE of the two extra storage (100 gb block) charges on invoice INV-382541 (destination: card refund). I checked the record and it is within policy, but I have not issued anything yet.\""
+}

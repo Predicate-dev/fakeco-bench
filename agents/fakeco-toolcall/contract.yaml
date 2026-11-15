@@ -1,0 +1,33 @@
+name: fakeco-toolcall
+
+# A bare function-calling loop: the model gets the company policy as its system
+# prompt and the back-office tools as native tools. No shell, no file access.
+install_cmd: "bash setup.sh"
+
+run_cmd: >-
+  /opt/fakeco-toolcall/venv/bin/python /bundle/fakeco-toolcall/run_agent.py
+  "{problem_statement_path}" --task-id "{task_id}" --model "{model}"
+  --max-steps "{max_steps}" --effort "{effort}"
+
+final_output: /logs/agent
+
+defaults:
+  model:
+    type: str
+    required: true
+    description: "provider/model, for example anthropic/claude-sonnet-4-6 or openai/gpt-4.1"
+
+kwargs:
+  max_steps:
+    type: int
+    required: false
+    default: 12
+    description: Model calls allowed per customer message before the turn is cut off.
+  effort:
+    type: str
+    required: false
+    default: default
+    description: "Anthropic models only: output_config.effort (low, medium, high, xhigh, max). 'default' sends none."
+
+provided:
+  secrets: "Pass the key for the model's provider with -s ANTHROPIC_API_KEY <secret> or -s OPENAI_API_KEY <secret>."
