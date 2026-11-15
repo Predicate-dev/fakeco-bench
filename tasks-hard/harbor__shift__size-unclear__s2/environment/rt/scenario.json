@@ -150,7 +150,8 @@
             "name": "Card replacement fee",
             "unit_price": 10.0,
             "qty": 6,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -165,7 +166,8 @@
             "name": "Card replacement fee",
             "unit_price": 10.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -180,7 +182,8 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -195,7 +198,8 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -210,14 +214,16 @@
             "name": "Gift wrap",
             "unit_price": 10.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Card replacement fee",
             "unit_price": 10.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -232,7 +238,8 @@
             "name": "Card replacement fee",
             "unit_price": 10.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -247,7 +254,8 @@
             "name": "Card replacement fee",
             "unit_price": 10.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -262,7 +270,8 @@
             "name": "Card replacement fee",
             "unit_price": 10.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -277,7 +286,8 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -292,7 +302,8 @@
             "name": "Monthly maintenance fee",
             "unit_price": 12.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -307,21 +318,24 @@
             "name": "Domestic wire fee",
             "unit_price": 25.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "International wire fee",
             "unit_price": 45.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L3",
             "name": "Wire recall fee",
             "unit_price": 30.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -336,7 +350,8 @@
             "name": "Card replacement fee",
             "unit_price": 38.0,
             "qty": 1,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -351,7 +366,8 @@
             "name": "Monthly maintenance fee",
             "unit_price": 47.0,
             "qty": 1,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -366,7 +382,8 @@
             "name": "Monthly maintenance fee",
             "unit_price": 12.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -381,7 +398,8 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -396,14 +414,16 @@
             "name": "Card replacement fee",
             "unit_price": 10.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Out-of-network ATM fee",
             "unit_price": 3.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -418,14 +438,16 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Out-of-network ATM fee",
             "unit_price": 2.4,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -440,14 +462,16 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Out-of-network ATM fee",
             "unit_price": 1.8,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -462,14 +486,16 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Out-of-network ATM fee",
             "unit_price": 3.0,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -484,14 +510,16 @@
             "name": "Paper statement fee",
             "unit_price": 5.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Out-of-network ATM fee",
             "unit_price": 4.5,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -506,14 +534,16 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Out-of-network ATM fee",
             "unit_price": 4.5,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -528,14 +558,16 @@
             "name": "Card replacement fee",
             "unit_price": 10.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Out-of-network ATM fee",
             "unit_price": 2.4,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -550,14 +582,16 @@
             "name": "Foreign transaction fee",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Out-of-network ATM fee",
             "unit_price": 3.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       }

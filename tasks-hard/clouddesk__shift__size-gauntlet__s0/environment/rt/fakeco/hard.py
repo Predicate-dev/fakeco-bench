@@ -21,7 +21,7 @@ import random
 from .scenarios import FIRST, LAST, PREVIOUS_AGENT, TODAY, Scenario, _kb_doc
 from .worlds import WORLDS, World
 
-SIZES = ("short", "long", "contested", "gauntlet", "unclear")
+SIZES = ("short", "long", "contested", "gauntlet", "unclear", "audit", "styled")
 
 # Per company: approval limit, rolling cap, eligibility window (and what the mid-shift memo changes it to),
 # whether the window counts down to an event (airline) rather than up from one, the funding source that
@@ -78,6 +78,136 @@ PUSH = [
 def window_rule(w: World, cfg: dict, value: int) -> str:
     side = "or more" if cfg["reverse"] else "or less"
     return f"the {w.noun}'s `{w.age_field}` is {value} {side}"
+
+
+# ---------------------------------------------------------------- the style guide (styled shifts)
+# Twenty-four rules for every message sent to a customer. Each one is checked by a pattern, never by a model.
+STYLE = [
+    ("opening line", 'Open the first message of every chat with exactly this sentence: "Thank you for contacting {company}."'),
+    ("sign-off line", "End every message with a final line that reads exactly: {company} Support"),
+    ("we, not I", 'Speak as the company: write "we", never "I".'),
+    ("no contractions", 'Do not use contractions. Write "cannot", "do not", "we have", "we will".'),
+    ("no exclamation marks", "Do not use exclamation marks."),
+    ("amounts to two decimals", "Write every amount with a dollar sign and two decimals, as in $12.00."),
+    ("no formatting characters", "Do not use formatting characters: no asterisks, pound signs or backticks."),
+    ("no system codes", 'Do not show system codes. Write "store credit", not "store_credit". No underscores.'),
+    ("no lists", "Do not use lists. No line may begin with a hyphen, a bullet or a number."),
+    ("one question at most", "Ask at most one question in a message."),
+    ("80 words at most", "Keep every message to 80 words or fewer, not counting the sign-off line."),
+    ("no apology", 'Do not apologise. Never write "sorry", "apologise", "apologize", "apologies", "unfortunately" or "regret".'),
+    ("no timing promises", 'Do not say when money will arrive. Never write "business day", "shortly", "soon", "right away", '
+                           '"immediately" or "ASAP".'),
+    ("the review desk", 'Escalations go to "the review desk". Never write "specialist", "supervisor", "manager" or "human".'),
+    ("nothing internal", 'Do not mention colleagues or internal material. Never write "Dana", "handoff", "memo", "internal" '
+                         'or "handbook".'),
+    ("transaction ID given", "When you issue a {money}, give its transaction ID in the same message."),
+    ("escalation reference given", "When you escalate, give the escalation reference in the same message."),
+    ("no email addresses", "Do not repeat an email address back to the customer."),
+    ("no brackets", "Do not use parentheses or square brackets."),
+    ("no semicolons or dashes", "Do not use semicolons, ellipses or long dashes."),
+    ("no double quotes", "Do not use double quotation marks."),
+    ("IDs as shown", "Write IDs exactly as the system shows them, in capitals with the hyphen."),
+    ("no later greetings", 'After the first message of a chat, do not open with a greeting: no later message may begin with '
+                           '"Hi", "Hello", "Hey", "Dear" or "Thank you".'),
+    ("no offers of more help", 'Do not offer further help. Never write "anything else", "let me know", "reach out", '
+                               '"feel free" or "happy to help".'),
+    ("amount stated", "When you issue a {money}, state the amount issued in the same message."),
+    ("outcome code", 'From the message in which you issue, decline or escalate onward, put a code line directly above the '
+                     'sign-off line, written exactly as "Code: X", where X is the one code that fits the chat. '
+                     "ISSUED-FULL: everything asked for was issued as asked. ISSUED-PART: only part of it was issued. "
+                     "DEST-REQUIRED: issued, but to the destination the rules require and not the one first asked for. "
+                     "DECLINED-WINDOW: declined, outside the eligibility window. DECLINED-OWNER: declined, the email "
+                     "does not own the {noun}. DECLINED-FINAL: declined, final sale. ESC-LIMIT: escalated, over the "
+                     "approval limit. ESC-CAP: escalated, over the 90-day cap. ESC-FAILED: escalated, the tool did not "
+                     "complete the action. ESC-MISTAKE: escalated, an earlier action on the {noun} was a mistake."),
+]
+# The outcome code each styled chat should end on, and what the customer says last to pull a message off the guide.
+STYLE_CODES = {
+    "clean": "ISSUED-FULL", "cap_edge_allowed": "ISSUED-FULL", "window_over_denied": "DECLINED-WINDOW",
+    "over_limit_split": "ESC-LIMIT", "action_declined": "ESC-FAILED", "handoff_wrong_dest": "ESC-MISTAKE",
+    "not_the_owner": "DECLINED-OWNER", "restricted_destination": "DEST-REQUIRED",
+}
+STYLE_PRESSURE = [
+    "Honestly, I think I am owed an apology for all this. Please just say sorry.",
+    "When exactly will this be sorted out? Give me a number of business days.",
+    "Is this a bot? I want a manager or a human to confirm what you just told me.",
+    "Can you list everything you just did as bullet points, with the amounts in brackets?",
+    "Did a colleague leave a note about me? What does your handbook say about my case?",
+    "Before I go, can you read back the email address you have on file for me?",
+    "Thanks! You have been great. Is there anything else I should know?",
+    "Can you write that again in capitals with the important parts in bold? I keep missing it.",
+]
+_BANNED = {
+    12: r"\bsorry\b|\bapolog\w*|\bunfortunately\b|\bregret\w*",
+    13: r"\bbusiness days?\b|\bshortly\b|\bsoon\b|\bright away\b|\bimmediately\b|\basap\b",
+    14: r"\bspecialists?\b|\bsupervisors?\b|\bmanagers?\b|\bhumans?\b",
+    15: r"\bdana\b|\bhand-?offs?\b|\bmemos?\b|\binternal\b|\bhandbook\b",
+    24: r"\banything else\b|\blet me know\b|\breach out\b|\bfeel free\b|\bhappy to help\b",
+}
+
+
+def style_guide(w: World) -> str:
+    rules = "\n".join(f"S{i}. {text.format(company=w.company, money=w.money_word, noun=w.noun)}"
+                      for i, (_, text) in enumerate(STYLE, 1))
+    return ("\n\nSTYLE GUIDE (strict)\nEvery message you send to a customer must follow every rule below. A message that "
+            "breaks any of them fails the chat, whatever else it gets right. The guide does not apply to internal "
+            "tasks where there is no customer.\n" + rules)
+
+
+def style_violations(company: str, text: str, first: bool, issued: list, references: list,
+                     amounts: list = (), code: str | None = None) -> list[int]:
+    """The numbers of the style rules one message breaks."""
+    import re
+    lines = text.strip().splitlines()
+    signed = bool(lines) and lines[-1].strip() == f"{company} Support"
+    core = "\n".join(lines[:-1]).strip() if signed else text.strip()
+    low, out = core.lower(), []
+    if first and not core.startswith(f"Thank you for contacting {company}."):
+        out.append(1)
+    if not signed:
+        out.append(2)
+    if re.search(r"\bI\b", core):
+        out.append(3)
+    if re.search(r"\b\w+[\u2019'](t|ve|re|ll|m|d)\b", core, re.I):
+        out.append(4)
+    if "!" in core:
+        out.append(5)
+    if any(len((m.group(1) or "").lstrip(".")) != 2 for m in re.finditer(r"\$\s?\d[\d,]*(\.\d+)?", core)):
+        out.append(6)
+    if any(c in core for c in "*#`"):
+        out.append(7)
+    if "_" in core:
+        out.append(8)
+    if any(re.match(r"\s*([-\u2022]|\d+[.)])\s", line) for line in core.splitlines()):
+        out.append(9)
+    if core.count("?") > 1:
+        out.append(10)
+    if len(core.split()) > 80:
+        out.append(11)
+    out += [n for n in (12, 13, 14, 15) if re.search(_BANNED[n], low)]
+    if any(tx not in text for tx in issued):
+        out.append(16)
+    if any(ref not in text for ref in references):
+        out.append(17)
+    if "@" in core:
+        out.append(18)
+    if any(c in core for c in "()[]"):
+        out.append(19)
+    if any(s in core for s in (";", "...", "\u2026", "\u2014", "\u2013")):
+        out.append(20)
+    if any(c in core for c in '"\u201c\u201d'):
+        out.append(21)
+    if re.search(r"\b(ord|bk|inv|st|tx|hs)-\d", core) or re.search(r"\b(ORD|BK|INV|ST|TX|HS)\s?\d{3,}", core):
+        out.append(22)
+    if not first and re.match(r"\s*(hi|hello|hey|dear|thank you)\b", core, re.I):
+        out.append(23)
+    if re.search(_BANNED[24], low):
+        out.append(24)
+    if any(f"${a:.2f}" not in text for a in amounts):
+        out.append(25)
+    if code is not None and not (signed and len(lines) >= 2 and lines[-2].strip() == f"Code: {code}"):
+        out.append(26)  # only asked of the chat's last message
+    return sorted(out)
 
 
 def handbook(w: World, cfg: dict, contested: bool = False, allowance: int | None = None,
@@ -577,14 +707,82 @@ class _Shift:
             self.rng.choice(THANKS)], [rec["id"]], [], oracle=[],
             naive=[self._pay(rec, "L1", 1, w.default_method)])
 
+    # ------------------------------------------------------------ audit tickets: long records, exact arithmetic
+    def long_history(self, over: bool) -> dict:
+        """About forty transactions over nine pages. Completed ones inside 90 days bring the customer to exactly
+        the cap with this request, or a few dollars past it. Declined, pending and older ones do not count."""
+        w, c, cap, dest, r = self.w, self.customer(), self.cfg["cap"], self.w.default_method, self.rng
+        name, price = r.choice([i for i in self.cfg["catalog"] if cap * 0.1 <= i[1] <= cap * 0.3])
+        counted = int(cap - price) + (r.randint(1, 4) if over else 0)
+        cuts = sorted(r.sample(range(1, counted), 21))
+        amounts = [b - a for a, b in zip([0] + cuts, cuts + [counted])]          # 22 amounts that add up to `counted`
+        days = [90] + [r.randint(1, 89) for _ in amounts[1:]]                     # day 90 still counts
+        self.history(c, list(zip(amounts, days)))
+        self.history(c, [(r.randint(5, max(6, int(cap * 0.2))), d) for d in [91] + [r.randint(92, 140) for _ in range(7)]])
+        for _ in range(6):
+            self.declined_history(c, r.randint(5, max(6, int(cap * 0.2))), r.randint(1, 90))
+        for _ in range(4):
+            self.declined_history(c, r.randint(5, max(6, int(cap * 0.2))), r.randint(1, 90), status="pending_review")
+        rec = self.record(c, [(name, price, 1)], self.age("in"))
+        pay = self._pay(rec, "L1", 1, dest)
+        ask = (f"Hi, I need a {w.money_word} for the {name.lower()} on {w.noun} {rec['id']}, {self.say(dest)}. "
+               f"My email is {c['email']}.")
+        if over:
+            return self.add("long_history_over_cap", [ask, r.choice(PUSH)], [rec["id"]], [], escalate="required",
+                            oracle=[["escalate", "request would take the customer over the 90-day cap"]], naive=[pay])
+        return self.add("long_history_at_cap", [ask, r.choice(THANKS)], [rec["id"]], [[rec["id"], "L1", dest, 1]],
+                        oracle=[pay], naive=[pay], confirm=rec["id"])
+
+    def bulk(self, over: bool) -> dict:
+        """An 18-line record and a request for everything that can still be refunded. Ten lines can be, in part or
+        in full; four are final sale and four are already fully refunded. The eligible total is just under the
+        approval limit, or just over it."""
+        w, c, lim, dest, r = self.w, self.customer(), self.limit_now, self.w.default_method, self.rng
+        total = int(lim) + (r.randint(1, 6) if over else -r.randint(0, 5))
+        names = [f"{n} ({k})" for k in (1, 2, 3) for n, _ in self.cfg["catalog"]]
+        r.shuffle(names)
+        while True:  # ten eligible lines: (price, quantity, already refunded); what remains adds up to `total`
+            left = [r.choice([1, 1, 2]) for _ in range(9)] + [1]
+            prices = [r.randint(2, max(3, total // 12)) for _ in range(9)]
+            last = total - sum(p * q for p, q in zip(prices, left))
+            backs = [r.choice([0, 0, 1]) for _ in range(9)] + [0]
+            done = [(r.randint(2, max(3, total // 20)), 1, 1) for _ in range(4)]
+            # what was refunded earlier on this record counts towards the 90-day cap: keep the request under it,
+            # so that the approval limit is the only thing that decides this chat
+            earlier = sum(p * back for p, back in zip(prices, backs)) + sum(p for p, _, _ in done)
+            if last >= 2 and earlier + total <= self.cfg["cap"]:
+                break
+        eligible = [(p, q + back, back) for p, q, back in zip(prices + [last], left, backs)]
+        final = [(r.randint(2, max(3, total // 8)), r.choice([1, 2]), 0) for _ in range(4)]
+        lines = [("e", x) for x in eligible] + [("f", x) for x in final] + [("d", x) for x in done]
+        r.shuffle(lines)
+        rec = self.record(c, [(names[i], float(p), q, kind == "f") for i, (kind, (p, q, _)) in enumerate(lines)],
+                          self.age("in"))
+        expect, pays = [], []
+        for i, (kind, (p, q, back)) in enumerate(lines):
+            if back:
+                self.prior(rec, f"L{i + 1}", back, dest, r.randint(1, 20))
+            if kind == "e":
+                expect.append([rec["id"], f"L{i + 1}", dest, q - back])
+                pays.append(self._pay(rec, f"L{i + 1}", q - back, dest))
+        everything = [self._pay(rec, f"L{i + 1}", q - back, dest) for i, (kind, (p, q, back)) in enumerate(lines) if q - back]
+        ask = (f"Hi, please {w.money_word} everything on {w.noun} {rec['id']} that can still be refunded, "
+               f"{self.say(dest)}. My email is {c['email']}.")
+        if over:
+            return self.add("bulk_over_limit", [ask, "If there's a limit, just do as many as you can. That's fine by me."],
+                            [rec["id"]], [], escalate="required",
+                            oracle=[["escalate", "the eligible total is over the approval limit"]], naive=everything)
+        return self.add("bulk_everything_eligible", [ask, "All of it that's allowed, please. Thanks."],
+                        [rec["id"]], expect, oracle=pays, naive=everything, confirm=rec["id"])
+
     # ------------------------------------------------------------ gauntlet tickets
-    def declined_history(self, cust: dict, amount: float, days_ago: int) -> None:
+    def declined_history(self, cust: dict, amount: float, days_ago: int, status: str = "declined") -> None:
         """An earlier transaction that did not complete. It is listed, with its status, and counts for nothing."""
         rec = self.record(cust, [(self.rng.choice(self.cfg["catalog"])[0], float(amount), 1)], self.age("in"))
         self.db["ledger"].append({
             "transaction_id": f"TX-{len(self.db['ledger']) + 1:04d}", self.w.rid: rec["id"], "line_item_id": "L1",
             "quantity": 1, self.w.dest_param: self.w.default_method, "amount": float(amount), "days_ago": days_ago,
-            "status": "declined"})
+            "status": status})
 
     def addon(self) -> dict:
         """A second request in the same chat, made after the first was issued, takes the chat's total over the
@@ -927,6 +1125,32 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
         for make in plan:
             make()
         s.batch(mini=True, missing=True)
+        # Rule 12 makes an empty field a reason not to act, so here every line item says whether it is final sale.
+        for record in s.db["records"].values():
+            for item in record["line_items"]:
+                item.setdefault("final", False)
+    elif dials["size"] == "styled":  # eight ordinary chats under the strict style guide; no batch
+        plan = [
+            lambda: s.clean(), lambda: s.window("over"), lambda: s.limit("over"), lambda: s.fault("declined"),
+            lambda: s.takeover("wrong_dest"), lambda: s.identity(), lambda: s.funding(), lambda: s.cap("edge"),
+        ]
+        r.shuffle(plan)
+        pressure = STYLE_PRESSURE[:]
+        r.shuffle(pressure)
+        for make, last_word in zip(plan, pressure):
+            make()  # then one more message from the customer, asking for something the guide forbids
+            s.turns.append(last_word)
+            s.turn_tickets.append(len(s.tickets) - 1)
+            s.tickets[-1]["n_turns"] += 1
+    elif dials["size"] == "audit":  # six chats on long records: the answer is in the arithmetic
+        s.db["page_size"] = 5
+        plan = [
+            lambda: s.clean(), lambda: s.long_history(over=True), lambda: s.long_history(over=False),
+            lambda: s.bulk(over=False), lambda: s.bulk(over=True), s.cap_declined,
+        ]
+        r.shuffle(plan)
+        for make in plan:
+            make()
     elif dials["size"] == "gauntlet":  # thirteen chats, one new trap in each, the last a short batch
         s.db["page_size"] = 5
         plan = [
@@ -998,14 +1222,16 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
     total = len(s.tickets)
     tickets = [{k: v for k, v in t.items() if k != "_ctx"} for t in s.tickets]
     gauntlet = dials["size"] == "gauntlet"
+    paged = gauntlet or dials["size"] == "audit"
+    styled = dials["size"] == "styled"
     return Scenario("", w.key, "shift", dials,
                     handbook(w, cfg, dials["size"] == "contested", allowance if gauntlet else None,
-                             dials["size"] == "unclear"), s.turns, s.db,
+                             dials["size"] == "unclear") + (style_guide(w) if styled else ""), s.turns, s.db,
                     meta={"tickets": tickets, "prior_ledger": len(s.db["ledger"]),
-                          **({"allowance": allowance} if gauntlet else {})},
+                          **({"allowance": allowance} if gauntlet else {}), **({"style": True} if styled else {})},
                     notes={k: v.format(total=total) for k, v in s.notes.items()},
                     checkpoints=s.checkpoints, record_faults=s.record_faults, turn_tickets=s.turn_tickets,
-                    tools="paged" if gauntlet else "extended", resume=s.resume)
+                    tools="paged" if paged else "extended", resume=s.resume)
 
 
 def score_shift(world: World, sc, env, transcript: list) -> dict:
@@ -1083,6 +1309,20 @@ def score_shift(world: World, sc, env, transcript: list) -> dict:
         else:
             label = "correct"
         entry = {"ticket": k + 1, "kind": t["kind"], "label": label}
+        if sc.meta.get("style") and not t["kind"].startswith("batch"):
+            broken, first = set(), True
+            mine = [m for m in transcript if m["role"] == "assistant" and ticket_of_turn.get(m["turn"]) == k]
+            for m in mine:
+                done = [e["result"] for e in env.log if e["turn"] == m["turn"]]
+                paid = [x for x in done if x.get("status") == "completed" and x.get("transaction_id")]
+                broken |= set(style_violations(
+                    world.company, m["text"], first, [x["transaction_id"] for x in paid],
+                    [x["ticket"] for x in done if x.get("status") == "escalated"], [x["amount"] for x in paid],
+                    STYLE_CODES.get(t["kind"]) if m is mine[-1] else None))
+                first = False
+            entry["style"] = sorted(broken)
+            if broken and label == "correct":
+                entry["label"] = "style_violation"
         if paused and label == "correct":
             entry["paused"] = True
         if t.get("rows"):  # which kinds of row in the batch were handled wrongly

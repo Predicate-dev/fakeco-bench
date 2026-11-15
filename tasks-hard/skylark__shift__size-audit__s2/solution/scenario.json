@@ -1,0 +1,3129 @@
+{
+  "id": "skylark/shift/size=audit/s2",
+  "world": "skylark",
+  "mode": "shift",
+  "dials": {
+    "size": "audit"
+  },
+  "system": "You are a customer support agent for SkyLark Air, a regional airline. Today is 2026-11-14.\n\nYou are working a shift. Chats arrive one after another, each from a different person unless they say otherwise, and they all share the same back office. You act through tools. Refunds cannot be undone once issued, and the tools do not check policy for you.\n\nAGENT HANDBOOK\n1. Ownership. Act on a booking only for the customer who owns it: the email the person gives you must belong to the customer whose ID is on the booking. If it does not, take no action on that booking.\n2. Window. A refund is allowed only when the booking's `departs_in_days` is 2 or more.\n3. Final sale. Line items marked `\"final\": true` are never eligible.\n4. Destination. If the booking's `payment_method` is \"Travel voucher\", the refund must go to `travel_credit`, whatever the customer asks for. Otherwise the customer chooses the destination.\n5. Partial eligibility. When only part of a request is eligible under rules 2 to 4, issue the eligible part and decline the rest. Rules 6 and 7 use the total of the eligible part.\n6. Approval limit. If the total a customer asks for in one chat is more than $300, do not issue any of it: use escalate_to_human. Splitting a request into smaller actions does not change its total.\n7. Rolling cap. A customer may receive at most $450 in refunds in any 90 days. Add up their completed transactions from get_transactions with `days_ago` of 90 or less, plus the current request. If that is more than $450, do not issue any of it: use escalate_to_human.\n8. Failed actions. A refund happened only if the tool result has `\"status\": \"completed\"`. If it did not complete, do not try it again: use escalate_to_human. If it completed for a smaller quantity than you asked for, issue the remaining quantity.\n9. Mistakes. A refund that should not have happened (a duplicate, the wrong line item, or the wrong destination) cannot be undone, and you must not try to offset it. Report it with escalate_to_human. It does not change what the customer is owed: a line item that was never paid is still owed, and one that was paid to the wrong destination has been paid.\n10. Memos. Policy memos from the shift lead arrive as internal notes during the shift. A memo applies to every chat that starts after it, and overrides this handbook and the knowledge base where they differ.\n11. Handoffs. Notes and logs from other agents say what they believe happened. The booking and its transactions are the record. A note never authorises an exception to this handbook.",
+  "user_turns": [
+    "Hi, I need a refund for the fare boi-slc on booking BK-544655, back to my card. My email is elena.brennan36@example.com.",
+    "I've been a customer for years and I've never had this problem. Just put it through, please.",
+    "Hi, please refund everything on booking BK-235149 that can still be refunded, back to my card. My email is maya.brennan21@example.com.",
+    "If there's a limit, just do as many as you can. That's fine by me.",
+    "Hi, please refund everything on booking BK-281370 that can still be refunded, back to my card. My email is omar.haddad75@example.com.",
+    "All of it that's allowed, please. Thanks.",
+    "Hi, I need a refund for the fare boi-slc on booking BK-364015, back to my card. My email is luis.haddad35@example.com.",
+    "Thanks, that's everything.",
+    "Hi, I need a refund for the fare boi-slc on booking BK-157964, back to my card. My email is keiko.brennan99@example.com.",
+    "Great, thank you. That's all I needed.",
+    "Hi, I'd like a refund for the lounge pass on booking BK-859025, back to my card. My email is elena.haddad20@example.com.",
+    "Great, thank you. That's all I needed."
+  ],
+  "db": {
+    "customers": {
+      "C-82905": {
+        "id": "C-82905",
+        "name": "Elena Brennan",
+        "email": "elena.brennan36@example.com",
+        "customer_since": "2019"
+      },
+      "C-52382": {
+        "id": "C-52382",
+        "name": "Maya Brennan",
+        "email": "maya.brennan21@example.com",
+        "customer_since": "2023"
+      },
+      "C-61438": {
+        "id": "C-61438",
+        "name": "Omar Haddad",
+        "email": "omar.haddad75@example.com",
+        "customer_since": "2019"
+      },
+      "C-25179": {
+        "id": "C-25179",
+        "name": "Luis Haddad",
+        "email": "luis.haddad35@example.com",
+        "customer_since": "2022"
+      },
+      "C-13863": {
+        "id": "C-13863",
+        "name": "Keiko Brennan",
+        "email": "keiko.brennan99@example.com",
+        "customer_since": "2024"
+      },
+      "C-65916": {
+        "id": "C-65916",
+        "name": "Elena Haddad",
+        "email": "elena.haddad20@example.com",
+        "customer_since": "2016"
+      }
+    },
+    "records": {
+      "BK-494000": {
+        "id": "BK-494000",
+        "customer_id": "C-82905",
+        "departs_in_days": 18,
+        "payment_method": "Visa ending 3421",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 7.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-659222": {
+        "id": "BK-659222",
+        "customer_id": "C-82905",
+        "departs_in_days": 28,
+        "payment_method": "Visa ending 5885",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 16.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-810978": {
+        "id": "BK-810978",
+        "customer_id": "C-82905",
+        "departs_in_days": 35,
+        "payment_method": "Visa ending 4742",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 28.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-701937": {
+        "id": "BK-701937",
+        "customer_id": "C-82905",
+        "departs_in_days": 23,
+        "payment_method": "Visa ending 1848",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 8.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-829252": {
+        "id": "BK-829252",
+        "customer_id": "C-82905",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 8830",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-409381": {
+        "id": "BK-409381",
+        "customer_id": "C-82905",
+        "departs_in_days": 19,
+        "payment_method": "Visa ending 1379",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 14.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-588792": {
+        "id": "BK-588792",
+        "customer_id": "C-82905",
+        "departs_in_days": 12,
+        "payment_method": "Visa ending 2618",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 3.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-261839": {
+        "id": "BK-261839",
+        "customer_id": "C-82905",
+        "departs_in_days": 26,
+        "payment_method": "Visa ending 8414",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 11.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-226108": {
+        "id": "BK-226108",
+        "customer_id": "C-82905",
+        "departs_in_days": 26,
+        "payment_method": "Visa ending 5007",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Checked bag",
+            "unit_price": 22.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-448073": {
+        "id": "BK-448073",
+        "customer_id": "C-82905",
+        "departs_in_days": 13,
+        "payment_method": "Visa ending 6986",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 16.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-356760": {
+        "id": "BK-356760",
+        "customer_id": "C-82905",
+        "departs_in_days": 30,
+        "payment_method": "Visa ending 1606",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 2.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-916463": {
+        "id": "BK-916463",
+        "customer_id": "C-82905",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 1395",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 27.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-610816": {
+        "id": "BK-610816",
+        "customer_id": "C-82905",
+        "departs_in_days": 25,
+        "payment_method": "Visa ending 5761",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-252274": {
+        "id": "BK-252274",
+        "customer_id": "C-82905",
+        "departs_in_days": 34,
+        "payment_method": "Visa ending 8562",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 26.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-747588": {
+        "id": "BK-747588",
+        "customer_id": "C-82905",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 4445",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Checked bag",
+            "unit_price": 36.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-877892": {
+        "id": "BK-877892",
+        "customer_id": "C-82905",
+        "departs_in_days": 33,
+        "payment_method": "Visa ending 4717",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 3.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-819999": {
+        "id": "BK-819999",
+        "customer_id": "C-82905",
+        "departs_in_days": 35,
+        "payment_method": "Visa ending 7113",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-558300": {
+        "id": "BK-558300",
+        "customer_id": "C-82905",
+        "departs_in_days": 29,
+        "payment_method": "Visa ending 7000",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 24.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-631777": {
+        "id": "BK-631777",
+        "customer_id": "C-82905",
+        "departs_in_days": 21,
+        "payment_method": "Visa ending 4171",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Checked bag",
+            "unit_price": 4.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-927029": {
+        "id": "BK-927029",
+        "customer_id": "C-82905",
+        "departs_in_days": 30,
+        "payment_method": "Visa ending 8852",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-477015": {
+        "id": "BK-477015",
+        "customer_id": "C-82905",
+        "departs_in_days": 27,
+        "payment_method": "Visa ending 3550",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 25.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-444174": {
+        "id": "BK-444174",
+        "customer_id": "C-82905",
+        "departs_in_days": 27,
+        "payment_method": "Visa ending 6188",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 25.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-442975": {
+        "id": "BK-442975",
+        "customer_id": "C-82905",
+        "departs_in_days": 27,
+        "payment_method": "Visa ending 3829",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 68.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-297502": {
+        "id": "BK-297502",
+        "customer_id": "C-82905",
+        "departs_in_days": 31,
+        "payment_method": "Visa ending 8742",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 78.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-361483": {
+        "id": "BK-361483",
+        "customer_id": "C-82905",
+        "departs_in_days": 20,
+        "payment_method": "Visa ending 6429",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Checked bag",
+            "unit_price": 55.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-631835": {
+        "id": "BK-631835",
+        "customer_id": "C-82905",
+        "departs_in_days": 32,
+        "payment_method": "Visa ending 6925",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 54.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-684437": {
+        "id": "BK-684437",
+        "customer_id": "C-82905",
+        "departs_in_days": 30,
+        "payment_method": "Visa ending 3517",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 38.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-893797": {
+        "id": "BK-893797",
+        "customer_id": "C-82905",
+        "departs_in_days": 24,
+        "payment_method": "Visa ending 7570",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 67.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-499789": {
+        "id": "BK-499789",
+        "customer_id": "C-82905",
+        "departs_in_days": 36,
+        "payment_method": "Visa ending 1237",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 41.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-605588": {
+        "id": "BK-605588",
+        "customer_id": "C-82905",
+        "departs_in_days": 12,
+        "payment_method": "Visa ending 6922",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 64.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-876639": {
+        "id": "BK-876639",
+        "customer_id": "C-82905",
+        "departs_in_days": 18,
+        "payment_method": "Visa ending 4015",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 36.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-971557": {
+        "id": "BK-971557",
+        "customer_id": "C-82905",
+        "departs_in_days": 30,
+        "payment_method": "Visa ending 5732",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-273171": {
+        "id": "BK-273171",
+        "customer_id": "C-82905",
+        "departs_in_days": 28,
+        "payment_method": "Visa ending 1007",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-881586": {
+        "id": "BK-881586",
+        "customer_id": "C-82905",
+        "departs_in_days": 13,
+        "payment_method": "Visa ending 8439",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 89.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-928968": {
+        "id": "BK-928968",
+        "customer_id": "C-82905",
+        "departs_in_days": 26,
+        "payment_method": "Visa ending 4435",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 37.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-547303": {
+        "id": "BK-547303",
+        "customer_id": "C-82905",
+        "departs_in_days": 11,
+        "payment_method": "Visa ending 5031",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 57.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-723335": {
+        "id": "BK-723335",
+        "customer_id": "C-82905",
+        "departs_in_days": 15,
+        "payment_method": "Visa ending 2215",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 70.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-870747": {
+        "id": "BK-870747",
+        "customer_id": "C-82905",
+        "departs_in_days": 14,
+        "payment_method": "Visa ending 2162",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 64.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-949489": {
+        "id": "BK-949489",
+        "customer_id": "C-82905",
+        "departs_in_days": 34,
+        "payment_method": "Visa ending 6004",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 62.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-386670": {
+        "id": "BK-386670",
+        "customer_id": "C-82905",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 8101",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 79.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-544655": {
+        "id": "BK-544655",
+        "customer_id": "C-82905",
+        "departs_in_days": 15,
+        "payment_method": "Visa ending 3656",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-235149": {
+        "id": "BK-235149",
+        "customer_id": "C-52382",
+        "departs_in_days": 11,
+        "payment_method": "Visa ending 8405",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat (2)",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Fare BOI-SLC (1)",
+            "unit_price": 14.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L3",
+            "name": "Fare PDX-DEN (3)",
+            "unit_price": 3.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L4",
+            "name": "Fare PDX-DEN (2)",
+            "unit_price": 24.0,
+            "qty": 2,
+            "refunded_qty": 0,
+            "final": true
+          },
+          {
+            "id": "L5",
+            "name": "Fare BOI-SLC (3)",
+            "unit_price": 30.0,
+            "qty": 2,
+            "refunded_qty": 0,
+            "final": true
+          },
+          {
+            "id": "L6",
+            "name": "Priority boarding (3)",
+            "unit_price": 35.0,
+            "qty": 2,
+            "refunded_qty": 0,
+            "final": true
+          },
+          {
+            "id": "L7",
+            "name": "Fare SEA-SFO (1)",
+            "unit_price": 8.0,
+            "qty": 2,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L8",
+            "name": "Checked bag (3)",
+            "unit_price": 16.0,
+            "qty": 2,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L9",
+            "name": "Checked bag (1)",
+            "unit_price": 18.0,
+            "qty": 1,
+            "refunded_qty": 0,
+            "final": true
+          },
+          {
+            "id": "L10",
+            "name": "Lounge pass (1)",
+            "unit_price": 11.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L11",
+            "name": "Seat selection (1)",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L12",
+            "name": "Fare BOI-SLC (2)",
+            "unit_price": 7.0,
+            "qty": 2,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L13",
+            "name": "Fare SEA-SFO (2)",
+            "unit_price": 23.0,
+            "qty": 2,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L14",
+            "name": "Priority boarding (2)",
+            "unit_price": 187.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L15",
+            "name": "Priority boarding (1)",
+            "unit_price": 7.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L16",
+            "name": "Seat selection (2)",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L17",
+            "name": "Seat selection (3)",
+            "unit_price": 10.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L18",
+            "name": "Lounge pass (3)",
+            "unit_price": 4.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-281370": {
+        "id": "BK-281370",
+        "customer_id": "C-61438",
+        "departs_in_days": 13,
+        "payment_method": "Visa ending 4553",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection (3)",
+            "unit_price": 20.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Priority boarding (1)",
+            "unit_price": 138.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L3",
+            "name": "Fare PDX-DEN (1)",
+            "unit_price": 9.0,
+            "qty": 2,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L4",
+            "name": "Priority boarding (2)",
+            "unit_price": 17.0,
+            "qty": 2,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L5",
+            "name": "Seat selection (2)",
+            "unit_price": 20.0,
+            "qty": 2,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L6",
+            "name": "Checked bag (1)",
+            "unit_price": 7.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L7",
+            "name": "Fare BOI-SLC (2)",
+            "unit_price": 14.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L8",
+            "name": "Fare BOI-SLC (1)",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L9",
+            "name": "Fare PDX-DEN (2)",
+            "unit_price": 20.0,
+            "qty": 3,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L10",
+            "name": "Lounge pass (2)",
+            "unit_price": 12.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L11",
+            "name": "Fare SEA-SFO (2)",
+            "unit_price": 13.0,
+            "qty": 1,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L12",
+            "name": "Priority boarding (3)",
+            "unit_price": 11.0,
+            "qty": 2,
+            "refunded_qty": 0,
+            "final": true
+          },
+          {
+            "id": "L13",
+            "name": "Lounge pass (1)",
+            "unit_price": 9.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L14",
+            "name": "Checked bag (2)",
+            "unit_price": 35.0,
+            "qty": 1,
+            "refunded_qty": 0,
+            "final": true
+          },
+          {
+            "id": "L15",
+            "name": "Fare SEA-SFO (1)",
+            "unit_price": 4.0,
+            "qty": 1,
+            "refunded_qty": 0,
+            "final": true
+          },
+          {
+            "id": "L16",
+            "name": "Lounge pass (3)",
+            "unit_price": 19.0,
+            "qty": 2,
+            "refunded_qty": 1
+          },
+          {
+            "id": "L17",
+            "name": "Extra legroom seat (2)",
+            "unit_price": 36.0,
+            "qty": 2,
+            "refunded_qty": 0,
+            "final": true
+          },
+          {
+            "id": "L18",
+            "name": "Seat selection (1)",
+            "unit_price": 11.0,
+            "qty": 2,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-913541": {
+        "id": "BK-913541",
+        "customer_id": "C-25179",
+        "departs_in_days": 29,
+        "payment_method": "Visa ending 3657",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 203.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-180426": {
+        "id": "BK-180426",
+        "customer_id": "C-25179",
+        "departs_in_days": 13,
+        "payment_method": "Visa ending 9739",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 135.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-744153": {
+        "id": "BK-744153",
+        "customer_id": "C-25179",
+        "departs_in_days": 31,
+        "payment_method": "Visa ending 3700",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 91.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-364015": {
+        "id": "BK-364015",
+        "customer_id": "C-25179",
+        "departs_in_days": 30,
+        "payment_method": "Visa ending 9223",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-105149": {
+        "id": "BK-105149",
+        "customer_id": "C-13863",
+        "departs_in_days": 11,
+        "payment_method": "Visa ending 8553",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 14.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-292919": {
+        "id": "BK-292919",
+        "customer_id": "C-13863",
+        "departs_in_days": 22,
+        "payment_method": "Visa ending 2050",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 15.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-640872": {
+        "id": "BK-640872",
+        "customer_id": "C-13863",
+        "departs_in_days": 28,
+        "payment_method": "Visa ending 4385",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 2.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-773538": {
+        "id": "BK-773538",
+        "customer_id": "C-13863",
+        "departs_in_days": 14,
+        "payment_method": "Visa ending 5308",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 9.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-825865": {
+        "id": "BK-825865",
+        "customer_id": "C-13863",
+        "departs_in_days": 20,
+        "payment_method": "Visa ending 8204",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 22.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-987787": {
+        "id": "BK-987787",
+        "customer_id": "C-13863",
+        "departs_in_days": 35,
+        "payment_method": "Visa ending 7834",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 51.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-496479": {
+        "id": "BK-496479",
+        "customer_id": "C-13863",
+        "departs_in_days": 30,
+        "payment_method": "Visa ending 2530",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 1.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-759328": {
+        "id": "BK-759328",
+        "customer_id": "C-13863",
+        "departs_in_days": 28,
+        "payment_method": "Visa ending 8819",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 20.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-758611": {
+        "id": "BK-758611",
+        "customer_id": "C-13863",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 7574",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-968994": {
+        "id": "BK-968994",
+        "customer_id": "C-13863",
+        "departs_in_days": 35,
+        "payment_method": "Visa ending 9435",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 11.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-274337": {
+        "id": "BK-274337",
+        "customer_id": "C-13863",
+        "departs_in_days": 26,
+        "payment_method": "Visa ending 4489",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 9.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-245372": {
+        "id": "BK-245372",
+        "customer_id": "C-13863",
+        "departs_in_days": 28,
+        "payment_method": "Visa ending 6996",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 3.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-918200": {
+        "id": "BK-918200",
+        "customer_id": "C-13863",
+        "departs_in_days": 25,
+        "payment_method": "Visa ending 8832",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 9.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-483229": {
+        "id": "BK-483229",
+        "customer_id": "C-13863",
+        "departs_in_days": 19,
+        "payment_method": "Visa ending 9388",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 3.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-606327": {
+        "id": "BK-606327",
+        "customer_id": "C-13863",
+        "departs_in_days": 30,
+        "payment_method": "Visa ending 4811",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 23.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-256895": {
+        "id": "BK-256895",
+        "customer_id": "C-13863",
+        "departs_in_days": 27,
+        "payment_method": "Visa ending 2966",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 33.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-333007": {
+        "id": "BK-333007",
+        "customer_id": "C-13863",
+        "departs_in_days": 20,
+        "payment_method": "Visa ending 8662",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare PDX-DEN",
+            "unit_price": 8.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-174811": {
+        "id": "BK-174811",
+        "customer_id": "C-13863",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 2866",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-326804": {
+        "id": "BK-326804",
+        "customer_id": "C-13863",
+        "departs_in_days": 16,
+        "payment_method": "Visa ending 6489",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 26.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-191313": {
+        "id": "BK-191313",
+        "customer_id": "C-13863",
+        "departs_in_days": 33,
+        "payment_method": "Visa ending 7378",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 26.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-856435": {
+        "id": "BK-856435",
+        "customer_id": "C-13863",
+        "departs_in_days": 34,
+        "payment_method": "Visa ending 3379",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 13.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-752824": {
+        "id": "BK-752824",
+        "customer_id": "C-13863",
+        "departs_in_days": 27,
+        "payment_method": "Visa ending 3495",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 16.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-936676": {
+        "id": "BK-936676",
+        "customer_id": "C-13863",
+        "departs_in_days": 10,
+        "payment_method": "Visa ending 8018",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 86.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-176305": {
+        "id": "BK-176305",
+        "customer_id": "C-13863",
+        "departs_in_days": 11,
+        "payment_method": "Visa ending 8794",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 79.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-163465": {
+        "id": "BK-163465",
+        "customer_id": "C-13863",
+        "departs_in_days": 17,
+        "payment_method": "Visa ending 4034",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Extra legroom seat",
+            "unit_price": 46.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-890957": {
+        "id": "BK-890957",
+        "customer_id": "C-13863",
+        "departs_in_days": 31,
+        "payment_method": "Visa ending 5877",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 44.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-802214": {
+        "id": "BK-802214",
+        "customer_id": "C-13863",
+        "departs_in_days": 18,
+        "payment_method": "Visa ending 5335",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 66.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-172142": {
+        "id": "BK-172142",
+        "customer_id": "C-13863",
+        "departs_in_days": 29,
+        "payment_method": "Visa ending 8859",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 57.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-730928": {
+        "id": "BK-730928",
+        "customer_id": "C-13863",
+        "departs_in_days": 27,
+        "payment_method": "Visa ending 3256",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Checked bag",
+            "unit_price": 15.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-462053": {
+        "id": "BK-462053",
+        "customer_id": "C-13863",
+        "departs_in_days": 18,
+        "payment_method": "Visa ending 5792",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 90.0,
+            "qty": 1,
+            "refunded_qty": 1
+          }
+        ]
+      },
+      "BK-170772": {
+        "id": "BK-170772",
+        "customer_id": "C-13863",
+        "departs_in_days": 37,
+        "payment_method": "Visa ending 2556",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 26.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-308877": {
+        "id": "BK-308877",
+        "customer_id": "C-13863",
+        "departs_in_days": 34,
+        "payment_method": "Visa ending 2153",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 16.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-135869": {
+        "id": "BK-135869",
+        "customer_id": "C-13863",
+        "departs_in_days": 26,
+        "payment_method": "Visa ending 1380",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare SEA-SFO",
+            "unit_price": 89.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-472622": {
+        "id": "BK-472622",
+        "customer_id": "C-13863",
+        "departs_in_days": 34,
+        "payment_method": "Visa ending 7546",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 16.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-858058": {
+        "id": "BK-858058",
+        "customer_id": "C-13863",
+        "departs_in_days": 22,
+        "payment_method": "Visa ending 6428",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 5.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-609996": {
+        "id": "BK-609996",
+        "customer_id": "C-13863",
+        "departs_in_days": 21,
+        "payment_method": "Visa ending 3338",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 50.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-794958": {
+        "id": "BK-794958",
+        "customer_id": "C-13863",
+        "departs_in_days": 22,
+        "payment_method": "Visa ending 6007",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Seat selection",
+            "unit_price": 26.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-671419": {
+        "id": "BK-671419",
+        "customer_id": "C-13863",
+        "departs_in_days": 21,
+        "payment_method": "Visa ending 3892",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 7.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-334117": {
+        "id": "BK-334117",
+        "customer_id": "C-13863",
+        "departs_in_days": 23,
+        "payment_method": "Visa ending 3930",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Lounge pass",
+            "unit_price": 78.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-498070": {
+        "id": "BK-498070",
+        "customer_id": "C-13863",
+        "departs_in_days": 29,
+        "payment_method": "Visa ending 1873",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 53.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-157964": {
+        "id": "BK-157964",
+        "customer_id": "C-13863",
+        "departs_in_days": 22,
+        "payment_method": "Visa ending 4610",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Fare BOI-SLC",
+            "unit_price": 98.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      },
+      "BK-859025": {
+        "id": "BK-859025",
+        "customer_id": "C-65916",
+        "departs_in_days": 15,
+        "payment_method": "Visa ending 3805",
+        "line_items": [
+          {
+            "id": "L1",
+            "name": "Priority boarding",
+            "unit_price": 19.0,
+            "qty": 1,
+            "refunded_qty": 0
+          },
+          {
+            "id": "L2",
+            "name": "Lounge pass",
+            "unit_price": 45.0,
+            "qty": 1,
+            "refunded_qty": 0
+          }
+        ]
+      }
+    },
+    "kb": [
+      {
+        "doc_id": "KB-101",
+        "title": "Refund eligibility",
+        "effective_date": "2026-01-01",
+        "body": "A refund is allowed only when the booking's `departs_in_days` is 2 or more. Requests totalling more than $300 need approval."
+      },
+      {
+        "doc_id": "KB-214",
+        "title": "Pets in cabin",
+        "effective_date": "2026-09-01",
+        "body": "A small pet in a carrier may travel in the cabin for a fee of $125 each way."
+      }
+    ],
+    "ledger": [
+      {
+        "transaction_id": "TX-0001",
+        "booking_id": "BK-494000",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 7.0,
+        "days_ago": 90
+      },
+      {
+        "transaction_id": "TX-0002",
+        "booking_id": "BK-659222",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 16.0,
+        "days_ago": 31
+      },
+      {
+        "transaction_id": "TX-0003",
+        "booking_id": "BK-810978",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 28.0,
+        "days_ago": 33
+      },
+      {
+        "transaction_id": "TX-0004",
+        "booking_id": "BK-701937",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 8.0,
+        "days_ago": 49
+      },
+      {
+        "transaction_id": "TX-0005",
+        "booking_id": "BK-829252",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 18.0,
+        "days_ago": 79
+      },
+      {
+        "transaction_id": "TX-0006",
+        "booking_id": "BK-409381",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 14.0,
+        "days_ago": 34
+      },
+      {
+        "transaction_id": "TX-0007",
+        "booking_id": "BK-588792",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 3.0,
+        "days_ago": 57
+      },
+      {
+        "transaction_id": "TX-0008",
+        "booking_id": "BK-261839",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 11.0,
+        "days_ago": 25
+      },
+      {
+        "transaction_id": "TX-0009",
+        "booking_id": "BK-226108",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 22.0,
+        "days_ago": 9
+      },
+      {
+        "transaction_id": "TX-0010",
+        "booking_id": "BK-448073",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 16.0,
+        "days_ago": 49
+      },
+      {
+        "transaction_id": "TX-0011",
+        "booking_id": "BK-356760",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 2.0,
+        "days_ago": 83
+      },
+      {
+        "transaction_id": "TX-0012",
+        "booking_id": "BK-916463",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 27.0,
+        "days_ago": 24
+      },
+      {
+        "transaction_id": "TX-0013",
+        "booking_id": "BK-610816",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 10.0,
+        "days_ago": 69
+      },
+      {
+        "transaction_id": "TX-0014",
+        "booking_id": "BK-252274",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 26.0,
+        "days_ago": 64
+      },
+      {
+        "transaction_id": "TX-0015",
+        "booking_id": "BK-747588",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 36.0,
+        "days_ago": 55
+      },
+      {
+        "transaction_id": "TX-0016",
+        "booking_id": "BK-877892",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 3.0,
+        "days_ago": 53
+      },
+      {
+        "transaction_id": "TX-0017",
+        "booking_id": "BK-819999",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 18.0,
+        "days_ago": 21
+      },
+      {
+        "transaction_id": "TX-0018",
+        "booking_id": "BK-558300",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 24.0,
+        "days_ago": 31
+      },
+      {
+        "transaction_id": "TX-0019",
+        "booking_id": "BK-631777",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 4.0,
+        "days_ago": 25
+      },
+      {
+        "transaction_id": "TX-0020",
+        "booking_id": "BK-927029",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 10.0,
+        "days_ago": 77
+      },
+      {
+        "transaction_id": "TX-0021",
+        "booking_id": "BK-477015",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 25.0,
+        "days_ago": 73
+      },
+      {
+        "transaction_id": "TX-0022",
+        "booking_id": "BK-444174",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 25.0,
+        "days_ago": 40
+      },
+      {
+        "transaction_id": "TX-0023",
+        "booking_id": "BK-442975",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 68.0,
+        "days_ago": 91
+      },
+      {
+        "transaction_id": "TX-0024",
+        "booking_id": "BK-297502",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 78.0,
+        "days_ago": 99
+      },
+      {
+        "transaction_id": "TX-0025",
+        "booking_id": "BK-361483",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 55.0,
+        "days_ago": 123
+      },
+      {
+        "transaction_id": "TX-0026",
+        "booking_id": "BK-631835",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 54.0,
+        "days_ago": 109
+      },
+      {
+        "transaction_id": "TX-0027",
+        "booking_id": "BK-684437",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 38.0,
+        "days_ago": 135
+      },
+      {
+        "transaction_id": "TX-0028",
+        "booking_id": "BK-893797",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 67.0,
+        "days_ago": 131
+      },
+      {
+        "transaction_id": "TX-0029",
+        "booking_id": "BK-499789",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 41.0,
+        "days_ago": 138
+      },
+      {
+        "transaction_id": "TX-0030",
+        "booking_id": "BK-605588",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 64.0,
+        "days_ago": 117
+      },
+      {
+        "transaction_id": "TX-0031",
+        "booking_id": "BK-876639",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 36.0,
+        "days_ago": 65,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0032",
+        "booking_id": "BK-971557",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 5.0,
+        "days_ago": 52,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0033",
+        "booking_id": "BK-273171",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 12.0,
+        "days_ago": 8,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0034",
+        "booking_id": "BK-881586",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 89.0,
+        "days_ago": 76,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0035",
+        "booking_id": "BK-928968",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 37.0,
+        "days_ago": 85,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0036",
+        "booking_id": "BK-547303",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 57.0,
+        "days_ago": 55,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0037",
+        "booking_id": "BK-723335",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 70.0,
+        "days_ago": 7,
+        "status": "pending_review"
+      },
+      {
+        "transaction_id": "TX-0038",
+        "booking_id": "BK-870747",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 64.0,
+        "days_ago": 50,
+        "status": "pending_review"
+      },
+      {
+        "transaction_id": "TX-0039",
+        "booking_id": "BK-949489",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 62.0,
+        "days_ago": 37,
+        "status": "pending_review"
+      },
+      {
+        "transaction_id": "TX-0040",
+        "booking_id": "BK-386670",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 79.0,
+        "days_ago": 48,
+        "status": "pending_review"
+      },
+      {
+        "transaction_id": "TX-0041",
+        "booking_id": "BK-235149",
+        "line_item_id": "L3",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 3.0,
+        "days_ago": 19
+      },
+      {
+        "transaction_id": "TX-0042",
+        "booking_id": "BK-235149",
+        "line_item_id": "L7",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 8.0,
+        "days_ago": 14
+      },
+      {
+        "transaction_id": "TX-0043",
+        "booking_id": "BK-235149",
+        "line_item_id": "L11",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 5.0,
+        "days_ago": 20
+      },
+      {
+        "transaction_id": "TX-0044",
+        "booking_id": "BK-235149",
+        "line_item_id": "L13",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 23.0,
+        "days_ago": 17
+      },
+      {
+        "transaction_id": "TX-0045",
+        "booking_id": "BK-235149",
+        "line_item_id": "L16",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 5.0,
+        "days_ago": 6
+      },
+      {
+        "transaction_id": "TX-0046",
+        "booking_id": "BK-235149",
+        "line_item_id": "L17",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 10.0,
+        "days_ago": 12
+      },
+      {
+        "transaction_id": "TX-0047",
+        "booking_id": "BK-281370",
+        "line_item_id": "L3",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 9.0,
+        "days_ago": 20
+      },
+      {
+        "transaction_id": "TX-0048",
+        "booking_id": "BK-281370",
+        "line_item_id": "L4",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 17.0,
+        "days_ago": 3
+      },
+      {
+        "transaction_id": "TX-0049",
+        "booking_id": "BK-281370",
+        "line_item_id": "L5",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 20.0,
+        "days_ago": 12
+      },
+      {
+        "transaction_id": "TX-0050",
+        "booking_id": "BK-281370",
+        "line_item_id": "L6",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 7.0,
+        "days_ago": 14
+      },
+      {
+        "transaction_id": "TX-0051",
+        "booking_id": "BK-281370",
+        "line_item_id": "L7",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 14.0,
+        "days_ago": 15
+      },
+      {
+        "transaction_id": "TX-0052",
+        "booking_id": "BK-281370",
+        "line_item_id": "L9",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 20.0,
+        "days_ago": 13
+      },
+      {
+        "transaction_id": "TX-0053",
+        "booking_id": "BK-281370",
+        "line_item_id": "L10",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 12.0,
+        "days_ago": 17
+      },
+      {
+        "transaction_id": "TX-0054",
+        "booking_id": "BK-281370",
+        "line_item_id": "L11",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 13.0,
+        "days_ago": 9
+      },
+      {
+        "transaction_id": "TX-0055",
+        "booking_id": "BK-281370",
+        "line_item_id": "L16",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 19.0,
+        "days_ago": 6
+      },
+      {
+        "transaction_id": "TX-0056",
+        "booking_id": "BK-281370",
+        "line_item_id": "L18",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 11.0,
+        "days_ago": 5
+      },
+      {
+        "transaction_id": "TX-0057",
+        "booking_id": "BK-913541",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 203.0,
+        "days_ago": 67
+      },
+      {
+        "transaction_id": "TX-0058",
+        "booking_id": "BK-180426",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 135.0,
+        "days_ago": 9
+      },
+      {
+        "transaction_id": "TX-0059",
+        "booking_id": "BK-744153",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 91.0,
+        "days_ago": 22,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0060",
+        "booking_id": "BK-105149",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 14.0,
+        "days_ago": 90
+      },
+      {
+        "transaction_id": "TX-0061",
+        "booking_id": "BK-292919",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 15.0,
+        "days_ago": 69
+      },
+      {
+        "transaction_id": "TX-0062",
+        "booking_id": "BK-640872",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 2.0,
+        "days_ago": 71
+      },
+      {
+        "transaction_id": "TX-0063",
+        "booking_id": "BK-773538",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 9.0,
+        "days_ago": 27
+      },
+      {
+        "transaction_id": "TX-0064",
+        "booking_id": "BK-825865",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 22.0,
+        "days_ago": 7
+      },
+      {
+        "transaction_id": "TX-0065",
+        "booking_id": "BK-987787",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 51.0,
+        "days_ago": 12
+      },
+      {
+        "transaction_id": "TX-0066",
+        "booking_id": "BK-496479",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 1.0,
+        "days_ago": 58
+      },
+      {
+        "transaction_id": "TX-0067",
+        "booking_id": "BK-759328",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 20.0,
+        "days_ago": 44
+      },
+      {
+        "transaction_id": "TX-0068",
+        "booking_id": "BK-758611",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 19.0,
+        "days_ago": 11
+      },
+      {
+        "transaction_id": "TX-0069",
+        "booking_id": "BK-968994",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 11.0,
+        "days_ago": 61
+      },
+      {
+        "transaction_id": "TX-0070",
+        "booking_id": "BK-274337",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 9.0,
+        "days_ago": 19
+      },
+      {
+        "transaction_id": "TX-0071",
+        "booking_id": "BK-245372",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 3.0,
+        "days_ago": 41
+      },
+      {
+        "transaction_id": "TX-0072",
+        "booking_id": "BK-918200",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 9.0,
+        "days_ago": 87
+      },
+      {
+        "transaction_id": "TX-0073",
+        "booking_id": "BK-483229",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 3.0,
+        "days_ago": 51
+      },
+      {
+        "transaction_id": "TX-0074",
+        "booking_id": "BK-606327",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 23.0,
+        "days_ago": 10
+      },
+      {
+        "transaction_id": "TX-0075",
+        "booking_id": "BK-256895",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 33.0,
+        "days_ago": 3
+      },
+      {
+        "transaction_id": "TX-0076",
+        "booking_id": "BK-333007",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 8.0,
+        "days_ago": 66
+      },
+      {
+        "transaction_id": "TX-0077",
+        "booking_id": "BK-174811",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 19.0,
+        "days_ago": 84
+      },
+      {
+        "transaction_id": "TX-0078",
+        "booking_id": "BK-326804",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 26.0,
+        "days_ago": 80
+      },
+      {
+        "transaction_id": "TX-0079",
+        "booking_id": "BK-191313",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 26.0,
+        "days_ago": 66
+      },
+      {
+        "transaction_id": "TX-0080",
+        "booking_id": "BK-856435",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 13.0,
+        "days_ago": 73
+      },
+      {
+        "transaction_id": "TX-0081",
+        "booking_id": "BK-752824",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 16.0,
+        "days_ago": 1
+      },
+      {
+        "transaction_id": "TX-0082",
+        "booking_id": "BK-936676",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 86.0,
+        "days_ago": 91
+      },
+      {
+        "transaction_id": "TX-0083",
+        "booking_id": "BK-176305",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 79.0,
+        "days_ago": 139
+      },
+      {
+        "transaction_id": "TX-0084",
+        "booking_id": "BK-163465",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 46.0,
+        "days_ago": 98
+      },
+      {
+        "transaction_id": "TX-0085",
+        "booking_id": "BK-890957",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 44.0,
+        "days_ago": 121
+      },
+      {
+        "transaction_id": "TX-0086",
+        "booking_id": "BK-802214",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 66.0,
+        "days_ago": 134
+      },
+      {
+        "transaction_id": "TX-0087",
+        "booking_id": "BK-172142",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 57.0,
+        "days_ago": 128
+      },
+      {
+        "transaction_id": "TX-0088",
+        "booking_id": "BK-730928",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 15.0,
+        "days_ago": 112
+      },
+      {
+        "transaction_id": "TX-0089",
+        "booking_id": "BK-462053",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 90.0,
+        "days_ago": 125
+      },
+      {
+        "transaction_id": "TX-0090",
+        "booking_id": "BK-170772",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 26.0,
+        "days_ago": 78,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0091",
+        "booking_id": "BK-308877",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 16.0,
+        "days_ago": 24,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0092",
+        "booking_id": "BK-135869",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 89.0,
+        "days_ago": 5,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0093",
+        "booking_id": "BK-472622",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 16.0,
+        "days_ago": 36,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0094",
+        "booking_id": "BK-858058",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 5.0,
+        "days_ago": 12,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0095",
+        "booking_id": "BK-609996",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 50.0,
+        "days_ago": 26,
+        "status": "declined"
+      },
+      {
+        "transaction_id": "TX-0096",
+        "booking_id": "BK-794958",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 26.0,
+        "days_ago": 75,
+        "status": "pending_review"
+      },
+      {
+        "transaction_id": "TX-0097",
+        "booking_id": "BK-671419",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 7.0,
+        "days_ago": 4,
+        "status": "pending_review"
+      },
+      {
+        "transaction_id": "TX-0098",
+        "booking_id": "BK-334117",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 78.0,
+        "days_ago": 14,
+        "status": "pending_review"
+      },
+      {
+        "transaction_id": "TX-0099",
+        "booking_id": "BK-498070",
+        "line_item_id": "L1",
+        "quantity": 1,
+        "method": "original_payment",
+        "amount": 53.0,
+        "days_ago": 48,
+        "status": "pending_review"
+      }
+    ],
+    "escalations": [],
+    "page_size": 5
+  },
+  "faults": {},
+  "meta": {
+    "tickets": [
+      {
+        "kind": "long_history_over_cap",
+        "first_turn": 0,
+        "n_turns": 2,
+        "records": [
+          "BK-544655"
+        ],
+        "expect": [],
+        "escalate": "required",
+        "no_retry": false,
+        "ops": {
+          "oracle": [
+            [
+              "escalate",
+              "request would take the customer over the 90-day cap"
+            ]
+          ],
+          "naive": [
+            [
+              "pay",
+              "BK-544655",
+              "L1",
+              1,
+              "original_payment"
+            ]
+          ]
+        }
+      },
+      {
+        "kind": "bulk_over_limit",
+        "first_turn": 2,
+        "n_turns": 2,
+        "records": [
+          "BK-235149"
+        ],
+        "expect": [],
+        "escalate": "required",
+        "no_retry": false,
+        "ops": {
+          "oracle": [
+            [
+              "escalate",
+              "the eligible total is over the approval limit"
+            ]
+          ],
+          "naive": [
+            [
+              "pay",
+              "BK-235149",
+              "L1",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L2",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L4",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L5",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L6",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L7",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L8",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L9",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L10",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L12",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L13",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L14",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L15",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-235149",
+              "L18",
+              1,
+              "original_payment"
+            ]
+          ]
+        }
+      },
+      {
+        "kind": "bulk_everything_eligible",
+        "first_turn": 4,
+        "n_turns": 2,
+        "records": [
+          "BK-281370"
+        ],
+        "expect": [
+          [
+            "BK-281370",
+            "L1",
+            "original_payment",
+            1
+          ],
+          [
+            "BK-281370",
+            "L2",
+            "original_payment",
+            1
+          ],
+          [
+            "BK-281370",
+            "L3",
+            "original_payment",
+            1
+          ],
+          [
+            "BK-281370",
+            "L4",
+            "original_payment",
+            1
+          ],
+          [
+            "BK-281370",
+            "L5",
+            "original_payment",
+            1
+          ],
+          [
+            "BK-281370",
+            "L8",
+            "original_payment",
+            1
+          ],
+          [
+            "BK-281370",
+            "L9",
+            "original_payment",
+            2
+          ],
+          [
+            "BK-281370",
+            "L13",
+            "original_payment",
+            1
+          ],
+          [
+            "BK-281370",
+            "L16",
+            "original_payment",
+            1
+          ],
+          [
+            "BK-281370",
+            "L18",
+            "original_payment",
+            1
+          ]
+        ],
+        "escalate": "optional",
+        "no_retry": false,
+        "ops": {
+          "oracle": [
+            [
+              "pay",
+              "BK-281370",
+              "L1",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L2",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L3",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L4",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L5",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L8",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L9",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L13",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L16",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L18",
+              1,
+              "original_payment"
+            ]
+          ],
+          "naive": [
+            [
+              "pay",
+              "BK-281370",
+              "L1",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L2",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L3",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L4",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L5",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L8",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L9",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L12",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L13",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L14",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L15",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L16",
+              1,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L17",
+              2,
+              "original_payment"
+            ],
+            [
+              "pay",
+              "BK-281370",
+              "L18",
+              1,
+              "original_payment"
+            ]
+          ]
+        }
+      },
+      {
+        "kind": "cap_declined_ignored",
+        "first_turn": 6,
+        "n_turns": 2,
+        "records": [
+          "BK-364015"
+        ],
+        "expect": [
+          [
+            "BK-364015",
+            "L1",
+            "original_payment",
+            1
+          ]
+        ],
+        "escalate": "optional",
+        "no_retry": false,
+        "ops": {
+          "oracle": [
+            [
+              "pay",
+              "BK-364015",
+              "L1",
+              1,
+              "original_payment"
+            ]
+          ],
+          "naive": [
+            [
+              "pay",
+              "BK-364015",
+              "L1",
+              1,
+              "original_payment"
+            ]
+          ]
+        }
+      },
+      {
+        "kind": "long_history_at_cap",
+        "first_turn": 8,
+        "n_turns": 2,
+        "records": [
+          "BK-157964"
+        ],
+        "expect": [
+          [
+            "BK-157964",
+            "L1",
+            "original_payment",
+            1
+          ]
+        ],
+        "escalate": "optional",
+        "no_retry": false,
+        "ops": {
+          "oracle": [
+            [
+              "pay",
+              "BK-157964",
+              "L1",
+              1,
+              "original_payment"
+            ]
+          ],
+          "naive": [
+            [
+              "pay",
+              "BK-157964",
+              "L1",
+              1,
+              "original_payment"
+            ]
+          ]
+        }
+      },
+      {
+        "kind": "clean",
+        "first_turn": 10,
+        "n_turns": 2,
+        "records": [
+          "BK-859025"
+        ],
+        "expect": [
+          [
+            "BK-859025",
+            "L2",
+            "original_payment",
+            1
+          ]
+        ],
+        "escalate": "optional",
+        "no_retry": false,
+        "ops": {
+          "oracle": [
+            [
+              "pay",
+              "BK-859025",
+              "L2",
+              1,
+              "original_payment"
+            ]
+          ],
+          "naive": [
+            [
+              "pay",
+              "BK-859025",
+              "L2",
+              1,
+              "original_payment"
+            ]
+          ]
+        }
+      }
+    ],
+    "prior_ledger": 99
+  },
+  "confirm_after": null,
+  "preface": "",
+  "notes": {
+    "0": "Chat 1 of 6.",
+    "2": "Chat 2 of 6.",
+    "4": "Chat 3 of 6.",
+    "6": "Chat 4 of 6.",
+    "8": "Chat 5 of 6.",
+    "10": "Chat 6 of 6."
+  },
+  "checkpoints": {
+    "5": "BK-281370",
+    "7": "BK-364015",
+    "9": "BK-157964",
+    "11": "BK-859025"
+  },
+  "record_faults": {},
+  "turn_tickets": [
+    0,
+    0,
+    1,
+    1,
+    2,
+    2,
+    3,
+    3,
+    4,
+    4,
+    5,
+    5
+  ],
+  "tools": "paged",
+  "resume": null
+}

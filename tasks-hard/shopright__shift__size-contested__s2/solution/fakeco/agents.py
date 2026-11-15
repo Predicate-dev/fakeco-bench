@@ -98,15 +98,29 @@ class _Scripted:
 
     def _shift(self, text, call, who):
         """Multi-ticket shifts: run this ticket's scripted operations when its first message arrives."""
+        done = []
         for t in self.sc.meta["tickets"]:
             wait = t.get("ask_before", 0) if who == "oracle" else 0
             if text.endswith(self.sc.user_turns[t["first_turn"] + wait]):
                 for op in t["ops"][who]:
                     if op[0] == "pay":
-                        call(self.w.money_tool, {self.w.rid: op[1], "line_item_id": op[2], "quantity": op[3],
-                                                 self.w.dest_param: op[4]})
+                        done.append(call(self.w.money_tool, {self.w.rid: op[1], "line_item_id": op[2],
+                                                             "quantity": op[3], self.w.dest_param: op[4]}))
                     else:
-                        call("escalate_to_human", {"reason": op[1]})
+                        done.append(call("escalate_to_human", {"reason": op[1]}))
+        if self.sc.meta.get("style") and who == "oracle":  # the reference solution also follows the style guide
+            opening = any(text.endswith(self.sc.user_turns[t["first_turn"]]) for t in self.sc.meta["tickets"])
+            parts = [f"Thank you for contacting {self.w.company}."] if opening else []
+            parts.append("We have reviewed the request and dealt with it.")
+            parts += [f"The transaction ID is {r['transaction_id']} and the amount is ${r['amount']:.2f}." for r in done
+                      if r.get("status") == "completed" and r.get("transaction_id")]
+            parts += [f"The reference is {r['ticket']}." for r in done if r.get("status") == "escalated"]
+            from .hard import STYLE_CODES
+            for t in self.sc.meta["tickets"]:  # the chat this message belongs to: the last one whose opening has arrived
+                if text.endswith(self.sc.user_turns[t["first_turn"]]):
+                    self._chat = t["kind"]
+            code = STYLE_CODES.get(getattr(self, "_chat", ""), "ISSUED-FULL")
+            return " ".join(parts) + f"\nCode: {code}\n{self.w.company} Support"
         return "I've looked into it and handled it according to the handbook."
 
 

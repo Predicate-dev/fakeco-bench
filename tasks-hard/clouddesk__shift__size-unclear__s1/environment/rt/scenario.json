@@ -150,7 +150,8 @@
             "name": "Extra storage (100 GB block)",
             "unit_price": 20.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -165,7 +166,8 @@
             "name": "Extra agent seat",
             "unit_price": 133.0,
             "qty": 1,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -180,7 +182,8 @@
             "name": "AI triage add-on",
             "unit_price": 163.0,
             "qty": 1,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -195,7 +198,8 @@
             "name": "SSO add-on",
             "unit_price": 110.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -210,7 +214,8 @@
             "name": "AI triage add-on",
             "unit_price": 60.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -225,7 +230,8 @@
             "name": "Chat widget add-on",
             "unit_price": 35.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -240,7 +246,8 @@
             "name": "SSO add-on",
             "unit_price": 110.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -255,7 +262,8 @@
             "name": "Extra agent seat",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -270,7 +278,8 @@
             "name": "Extra agent seat",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -285,7 +294,8 @@
             "name": "Extra agent seat",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -300,7 +310,8 @@
             "name": "AI triage add-on",
             "unit_price": 60.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -315,21 +326,24 @@
             "name": "Analytics add-on",
             "unit_price": 80.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Phone support add-on",
             "unit_price": 45.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L3",
             "name": "AI triage add-on",
             "unit_price": 60.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -344,7 +358,8 @@
             "name": "Phone support add-on",
             "unit_price": 45.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -359,7 +374,8 @@
             "name": "Phone support add-on",
             "unit_price": 45.0,
             "qty": 6,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -374,14 +390,16 @@
             "name": "Extra agent seat",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Chat widget add-on",
             "unit_price": 35.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -396,14 +414,16 @@
             "name": "Chat widget add-on",
             "unit_price": 35.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "SMS notification pack",
             "unit_price": 18.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -418,14 +438,16 @@
             "name": "Phone support add-on",
             "unit_price": 45.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "SMS notification pack",
             "unit_price": 15.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -440,14 +462,16 @@
             "name": "Analytics add-on",
             "unit_price": 80.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "SMS notification pack",
             "unit_price": 15.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -462,14 +486,16 @@
             "name": "Extra storage (100 GB block)",
             "unit_price": 20.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "SMS notification pack",
             "unit_price": 22.5,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -484,14 +510,16 @@
             "name": "Extra agent seat",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "SMS notification pack",
             "unit_price": 15.0,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -506,14 +534,16 @@
             "name": "Analytics add-on",
             "unit_price": 80.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "SMS notification pack",
             "unit_price": 30.0,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -528,14 +558,16 @@
             "name": "Chat widget add-on",
             "unit_price": 35.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "SMS notification pack",
             "unit_price": 9.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -550,14 +582,16 @@
             "name": "Chat widget add-on",
             "unit_price": 35.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "SMS notification pack",
             "unit_price": 15.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       }

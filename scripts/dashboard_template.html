@@ -151,7 +151,9 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
     </div>
     <dl class="fk-defs">
       <div><dt>Shifts passed (pass@1)</dt><dd>Short and long shifts, 24 in all, one attempt each. Every chat in the shift has to be right.</dd></div>
-      <div><dt>Contested, Gauntlet</dt><dd>Harder shift types added later, 12 of each. A count out of fewer than 12 means only part was run.</dd></div>
+      <div><dt>Contested, Gauntlet, Unclear, Audit</dt><dd>Harder shift types added later, 12 of each. A count out of fewer than 12 means only part was run.</dd></div>
+      <div><dt>Styled</dt><dd>Eight ordinary chats under a strict 24-rule style guide, checked by patterns. A chat fails if any message breaks any rule.</dd></div>
+      <div><dt>Limited memory</dt><dd>The same model and shifts, but every chat starts with a fresh context and only the notes the agent chose to save (1,200 characters).</dd></div>
       <div><dt>Contested, finished</dt><dd>In a contested shift another session may still be paying from the same list, so stopping and escalating counts as a pass. This column counts only shifts where the agent also finished the batch.</dd></div>
       <div><dt>Chats right</dt><dd>Share of individual chats handled correctly in the short and long shifts.</dd></div>
       <div><dt>All 3 seeds / Any of 3</dt><dd>Each company and shift length was generated three times. Of the 8 combinations: how many the model passed every time, and how many at least once. These are three different shifts, not three attempts at one.</dd></div>
@@ -174,6 +176,11 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
       <h2>Takeover batches, row by row</h2>
       <p class="fk-lede">Each shift ends with a colleague's half-finished batch. These are the individual rows handled wrongly.</p>
       <div class="fk-scroll"><table id="rows"><thead></thead><tbody></tbody></table></div>
+    </div>
+    <div class="fk-block" id="style-block" hidden>
+      <h2>Style guide: chats that broke each rule</h2>
+      <p class="fk-lede">Styled shifts add a strict 24-rule style guide to eight ordinary chats. Every rule is checked by a pattern. One broken rule in one message fails the chat.</p>
+      <div class="fk-scroll"><table id="style"><thead></thead><tbody></tbody></table></div>
     </div>
     <div class="fk-block">
       <h2>Every chat type</h2>
@@ -201,18 +208,20 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-body); 
 <script>
 const INDEX = /*INDEX*/null;
 const WORLDS = { shopright: "ShopRight", skylark: "SkyLark Air", clouddesk: "CloudDesk", harbor: "Harbor Bank" };
-const SIZE_NAMES = { short: "Short", long: "Long", contested: "Contested", gauntlet: "Gauntlet" };
+const SIZE_NAMES = { short: "Short", long: "Long", contested: "Contested", gauntlet: "Gauntlet", unclear: "Unclear", audit: "Audit", styled: "Styled" };
 const LABELS = {
   correct: "Right", should_not_have_acted: "Issued money it should not have", did_not_act: "Did not issue what was owed",
   wrong_action: "Issued the wrong set of payments", did_not_escalate: "Did not escalate", retried_failed_action: "Retried a failed action",
   acted_on_another_record: "Acted on a record outside this chat", not_reached: "Never got to this chat",
+  acted_before_asking: "Issued money before the customer had said enough",
+  style_violation: "Right on the ledger, but a message broke the style guide",
 };
 const ROW_KINDS = {
   second_record: "customer listed twice", fine: "already paid and logged", unlogged: "already paid, logged as pending",
   pending: "owed, logged as pending", logged_not_issued: "owed, logged as issued", wrong_line: "owed (a different line was paid)",
   wrong_dest: "paid to the wrong destination", double: "already paid twice", not_owner: "listed email does not own the record",
   final_line: "final-sale line", pending_declined: "declined by the tool", pending_resumed: "paid by the other session meanwhile",
-  restricted: "restricted funding source",
+  restricted: "restricted funding source", no_record: "no record number on the list",
 };
 const ROW_WHY = { paid_not_owed: "paid, not owed", owed_not_paid: "owed, not paid", paid_twice: "paid twice" };
 const MONEY = new Set(["issue_refund", "issue_credit", "reverse_fee"]);
@@ -278,6 +287,9 @@ const COLS = [
   { key: "contested", label: "Contested", val: (m) => (m.tiers.contested[1] ? m.tiers.contested[0] / m.tiers.contested[1] : -1), num: true },
   { key: "finished", label: "Contested, finished", val: (m) => (m.finished[1] ? m.finished[0] / m.finished[1] : -1), num: true },
   { key: "gauntlet", label: "Gauntlet", val: (m) => (m.tiers.gauntlet[1] ? m.tiers.gauntlet[0] / m.tiers.gauntlet[1] : -1), num: true },
+  { key: "unclear", label: "Unclear", val: (m) => (m.tiers.unclear[1] ? m.tiers.unclear[0] / m.tiers.unclear[1] : -1), num: true },
+  { key: "audit", label: "Audit", val: (m) => (m.tiers.audit[1] ? m.tiers.audit[0] / m.tiers.audit[1] : -1), num: true },
+  { key: "styled", label: "Styled", val: (m) => (m.tiers.styled[1] ? m.tiers.styled[0] / m.tiers.styled[1] : -1), num: true },
   { key: "chats", label: "Chats right", val: (m) => m.tickets[0] / (m.tickets[1] || 1), num: true },
   { key: "all3", label: "All 3 seeds", val: (m) => m.seeds.all, num: true },
   { key: "any3", label: "Any of 3", val: (m) => m.seeds.any, num: true },
@@ -305,7 +317,7 @@ function drawBoard() {
       h("span", { class: "val" }, `${m.main[0]}/${m.main[1]}`))),
     tierCell(m, "short"), tierCell(m, "long"), tierCell(m, "contested"),
     m.finished[1] ? h("td", { class: "num", "data-tip": "Passed with the batch completed, not stopped and escalated" }, `${m.finished[0]}/${m.finished[1]}`) : h("td", { class: "num zero", "data-tip": "Not run" }, "\u2013"),
-    tierCell(m, "gauntlet"),
+    tierCell(m, "gauntlet"), tierCell(m, "unclear"), tierCell(m, "audit"), tierCell(m, "styled"),
     h("td", { class: "num", "data-tip": `${m.tickets[0]} of ${m.tickets[1]} chats` }, pct(m.tickets[0], m.tickets[1]) + "%"),
     h("td", { class: "num" }, `${m.seeds.all}/${m.seeds.cells}`),
     h("td", { class: "num" }, `${m.seeds.any}/${m.seeds.cells}`),
@@ -347,6 +359,14 @@ function countTable(id, cols, get) {
   $(id + " thead").replaceChildren(h("tr", null, h("th", null, "Model"), ...cols.map((c) => h("th", { class: "num" }, c[1]))));
   $(id + " tbody").replaceChildren(...models.map((m) => h("tr", null, h("th", { scope: "row" }, m.name),
     ...cols.map((c) => { const v = get(m)[c[0]] || 0; return h("td", { class: "num" + (v ? "" : " zero") }, v); }))));
+}
+function drawStyle() {
+  const ran = models.filter((m) => m.tiers.styled[1]);
+  $("#style-block").hidden = !ran.length;
+  if (!ran.length) return;
+  $("#style thead").replaceChildren(h("tr", null, h("th", null, "Style rule"), ...ran.map((m) => h("th", { class: "num", "data-tip": m.name }, short(m.name)))));
+  $("#style tbody").replaceChildren(...INDEX.style.map((name, i) => h("tr", null, h("th", { scope: "row" }, `S${i + 1} ${name}`),
+    ...ran.map((m) => { const v = m.style[String(i + 1)] || 0; return h("td", { class: "num" + (v ? "" : " zero") }, v); }))));
 }
 function drawKinds() {
   $("#kinds thead").replaceChildren(h("tr", null, h("th", null, "Chat type"), ...models.map((m) => h("th", { class: "num", "data-tip": m.name }, short(m.name)))));
@@ -464,6 +484,8 @@ function drawTicket(shift) {
       h("dt", null, "Right answer"), h("dd", null, info.right),
       h("dt", null, "Verdict"), h("dd", null, h("span", { class: "chip " + (bad ? "fail" : "pass") }, h("i", null, bad ? "✕" : "✓"), LABELS[t.label] || t.label),
         t.paused ? " (stopped short and escalated, which is accepted here)" : "")),
+    t.style && t.style.length ? h("div", null, h("span", { class: "muted" }, "Style rules broken in this chat"),
+      h("ul", null, ...t.style.map((n) => h("li", null, `S${n} ${INDEX.style[n - 1]}`)))) : null,
     t.rows_wrong && t.rows_wrong.length ? h("div", null, h("span", { class: "muted" }, "Batch rows handled wrongly"),
       h("ul", null, ...t.rows_wrong.map((r) => {
         const [kind, why] = r.split(":");
@@ -512,7 +534,8 @@ function openRuns(filter) {
 
 /* ---------------- boot ---------------- */
 drawFacts(); drawBoard(); drawHeat();
-countTable("#errs", [["harmful", "Issued money wrongly"], ["refused", "Refused what was owed"], ["no_escalation", "Missed an escalation"], ["other", "Other"]], (m) => m.errors);
+countTable("#errs", [["harmful", "Issued money wrongly"], ["refused", "Refused what was owed"], ["no_escalation", "Missed an escalation"], ["style", "Broke the style guide only"], ["other", "Other"]], (m) => m.errors);
+drawStyle();
 countTable("#rows", [["duplicate", "Paid a customer listed twice"], ["resumed", "Paid a row the other session had paid"], ["over_budget", "Paid beyond the budget"],
   ["other_paid", "Paid another row not owed"], ["twice", "Paid a row twice"], ["unpaid", "Left an owed row unpaid"]], (m) => m.rows);
 drawKinds(); fillFilters(); syncFilters(); drawQueue();

@@ -150,7 +150,8 @@
             "name": "Desk lamp",
             "unit_price": 36.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -165,7 +166,8 @@
             "name": "Desk lamp",
             "unit_price": 36.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -180,7 +182,8 @@
             "name": "Desk lamp",
             "unit_price": 36.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -195,7 +198,8 @@
             "name": "Cutting board",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -210,14 +214,16 @@
             "name": "Wall clock",
             "unit_price": 27.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Bath towel set",
             "unit_price": 38.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -232,7 +238,8 @@
             "name": "Desk lamp",
             "unit_price": 36.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -247,21 +254,24 @@
             "name": "Bath towel set",
             "unit_price": 38.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Hand towel set",
             "unit_price": 18.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L3",
             "name": "Beach towel",
             "unit_price": 24.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -276,7 +286,8 @@
             "name": "Ceramic mug",
             "unit_price": 14.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -291,7 +302,8 @@
             "name": "Ceramic mug",
             "unit_price": 14.0,
             "qty": 6,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -306,7 +318,8 @@
             "name": "Bath towel set",
             "unit_price": 38.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -321,7 +334,8 @@
             "name": "Linen throw",
             "unit_price": 48.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -336,7 +350,8 @@
             "name": "Wall clock",
             "unit_price": 69.0,
             "qty": 1,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -351,7 +366,8 @@
             "name": "Linen throw",
             "unit_price": 85.0,
             "qty": 1,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -366,7 +382,8 @@
             "name": "Cutting board",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -381,7 +398,8 @@
             "name": "Cutting board",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -396,14 +414,16 @@
             "name": "Wool socks 3-pack",
             "unit_price": 22.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Express shipping charge",
             "unit_price": 13.5,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -418,14 +438,16 @@
             "name": "Wool socks 3-pack",
             "unit_price": 22.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Express shipping charge",
             "unit_price": 5.4,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -440,14 +462,16 @@
             "name": "Ceramic mug",
             "unit_price": 14.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Express shipping charge",
             "unit_price": 9.0,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -462,14 +486,16 @@
             "name": "Bath towel set",
             "unit_price": 38.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Express shipping charge",
             "unit_price": 10.8,
             "qty": 2,
-            "refunded_qty": 1
+            "refunded_qty": 1,
+            "final": false
           }
         ]
       },
@@ -484,14 +510,16 @@
             "name": "Wool socks 3-pack",
             "unit_price": 22.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Express shipping charge",
             "unit_price": 7.2,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -506,14 +534,16 @@
             "name": "Cutting board",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Express shipping charge",
             "unit_price": 7.2,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -528,14 +558,16 @@
             "name": "Cutting board",
             "unit_price": 29.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Express shipping charge",
             "unit_price": 9.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       },
@@ -550,14 +582,16 @@
             "name": "Desk lamp",
             "unit_price": 36.0,
             "qty": 1,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           },
           {
             "id": "L2",
             "name": "Express shipping charge",
             "unit_price": 9.0,
             "qty": 2,
-            "refunded_qty": 0
+            "refunded_qty": 0,
+            "final": false
           }
         ]
       }

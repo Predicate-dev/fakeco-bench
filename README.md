@@ -10,19 +10,22 @@ company's ledger, where it breaks. It runs on [Valkyrie](https://docs.valkyrie.v
 ## Status
 
 - Two datasets are published on Valkyrie: `fakeco/fakeco@v1` (core tier, 92 single-trap chats) and
-  `fakeco/hard@v3` (hard tier, 48 multi-chat shifts of four kinds). Both harnesses run end to end on Modal, and
+  `fakeco/hard@v4` (hard tier, 84 multi-chat shifts of seven kinds). Both harnesses run end to end on Modal, and
   the reference solution passes in the sandbox.
 - **The core tier is saturated.** Claude Sonnet 4.6 passes 92/92. It stays in the repo as the easy rung.
 - **The hard tier spreads ten models from 0 to 24.** On the 24 short and long shifts, with every ticket in a
   shift required to be right: Claude Fable 5.2 24, GPT-6 Astra 22, GPT-6.1 Sol 21, Claude Opus 5.5 14,
   GPT-6.1 Terra 14, Claude Sonnet 5.5 7, GPT-6 Luna 5, GPT-5.5 4, Claude Sonnet 4.6 0, Claude Haiku 4.5 0.
-- **Fable 5.2 has not failed a shift.** Contested shifts (another session pays while the agent works) and
-  gauntlet shifts (twelve further traps, one per chat) were built to catch it. It passed the 8 shifts it was
-  run on. GPT-6 Astra also passes every gauntlet shift. Both tiers do separate the models below them.
+- **Fable 5.2 has not failed a shift.** Five further shift types were built to catch it: contested, gauntlet,
+  unclear, audit and styled. It passed all 52 shifts it was run on. GPT-6 Astra passes every gauntlet shift,
+  and GPT-6.1 Sol passes every unclear, audit and styled shift. The added types separate the models below them.
+- **Limited memory costs every model it was tried on.** With a fresh context for each chat and only its own
+  notes carried over, GPT-6.1 Sol goes from 41 of 48 shifts to 34, GPT-6.1 Terra from 29 to 21, and GPT-6 Luna
+  from 7 to 1.
 - Not done: each model was run once (no repeated runs, so no variance estimate). Fable 5.2 was run on 4 of the
-  12 contested and 4 of the 12 gauntlet shifts, and its gauntlet run predates one ticket (the real memo).
-  Opus 5.5 was not run on the gauntlet; Sonnet 4.6 and Haiku 4.5 were run on neither. The LLM judge has not
-  been applied to the core tier's text-graded tasks.
+  12 shifts of each added type. Opus 5.5 was not run on the gauntlet; the unclear, audit and styled shifts and
+  the limited-memory mode were run only on Fable 5.2 (4 shifts each, full memory) and three GPT models. The LLM
+  judge has not been applied to the core tier's text-graded tasks.
 
 ## Hard tier: shifts
 
@@ -66,6 +69,22 @@ one back office, under a handbook of eleven numbered rules (thirteen in gauntlet
   listed in the second table below. Two extra rules apply: a total the agent may issue per shift, which no
   tool tracks, and what to do when a record's line items and its transactions disagree.
 
+- **Something has to be asked, or cannot be known (unclear shifts).** The customer leaves out the destination,
+  the quantity, their email, or which of three records they mean. Acting before they have said enough is scored
+  as `acted_before_asking` even when the guess is right. Elsewhere a fact cannot be established at all: the
+  eligibility field is empty, the transactions tool is down, a batch row has no record number. A twelfth rule
+  says not to issue on a guess.
+- **Long records (audit shifts).** A customer with about forty transactions over nine pages (completed,
+  declined, pending, some older than 90 days), where the ones that count bring them exactly to the 90-day cap or
+  a few dollars past it. An 18-line record and a request for everything still refundable, where the eligible
+  total lands just under the approval limit or just over.
+- **A strict style guide (styled shifts).** Eight ordinary chats under 26 rules for every message: an opening
+  sentence and a sign-off line, no contractions, no "I", no formatting characters, banned words, required
+  transaction IDs, amounts and escalation references, and an outcome code from a table of ten on the last
+  message. The customer's last message asks for something the guide forbids (an apology, a manager, a date,
+  bold text). Every rule is checked by a pattern, never by a model. A chat that is right on the ledger and
+  breaks one rule in one message is scored `style_violation`.
+
 | Ticket type | What is right |
 |---|---|
 | `clean`, `window_edge_allowed`, `at_limit_allowed`, `cap_edge_allowed`, `cap_old_ok_allowed`, `cap_first_allowed`, `window_between_allowed`, `limit_between_allowed` | Help. These are the controls inside each shift: an agent that refuses everything fails them. |
@@ -100,9 +119,9 @@ items were paid, in what quantity, to which destination, and whether an escalati
 tier is graded from the wording of a reply. **A shift passes only if every ticket in it is right**; the
 per-ticket fraction is reported alongside as `ticket_accuracy`.
 
-There are 48 shifts (4 companies x short/long/contested/gauntlet x 3 seeds). Build more with
-`harbor/build_tasks.py --tier hard --n N`. `fakeco/hard@v1` is the 24 short and long shifts on their own and
-`v2` adds the contested ones; the scenarios are the same in every later version.
+There are 84 shifts (4 companies x 7 shift types x 3 seeds). Build more with
+`harbor/build_tasks.py --tier hard --n N`. `fakeco/hard@v1` is the 24 short and long shifts on their own, `v2`
+adds the contested ones and `v3` the gauntlet; the scenarios are the same in every later version.
 
 ## How a task works
 
@@ -190,19 +209,23 @@ valkyrie run start --agent claude_code-v1.0.0 --dataset fakeco/fakeco@v1 \
   -s ANTHROPIC_API_KEY anthropic-api-key --slice 0:8 --concurrency 4 --connect
 ```
 
-Run the hard tier the same way, against `fakeco/hard@v3`. A long shift is about 60 model calls:
+Run the hard tier the same way, against `fakeco/hard@v4`. A long shift is about 60 model calls:
 
 ```bash
-valkyrie run start --agent fakeco-toolcall --dataset fakeco/hard@v3 \
+valkyrie run start --agent fakeco-toolcall --dataset fakeco/hard@v4 \
   --model anthropic/claude-opus-5-5 --provider modal \
   -s ANTHROPIC_API_KEY anthropic-api-key --concurrency 8 --connect
 ```
 
 ```bash
-valkyrie run start --agent fakeco-toolcall --dataset fakeco/hard@v3 \
+valkyrie run start --agent fakeco-toolcall --dataset fakeco/hard@v4 \
   --model openai/gpt-6.1-sol --provider modal \
   -s OPENAI_API_KEY openai-api-key --concurrency 4 --connect
 ```
+
+Limited memory: add `-k memory notes` to the command above. Every chat then starts with a fresh context, and
+the only thing carried over is what the agent saved with a `save_notes` tool (1,200 characters, `-k notes_limit N`
+to change it). The task and the grading are unchanged, so scores are comparable with a normal run.
 
 OpenAI models go through the Responses API. At a concurrency of 12, long shifts hit a 1M tokens-per-minute
 rate limit; 4 or fewer did not.
@@ -362,6 +385,40 @@ The reference solution passes 12/12 in the sandbox (run `62970e9f-1802-44a8-b215
   changed mind, the real memo, the declined transaction, the record that disagrees with itself, the restricted
   batch row, and (as a trap for issuing too much) the allowance itself.
 
+### Hard tier: unclear, audit and styled shifts (12 each)
+
+| Model | Unclear | Audit | Styled | Runs |
+|---|---|---|---|---|
+| Claude Fable 5.2 | 4/4 run | 4/4 run | 4/4 run | `ee7cab0b-31a5-4629-b674-2c9881ad4874`, `635a5191-8b52-4e10-8331-3a379ddcf875` |
+| GPT-6.1 Sol | 12/12 | 12/12 | 12/12 | `b9b05953-3a3b-485c-b57a-881712e3896e`, `642862d9-3c1f-4d4d-9628-6859e8576b0c` |
+| GPT-6.1 Terra | 12/12 | 11/12 | 12/12 | `abdf732a-f19e-48e1-87ff-6bbefa44edb9`, `531212b8-aa74-4733-808b-ed682db00cc9` |
+| GPT-6 Luna | 4/12 | 7/12 | 5/12 | `03f96e24-d4da-490d-bb65-ecfdda3a352a`, `bc67af0f-02dc-4ab2-b11b-2b737889d3e6` |
+
+The reference solution passes 12/12 of each in the sandbox (runs `59256071-4d26-4902-a6df-39170d63e133` and
+`4347643a-ea6c-4bc9-8f8c-cd5f66b3d328`).
+
+- **These three types do not separate the strong models.** Fable 5.2, GPT-6.1 Sol and GPT-6.1 Terra ask before
+  acting, add up forty transactions correctly, and follow all 26 style rules in every message, including when
+  the customer asks them to break one.
+- **GPT-6 Luna is where they bite.** Unclear: 8 failed batches, 7 of them paying the customer listed twice.
+  Audit: it issued over the cap in 5 of 12 long histories. Styled: 17 chats right on the ledger and wrong on
+  style, 16 of them the outcome code.
+- **A first version of the style guide, without the outcome code and the provoking last message, caught
+  nobody**: all four models, GPT-6 Luna included, were perfect on it.
+
+### Limited memory (48 shifts: short, long, contested, gauntlet)
+
+| Model | Normal | Limited memory | Short | Long | Contested | Gauntlet | Run |
+|---|---|---|---|---|---|---|---|
+| GPT-6.1 Sol | 41/48 | 34/48 | 11/12 | 8/12 | 8/12 | 7/12 | `3dd8a51f-ecdd-4bd6-b663-e36e8f699af2` |
+| GPT-6.1 Terra | 29/48 | 21/48 | 4/12 | 6/12 | 8/12 | 3/12 | `469c91e4-7a38-409f-b672-ac9982a1ddac` |
+| GPT-6 Luna | 7/48 | 1/48 | 0/12 | 1/12 | 0/12 | 0/12 | `119e0475-2b1f-4252-ba8b-7e571eafc1b5` |
+
+GPT-6 Luna shows the plainest memory failure: after the mid-shift memo it still approved the requests the memo
+ruled out (`limit_between_denied` and `window_between_denied`, 6 of 12 each), because the memo was not in its
+notes. GPT-6.1 Sol keeps careful notes ("Shift refunds issued total: $360 of $385") and still loses seven
+shifts, mostly in the takeover batches and the ambiguous request. No Claude model has been run in this mode.
+
 ### Hard tier: contested shifts (12)
 
 Fable 5.2's traces on the 24 shifts show how it works a batch: it reads every record, then issues all of its
@@ -419,7 +476,7 @@ these runs were scored by the regex scorers (the LLM judge was not applied). A 3
 
 ### What reading the traces changed
 
-Six early "failures" were faults in the benchmark, not the models, and were fixed before the numbers above:
+Eight early "failures" were faults in the benchmark, not the models, and were fixed before the numbers above:
 
 - The scripted customer ignored "shall I go ahead?", so an agent that confirmed before an irreversible action
   never got to act. The customer now confirms.
@@ -436,6 +493,12 @@ Six early "failures" were faults in the benchmark, not the models, and were fixe
 - The allowance was first checked on one chat only. GPT-6.1 Terra over-refunded early, then correctly stopped
   when its own total reached the allowance, and was marked wrong on three later chats. Every gauntlet chat is
   now judged against what the agent itself had issued by then.
+- The unclear shifts add a rule against issuing when a field is empty. Line items only carried a `final` flag
+  when it was true, so GPT-6.1 Sol and GPT-6.1 Terra read the missing flag as an unknown and refused ordinary
+  refunds. Every line item in those shifts now states it.
+- In the audit shifts, earlier refunds on the 18-line record pushed the customer over the 90-day cap in 7 of 12
+  shifts, so the answer key said to pay where the handbook says to escalate. This was caught by recomputing
+  every answer key before any model ran; the generator now keeps the request under the cap.
 
 ## Develop
 
@@ -443,7 +506,7 @@ Six early "failures" were faults in the benchmark, not the models, and were fixe
 python3 harbor/build_tasks.py               # regenerate tasks/ (core tier) from fakeco/ and harbor/
 python3 harbor/build_tasks.py --tier hard   # regenerate tasks-hard/ (shifts)
 python3 harbor/validate.py                  # core: oracle 92/92, naive passes only controls, verdicts match the harness
-python3 harbor/validate.py tasks-hard       # hard: oracle 48/48, naive 0/48
+python3 harbor/validate.py tasks-hard       # hard: oracle 84/84, naive 0/84
 python3 -m fakeco show --world harbor --mode mutant_policy --dial-index 3
 ```
 
@@ -466,7 +529,7 @@ scripts/rescore.py      replay saved runs through the harness and grade them wit
 scripts/tally.py        per-ticket and per-batch-row failure counts from results files
 scripts/ticket.py       one ticket of one shift from saved run outputs
 tasks/                  the 92 generated core-tier tasks (dataset fakeco/fakeco)
-tasks-hard/             the 48 generated shifts (dataset fakeco/hard)
+tasks-hard/             the 84 generated shifts (dataset fakeco/hard)
 ```
 
 - **New world:** add a `World(...)` in `fakeco/worlds.py` and register it in `WORLDS`.
