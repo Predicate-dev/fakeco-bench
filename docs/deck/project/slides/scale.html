@@ -1,0 +1,25 @@
+<section id="scale" data-transition="fade">
+<p class="eyebrow">Finding 3</p>
+<h2>It is not a length effect: most models fail at 12 rows</h2>
+<div class="row wide">
+<div class="heat grow">
+<div class="hrow head"><p class="small">Batches passed, of 12</p><p class="small">12 rows</p><p class="small">28 rows</p><p class="small">64 rows</p></div>
+<div class="hrow"><p class="name">Claude Fable 5.2</p><p class="cell v5">12</p><p class="cell v5">12</p><p class="cell v4">10</p></div>
+<div class="hrow"><p class="name">GPT-6 Astra</p><p class="cell v5">12</p><p class="cell v4">10</p><p class="cell v3">7</p></div>
+<div class="hrow"><p class="name">GPT-6.1 Sol</p><p class="cell v5">12</p><p class="cell v3">9</p><p class="cell v3">7</p></div>
+<div class="hrow"><p class="name">Claude Opus 5.5</p><p class="cell v3">9</p><p class="cell v2">5</p><p class="cell v3">8</p></div>
+<div class="hrow"><p class="name">Claude Fable 5.1</p><p class="cell v3">7</p><p class="cell v3">7</p><p class="cell v1">3</p></div>
+<div class="hrow"><p class="name">GPT-6.1 Terra</p><p class="cell v3">8</p><p class="cell v2">6</p><p class="cell v0">0</p></div>
+<div class="hrow"><p class="name">Claude Sonnet 5.5</p><p class="cell v1">3</p><p class="cell v2">4</p><p class="cell v1">1</p></div>
+<div class="hrow"><p class="name">GPT-6 Luna</p><p class="cell v1">1</p><p class="cell v2">4</p><p class="cell v0">0</p></div>
+</div>
+<div class="col side">
+<div class="stat"><p class="num mid">3 of 14</p><p class="small">models pass every 12-row batch</p></div>
+<div class="stat"><p class="num mid fail">5 of 14</p><p class="small">pass none at 12 rows</p></div>
+<div class="divider"></div>
+<p class="small">The 12-row and 28-row lists hold one repeated customer. The 64-row list holds five. The six models not shown pass 0 to 4 at any size.</p>
+</div>
+</div>
+<div class="foot"><p class="small">The same batch task at three sizes, 12 shifts each</p><p class="small">7</p></div>
+<aside>This is the same task at three sizes. At 12 rows, with one repeated customer, only three of fourteen models get all twelve shifts right, and five get none. So this is not a long-context effect. Size is what brings it to the top: Fable 5.2 is perfect at 12 and 28 rows and drops to 10 of 12 at 64.</aside>
+</section>

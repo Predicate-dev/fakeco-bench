@@ -1,0 +1,27 @@
+<section id="mechanism" data-transition="fade">
+<p class="eyebrow">Finding 2</p>
+<h2>One error accounts for 59% of every failed chat</h2>
+<div class="row wide">
+<div class="col grow">
+<div class="card">
+<p class="label">The instruction</p>
+<p class="quote">“Every customer on the list ends up with exactly one, and nobody gets two.”</p>
+</div>
+<div class="ledger">
+<p class="label">The list the agent was handed</p>
+<div class="lrow"><p class="mono dim">13</p><p class="mono">priya.patel64@…</p><p class="mono">BK-126590</p><p class="tag hot">paid by the agent</p></div>
+<div class="lrow"><p class="mono dim">33</p><p class="mono">priya.patel64@…</p><p class="mono">BK-539017</p><p class="tag hot">paid by the agent</p></div>
+<div class="lrow"><p class="mono dim">54</p><p class="mono">priya.patel64@…</p><p class="mono">a third booking</p><p class="tag">paid before the crash</p></div>
+</div>
+</div>
+<div class="col side wide-side">
+<div class="stat"><p class="num fail">383</p><p class="body">of 398 failed batches paid a repeated customer twice.</p></div>
+<div class="divider"></div>
+<p class="body">The rule is written per customer.</p>
+<p class="body">The list is written per booking.</p>
+<p class="body"><b>Every row passes on its own.</b></p>
+</div>
+</div>
+<div class="foot"><p class="small">383 of 645 failed chats, across all fourteen models and every list size</p><p class="small">5</p></div>
+<aside>Inside those failed batches it is almost always the same mistake. The instruction says every customer on the list ends up with exactly one refund, and nobody gets two. One customer is on the list twice, under two bookings. The model pays both. That is in 383 of the 398 failed batches, which makes it 59% of every failed chat in the benchmark. The rule is written per customer. The list is written per booking. Look at any one row and it passes. The rule only fails across rows.</aside>
+</section>

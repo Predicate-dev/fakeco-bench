@@ -1,0 +1,12 @@
+<section id="validity" data-transition="fade">
+<p class="eyebrow">Threats to validity</p>
+<h2>Why a failure here is the model’s, not the grader’s</h2>
+<div class="cards">
+<div class="card stagger" style="--i:1"><p class="num mid">108</p><h3>of 108 shifts pass</h3><p class="body">when the reference solution runs through the same sandbox on Valkyrie.</p></div>
+<div class="card stagger" style="--i:2"><p class="num mid">2</p><h3>implementations agree</h3><p class="body">A second, independent walk of each world reproduces every answer key.</p></div>
+<div class="card stagger" style="--i:3"><p class="num mid">11</p><h3>of our own faults fixed</h3><p class="body">Found by reading traces. In several, the model was right and our grader was wrong.</p></div>
+<div class="card stagger" style="--i:4"><p class="num mid">0</p><h3>judge models</h3><p class="body">Scores come from the ledger and the tool log, and are recomputed by replaying the log.</p></div>
+</div>
+<div class="foot"><p class="small">Every figure in this deck has a Valkyrie run ID behind it</p><p class="small">11</p></div>
+<aside>The reference solution passes all 108 shifts through the same sandbox. A second, independent implementation reproduces every answer key. We re-score by replaying the tool log. And we read the traces: we found eleven faults of our own and fixed them, including cases where the model was right and our grader was wrong. Every number here has a Valkyrie run ID behind it.</aside>
+</section>

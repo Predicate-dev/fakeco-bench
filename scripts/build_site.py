@@ -1,4 +1,4 @@
-"""Build the public FakeCo Bench page from data that is already on disk. No model is run.
+"""Build the public Exactly Once page from data that is already on disk. No model is run.
 
     python3 scripts/build_dashboard.py     # first, so docs/dashboard is current
     python3 scripts/build_site.py

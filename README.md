@@ -1,11 +1,38 @@
-# FakeCo: where tool-using agents fail in fake companies
+# Exactly Once: agents check each item and miss the rules that span them
 
 > **TODO (human-written overview).** The hackathon asks for one paragraph here that is entirely human-written.
 > Replace this block with it. Everything below describes how the benchmark works and how to run it.
 
-FakeCo puts an agent on the support desk of four fake companies and checks, from the tool log and the
-company's ledger, where it breaks. It runs on [Valkyrie](https://docs.valkyrie.vals.ai/) as a dataset of 92
+Exactly Once puts an agent on the support desk of four fake companies (the FakeCo world) and checks, from the
+tool log and the company's ledger, where it breaks. The benchmark was first called FakeCo Bench, and the dataset
+and code keep that name. It runs on [Valkyrie](https://docs.valkyrie.vals.ai/) as a dataset of 92
 [Harbor-format](https://docs.harborframework.com/tasks/overview) tasks.
+
+## The finding
+
+Frontier agents check a rule one item at a time. The rules they break are the ones that hold across items.
+Pooled over the 7,304 scored chats in the dashboard (one run per model; models ran different sets of shift
+types, so the pool is not balanced):
+
+| Kind of chat | Failed | Rate | Fable 5.2, GPT-6 Astra and GPT-6.1 Sol only |
+|---|---|---|---|
+| One request, one decision | 116 of 5,492 | 2.1% | 0.3% |
+| A colleague's handoff note | 131 of 1,080 | 12.1% | 1.8% |
+| A batch someone else started | 398 of 732 | 54.4% | 8.8% |
+
+- **One error is 59% of all failed chats** (383 of 645). In 383 of the 398 failed batches the agent paid a customer who was
+  on the list under two records, after being told that every customer gets exactly one and nobody gets two. The
+  rule is per customer and the list is per record, so each row passes on its own.
+- **It is not a length effect.** On the 12-row batch, with one repeated customer, three of fourteen models pass
+  all twelve shifts and five pass none. Batches passed of 12 at 12, 28 and 64 rows: Fable 5.2 12, 12, 10; GPT-6
+  Astra 12, 10, 7; GPT-6.1 Sol 12, 9, 7; Opus 5.5 9, 5, 8; Fable 5.1 7, 7, 3; GPT-6.1 Terra 8, 6, 0; Sonnet 5.5
+  3, 4, 1; GPT-6 Luna 1, 4, 0. The 12-row and 28-row lists hold one repeated customer and the 64-row list five,
+  so size and the number of repeats are not separated.
+- **Harder single requests do not move the top models.** On the unclear, audit, styled, tone and gauntlet
+  shifts together, Fable 5.2 passes 60 of 60 and GPT-6.1 Sol 57 of 60.
+- **Not tested:** whether one handbook line ("group the list by customer first") removes the failure.
+
+The counts come from `docs/dashboard/data/`, which `scripts/build_dashboard.py` writes from the Valkyrie results.
 
 ## Status
 
@@ -25,9 +52,9 @@ company's ledger, where it breaks. It runs on [Valkyrie](https://docs.valkyrie.v
   41 of 48 shifts down to 34), and a world that changes while the agent works. On the 24-shift signal set (long plus large takeover) the
   top of the table reads Fable 5.2 22, GPT-6 Astra 17, GPT-6.1 Sol 16, Opus 5.5 13, Fable 5.1 10.
 - Not done: each model was run once (no repeated runs, so no variance estimate), and Fable 5.2's two failures
-  are 2 of 12, both at the same company. Fable 5.1 and the GPT-5.6 models were run on the short and long shifts
-  only; Opus 5.5, Sonnet 5.5, Fable 5.1 and GPT-6 Astra were run on the large takeover but not on the unclear, audit,
-  styled or tone shifts; GPT-5.5 on none of the types added after the gauntlet. The
+  are 2 of 12, both at the same company. All fourteen models were run on the short, long and large
+  takeover shifts. The GPT-5.6 models, Sonnet 4.6 and Haiku 4.5 were run on those three types only. Opus 5.5,
+  Sonnet 5.5, Fable 5.1, GPT-6 Astra and GPT-5.5 were not run on the unclear, audit, styled or tone shifts. The
   LLM judge has not been applied to the core tier's text-graded tasks.
 
 ## Hard tier: shifts
@@ -440,6 +467,12 @@ batch: nine payments to a customer listed twice, on 12-row and 28-row batches al
 | GPT-6.1 Sol | 9/12 | 7/12 | 10/12 | `2b23f51b-2417-4cf3-8fa7-6de27454e80d`, `ae50ae69-6d59-4fba-bcda-2f7f9a8a11e6`, `d21b537c-1450-4732-8be3-d56e2d57bff3` |
 | GPT-6.1 Terra | 6/12 | 0/11 graded (one rate-limit error) | 4/12 | `2deafd33-f04f-41ea-9fdf-aab8cef6396b`, `b215cf8e-5d8a-4d51-9cba-13bac9f3540a`, `51e53e5a-08c9-451b-99bd-b8aa86c31935` |
 | GPT-6 Luna | 4/12 | 0/12 | 3/12 | `7bd8519e-1b9c-4e61-9b73-0ef88d26be90`, `14dad4c2-6aa9-43fc-9494-65c2ff4dd9a5` |
+| GPT-5.5 | 4/12 | 0/12 | not run | `c47327f8-4229-44be-aafc-c2dceabb077e` |
+| GPT-5.6 Sol | 4/12 | 0/12 | not run | `7edfb3b2-33f8-4c1e-8cf5-9894dd149088` |
+| GPT-5.6 Terra | 1/12 | 0/12 | not run | `a324f548-3a87-4ad3-8bce-b2d05368b024` |
+| GPT-5.6 Luna | 0/12 | 0/12 | not run | `308d9450-e005-4c41-9a60-73652b7d0dd0` |
+| Claude Sonnet 4.6 | 0/12 | 0/12 | not run | `99bb3bc8-399c-451b-8260-03e42213b0a1` |
+| Claude Haiku 4.5 | 0/12 | 0/12 | not run | `a6bab8c6-ce43-4d4d-aaa4-fc15d866cce2` |
 
 The reference solution passes 12/12 large takeover shifts in the sandbox (run
 `3da54d72-3cf3-41fd-ac8b-88de08f87101`) and all 108 shifts offline. Large takeover runs use `-k max_steps 400`.
@@ -449,7 +482,8 @@ The reference solution passes 12/12 large takeover shifts in the sandbox (run
 - **Scale catches Fable 5.2 too**, twice in twelve (see above). No model reaches 90% on the large takeover.
 - **The signal set.** The 12 long and 12 large takeover shifts together are the high-signal subset: chosen by
   shift type, not by picking shifts after seeing results. Out of 24: Fable 5.2 22, GPT-6 Astra 17, GPT-6.1 Sol
-  16, Opus 5.5 13, Fable 5.1 10, GPT-6.1 Terra 6, Sonnet 5.5 5, GPT-6 Luna 4.
+  16, Opus 5.5 13, Fable 5.1 10, GPT-6.1 Terra 6, Sonnet 5.5 5, GPT-6 Luna 4, GPT-5.5 4, GPT-5.6 Sol 4, GPT-5.6
+  Terra 1, GPT-5.6 Luna 0, Sonnet 4.6 0, Haiku 4.5 0.
 - **Size does not order every model.** Opus 5.5 passes 8 of 12 large takeover shifts and 5 of 12 long ones.
 - **Sarcasm catches GPT, not Fable.** GPT-6.1 Terra issued to the destination the customer had named
   sarcastically in 6 of 12 shifts, and GPT-6.1 Sol in 2.

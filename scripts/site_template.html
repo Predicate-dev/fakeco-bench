@@ -1,4 +1,4 @@
-<title>FakeCo Bench</title>
+<title>Exactly Once</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Archivo:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
 <style>
@@ -195,7 +195,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 <div class="fk">
   <header class="mast"><div class="wrap">
     <div class="bar">
-      <span class="word">FakeCo Bench</span>
+      <span class="word">Exactly Once</span>
       <nav aria-label="Sections"><a href="#leaderboard">Leaderboard</a><a href="#batch">Try it</a><a href="#replay">Replay</a><a href="#cuts">Cuts</a><a href="#notes">Notes</a><a href="#run">Run</a><a href="analysis.html">Analysis</a></nav>
     </div>
     <div class="head">
@@ -320,7 +320,7 @@ function drawHead() {
     $("#head-stamp").hidden = false;
   }
   const also = DATA.replays.find((r) => r.key === "duplicate" && r !== lead);
-  $("#dek").replaceChildren(...[`FakeCo Bench puts an AI agent on a support desk for a whole shift, then reads the ledger. ${t.shifts} shifts, ${t.models} models, and no model does the grading.`
+  $("#dek").replaceChildren(...[`Exactly Once puts an AI agent on a support desk for a whole shift, then reads the ledger. ${t.shifts} shifts, ${t.models} models, and no model does the grading.`
     + (clean.length === 1 && clean[0] === top ? ` ${short(top.name)} is the only one to pass all ${top.main[1]} short and long shifts.` : ""),
     also ? h("span", { style: "display:block; margin-top:8px; font-size:16px" }, h("a", { href: "#replay" }, `Also below: ${also.model} checked all ${also.rows} records and still paid one customer twice.`)) : null].filter(Boolean));
 }

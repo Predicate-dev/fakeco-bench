@@ -3,17 +3,17 @@
   "createdOnFiles": {"v": 1, "at": "2026-11-15T15:14:00Z"},
   "lists": "css",
   "format": {"v": 1, "shared": ["project/deck.css"]},
-  "title": "FakeCo Bench",
-  "cover": "cover",
-  "order": ["cover", "problem", "shift", "grading", "leaderboard", "pareto", "duplicate", "moving", "gauntlet", "harder", "fable", "map", "trust", "fit", "limits", "close"],
+  "title": "Exactly Once",
+  "cover": "title",
+  "order": ["title", "gap", "method", "concentration", "mechanism", "noticed", "scale", "forms", "control", "results", "validity", "next", "takeaway", "cost"],
   "sections": {
-    "what": {"description": "What FakeCo is and why a chat-level benchmark is no longer enough.", "start": "cover"},
-    "results": {"description": "How fourteen models score, and what that costs.", "start": "leaderboard"},
-    "failures": {"description": "Four ways agents fail, each shown from a real run, and the harder variants.", "start": "duplicate"},
-    "case": {"description": "Why the numbers can be trusted, how the benchmark fits what Vals values, and what is still open.", "start": "trust"}
+    "question": {"description": "The observation that chat-level accuracy hides shift-level failure, and how the benchmark measures it.", "start": "title"},
+    "findings": {"description": "Three findings: failures concentrate in inherited work, one cross-item error explains most of them, and it is not a length effect.", "start": "concentration"},
+    "evidence": {"description": "The same failure in other forms, the control that rules out harder items, and the results.", "start": "forms"},
+    "validity": {"description": "Why the failures are the model's, what is not yet shown, and the next experiment.", "start": "validity"}
   },
   "faces": {
-    "space-grotesk": {"family": "Space Grotesk", "href": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"},
+    "instrument-serif": {"family": "Instrument Serif", "href": "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"},
     "inter": {"family": "Inter", "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"},
     "jetbrains-mono": {"family": "JetBrains Mono", "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"}
   },
