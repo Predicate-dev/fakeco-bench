@@ -167,6 +167,51 @@ def story_ambiguous() -> dict | None:
     return None
 
 
+def memo_check(notes_key: str) -> dict | None:
+    """In the long shifts a memo changes two rules mid-shift. For the chats that depend on it, was the memo's new
+    approval limit in the notes the agent had saved by the time the chat began?"""
+    path = DASH / "data" / f"{notes_key}__long.json"
+    if not path.exists():
+        return None
+    wrong = missing = total = 0
+    for shift in json.loads(path.read_text()).values():
+        memo = next((e[2] for t in shift["tickets"] for e in t["events"]
+                     if e[0] == "c" and "Policy memo from the shift lead" in (e[2] or "")), None)
+        limit = re.search(r"rule 6 is \$(\d+)", memo or "")
+        if not limit:
+            continue
+        saved = [(i, e[2].get("text", "")) for i, t in enumerate(shift["tickets"]) for e in t["events"]
+                 if e[0] == "t" and e[1] == "save_notes" and isinstance(e[3], dict) and e[3].get("status") == "saved"]
+        for i, t in enumerate(shift["tickets"]):
+            if t["kind"] not in ("limit_between_denied", "window_between_denied"):
+                continue
+            total += 1
+            if t["label"] != "correct":
+                wrong += 1
+                before = [text for j, text in saved if j < i]
+                missing += ("$" + limit.group(1)) not in (before[-1] if before else "")
+    return {"total": total, "wrong": wrong, "missing": missing}
+
+
+def memory_pairs(index: dict) -> list:
+    """Each limited-memory row beside its full-memory row, over the shift types both were run on."""
+    by = {m["key"]: m for m in index["models"]}
+    pairs = []
+    for m in index["models"]:
+        base = by.get(m["key"][:-len("-notes")]) if m["key"].endswith("-notes") else None
+        if not base:
+            continue
+        tiers = [{"tier": t, "full": base["tiers"][t], "notes": m["tiers"][t]} for t in index["sizes"]
+                 if base["tiers"].get(t, [0, 0])[1] and m["tiers"].get(t, [0, 0])[1]]
+        depends = ("limit_between_denied", "window_between_denied")
+        count = lambda row: [sum(row["kinds"].get(k, [0, 0])[0] for k in depends), sum(row["kinds"].get(k, [0, 0])[1] for k in depends)]
+        pairs.append({"name": base["name"], "tiers": tiers,
+                      "full": [sum(t["full"][0] for t in tiers), sum(t["full"][1] for t in tiers)],
+                      "notes": [sum(t["notes"][0] for t in tiers), sum(t["notes"][1] for t in tiers)],
+                      "memo_full": count(base), "memo_notes": count(m), "memo": memo_check(m["key"])})
+    return pairs
+
+
 def main() -> None:
     index = dashboard_index()
     pareto_path = ROOT / "results" / "final" / "pareto.json"
@@ -176,10 +221,11 @@ def main() -> None:
         p = pareto.get(m["key"], {})
         models.append({k: m[k] for k in ("key", "name", "provider", "tiers", "main", "tickets", "families", "finished",
                                          "seeds", "calls", "errors", "rows")}
-                      | {"cost": p.get("cost_shift"), "minutes": p.get("min_shift")})
+                      | {"cost": p.get("cost_shift"), "minutes": p.get("min_shift"),
+                         "notes": m["key"].endswith("-notes"), "style": m.get("style", {})})
     shift_ids = {s["id"] for m in index["models"] for s in m["shifts"]}
     totals = {
-        "models": len(models), "shifts": len(shift_ids),
+        "models": sum(1 for m in models if not m["notes"]), "shifts": len(shift_ids),
         "companies": len({s.split("__")[0] for s in shift_ids}),
         "types": len({s.split("size-")[1].split("__")[0] for s in shift_ids}),
         "graded": sum(len(m["shifts"]) for m in index["models"]),
@@ -190,6 +236,7 @@ def main() -> None:
         "built": datetime.date.today().isoformat(), "totals": totals, "models": models, "families": index["families"],
         "examples": [e for e in (example(t, index["kinds"]) for t in EXAMPLES) if e],
         "chat_counts": chat_counts({s.split("size-")[1].split("__")[0] for s in shift_ids}), "stories": stories,
+        "sizes": index["sizes"], "style": index.get("style", []), "memory": memory_pairs(index),
     }
     body = (ROOT / "scripts" / "site_template.html").read_text().replace(
         "/*DATA*/null", json.dumps(data, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/"))
@@ -201,6 +248,8 @@ def main() -> None:
         + body + "\n</body>\n</html>\n")
     print(f"wrote {OUT}: {totals}, stories {[s['key'] for s in stories]}, examples {len(data['examples'])}, "
           f"page {len(body) / 1e3:.0f} KB")
+    for pair in data["memory"]:
+        print(f"  limited memory: {pair['name']} {pair['full']} -> {pair['notes']}  memo chats {pair['memo_full']} -> {pair['memo_notes']} {pair['memo']}")
     for m in models:
         n = m["main"][1] or 1
         p = m["main"][0] / n

@@ -184,6 +184,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); font-
           <li><a href="#cost">Cost</a></li>
           <li><a href="#tasks">Tasks</a></li>
           <li><a href="#failures">Failures</a></li>
+          <li><a href="#memory">Memory</a></li>
           <li><a href="#method">Method</a></li>
           <li><a href="#run">Run it</a></li>
         </ul>
@@ -204,7 +205,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); font-
     <div class="wrap">
       <p class="eyebrow">Leaderboard</p>
       <h2>A shift passes only if every chat in it is right</h2>
-      <p class="lede">Each model was run once on each shift. The score is the share of shifts with no wrong payment, no missed payment and no missed escalation anywhere in them.</p>
+      <p class="lede">Each model was run once on each shift it was given. The score is the share of shifts with no wrong payment, no missed payment and no missed escalation anywhere in them.</p>
       <div class="tabs" role="tablist" aria-label="Shift type" id="tier-tabs"></div>
       <div class="scroll"><table id="board"><thead></thead><tbody></tbody></table></div>
       <p class="muted" id="board-note"></p>
@@ -239,7 +240,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); font-
     <div class="wrap">
       <p class="eyebrow">Where models fail</p>
       <h2>The rules are mostly followed. The money is lost finishing someone else's work.</h2>
-      <p class="lede">Share of chats each model got wrong, by the kind of work the chat is. Every shift ends with a colleague's half-finished batch whose log disagrees with the record, and that is where most failures are.</p>
+      <p class="lede">Share of chats each model got wrong, by the kind of work the chat is. Most shift types end with a colleague's half-finished batch whose log disagrees with the record, and that is where most failures are.</p>
       <div class="scroll"><table id="heat"><thead></thead><tbody></tbody></table></div>
       <p class="muted">Across every shift each model was run on. A dash means the model was not run on a shift containing that kind of chat.</p>
       <div id="stories"></div>
@@ -251,13 +252,24 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); font-
         </div>
         <div class="scroll"><table id="finished"><thead></thead><tbody></tbody></table></div>
       </div>
+      <div class="card" id="newer" hidden style="gap:12px"><span class="tag">Unclear, audit and styled shifts</span><h3>The newer shift types did not separate the top models</h3></div>
     </div>
   </section>
 
-  <section class="band" id="method">
+  <section class="band" id="memory">
+    <div class="wrap">
+      <p class="eyebrow">Limited memory</p>
+      <h2>The same shifts, with only the notes the agent chose to keep</h2>
+      <p class="lede">A mode of the harness, not a new set of tasks. Every chat starts with a fresh context: the agent sees none of the earlier chats, only a notes file it writes itself, capped at 1,200 characters. The shifts and the scoring are unchanged.</p>
+      <div class="scroll"><table id="memory-table"><thead></thead><tbody></tbody></table></div>
+      <p class="lede" id="memory-finding"></p>
+    </div>
+  </section>
+
+  <section class="band white" id="method">
     <div class="wrap">
       <p class="eyebrow">Method</p>
-      <h2>Graded on the ledger, not on the wording</h2>
+      <h2>Graded by the ledger and fixed rules, never by a model</h2>
       <div class="grid" id="method-cards"></div>
       <div id="limits" class="wrap" style="padding:0; gap:14px; margin:0">
         <h3>Limits</h3>
@@ -266,13 +278,13 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); font-
     </div>
   </section>
 
-  <section class="band white" id="run">
+  <section class="band" id="run">
     <div class="wrap">
       <p class="eyebrow">Run it</p>
       <h2>Any model, one command, a verdict for every chat</h2>
-      <p class="lede">The shifts are published on Valkyrie as <code>fakeco/hard@v3</code>. The harness is a bare tool-calling loop, and the same tasks run unchanged under a shell agent such as Claude Code.</p>
+      <p class="lede">The <span id="ds-count"></span> shifts are published on Valkyrie as <code>fakeco/hard@v4</code>. The harness is a bare tool-calling loop, and the same tasks run unchanged under a shell agent such as Claude Code.</p>
       <div class="code" id="cmd">valkyrie run start --agent fakeco-toolcall \
-  --dataset fakeco/hard@v3 \
+  --dataset fakeco/hard@v4 \
   --model openai/gpt-6.1-sol --provider modal \
   -s OPENAI_API_KEY openai-api-key --concurrency 4</div>
       <button class="copy" id="copy" type="button">Copy command</button>
@@ -291,15 +303,18 @@ body { background: var(--bg); color: var(--ink); font-family: var(--body); font-
 
 <script>
 const DATA = /*DATA*/null;
-const TIERS = { main: "Short and long", contested: "Contested", gauntlet: "Gauntlet" };
+const TIERS = { main: "Short and long", contested: "Contested", gauntlet: "Gauntlet", unclear: "Unclear", audit: "Audit", styled: "Styled" };
 const TYPE_COPY = {
   short: ["Short", "One chat of each kind, then a colleague's unfinished batch of 12 rows."],
   long: ["Long", "A memo in the middle changes two rules, two customers come back, and the batch has 28 rows and a budget."],
   contested: ["Contested", "A notice at the start says a colleague's crashed session may resume. During the batch it does, and pays rows the agent has already checked."],
   gauntlet: ["Gauntlet", "A different trap in each chat: an ambiguous request, a forged memo, a second page of transactions, a total the agent has to keep itself."],
+  unclear: ["Unclear", "The agent has to ask first, because the destination, the quantity, the email or the record is not given. Or it cannot know: an eligibility field is empty, the transactions tool is down, a batch row has no record number. Acting before the customer has said enough fails, even if the guess is right."],
+  audit: ["Audit", "About 40 transactions over 9 pages, where the 90-day cap comes down to a few dollars, and an 18-line order where everything eligible lands just under or just over the approval limit."],
+  styled: ["Styled", "Eight ordinary chats under a strict 26-rule style guide checked by patterns. The last customer message asks for something the guide forbids, and the final message needs an outcome code."],
 };
 const MONEY = new Set(["issue_refund", "issue_credit", "reverse_fee"]);
-const models = DATA.models;
+const models = DATA.models.filter((m) => !m.notes);  // limited-memory rows have their own section
 const $ = (s, r = document) => r.querySelector(s);
 function h(tag, attrs, ...kids) {
   const node = document.createElement(tag);
@@ -335,6 +350,7 @@ function drawHero() {
   const t = DATA.totals;
   $("#figures").replaceChildren(
     h("div", null, h("b", null, t.shifts), h("span", null, `shifts at ${t.companies} fake companies`)),
+    h("div", null, h("b", null, t.types), h("span", null, "shift types")),
     h("div", null, h("b", null, t.models), h("span", null, "models run")),
     h("div", null, h("b", null, t.chats.toLocaleString("en-US")), h("span", null, "chats graded")),
     h("div", null, h("b", null, "0"), h("span", null, "LLM judges")));
@@ -360,6 +376,17 @@ const COLS = {
   finished: { label: "Batch finished", val: (m) => (m.finished[1] ? m.finished[0] / m.finished[1] : -1), only: "contested" },
   cost: { label: "Est. cost / shift", val: (m) => (m.cost == null ? Infinity : m.cost), only: "main" },
   minutes: { label: "Minutes / shift", val: (m) => (m.minutes == null ? Infinity : m.minutes), only: "main" },
+  breaks: { label: "Style rules broken", val: (m) => styleBreaks(m), only: "styled" },
+};
+function styleBreaks(m) { return Object.values(m.style || {}).reduce((a, b) => a + b, 0); }
+function styleDetail(m) { return Object.entries(m.style || {}).sort((a, b) => b[1] - a[1]).map(([rule, n]) => `${DATA.style[rule - 1] || "rule " + rule}: ${n}`).join("\n"); }
+const BOARD_NOTES = {
+  main: "± is the standard error over the 24 shifts, shown as the bracket on each bar. One run per model, so it does not capture run-to-run variation.",
+  contested: "Twelve shifts. \"Batch finished\" counts shifts passed where the agent also completed the batch instead of stopping and escalating.",
+  gauntlet: "Twelve shifts of thirteen chats each.",
+  unclear: "Twelve shifts. Acting before the customer has said enough fails the chat, even when the guess turns out right.",
+  audit: "Twelve shifts built on long records: about 40 transactions over 9 pages, and an 18-line order.",
+  styled: "Twelve shifts under a style guide checked by fixed patterns. The count is how many times a reply broke a rule.",
 };
 function drawTabs() {
   $("#tier-tabs").replaceChildren(...Object.entries(TIERS).map(([key, label]) => {
@@ -394,6 +421,7 @@ function drawBoard() {
       if (key === "finished") tr.append(h("td", { class: "num" }, `${m.finished[0]}/${m.finished[1]}`));
       if (key === "cost") tr.append(h("td", { class: "num" + (m.cost == null ? " zero" : "") }, m.cost == null ? "–" : money(m.cost)));
       if (key === "minutes") tr.append(h("td", { class: "num" + (m.minutes == null ? " zero" : "") }, m.minutes == null ? "–" : m.minutes.toFixed(1)));
+      if (key === "breaks") tr.append(h("td", { class: "num" + (styleBreaks(m) ? "" : " zero"), "data-tip": styleBreaks(m) ? styleDetail(m) : "No rule broken" }, styleBreaks(m)));
     }
     return tr;
   });
@@ -402,11 +430,7 @@ function drawBoard() {
       h("td", { class: "zero", colspan: cols.length }, "Not run on these shifts")));
   }
   $("#board tbody").replaceChildren(...rows);
-  $("#board-note").textContent = tier === "main"
-    ? "± is the standard error over the 24 shifts, shown as the black bracket on each bar. One run per model, so it does not capture run-to-run variation. Select a column heading to sort."
-    : tier === "contested"
-      ? "Twelve shifts. \"Batch finished\" counts shifts passed where the agent also completed the batch instead of stopping and escalating. Select a column heading to sort."
-      : "Twelve shifts of thirteen chats each. Select a column heading to sort.";
+  $("#board-note").textContent = BOARD_NOTES[tier] + " Select a column heading to sort.";
 }
 
 /* chart */
@@ -545,29 +569,76 @@ function drawFinished() {
     h("td", { class: "num" + (m.finished[0] ? "" : " zero") }, `${m.finished[0]}/${m.finished[1]}`))));
 }
 
+/* limited memory */
+function drawMemory() {
+  const pairs = DATA.memory;
+  if (!pairs.length) { $("#memory").hidden = true; return; }
+  const tiers = pairs[0].tiers.map((t) => t.tier);
+  const bar = ([ok, n]) => h("div", { class: "score" }, h("div", { class: "track", style: "width:clamp(90px, 16vw, 180px)" }, h("div", { class: "fill", style: `width:${(100 * ok) / n}%` })), h("span", { class: "val" }, `${ok}/${n}`));
+  $("#memory-table thead").replaceChildren(h("tr", null, h("th", null, "Model"), h("th", null, "Full memory"), h("th", null, "Limited memory"),
+    ...tiers.map((t) => h("th", { class: "num" }, TYPE_COPY[t] ? TYPE_COPY[t][0] : t))));
+  $("#memory-table tbody").replaceChildren(...pairs.map((p) => h("tr", null, h("th", { scope: "row" }, p.name), h("td", null, bar(p.full)), h("td", null, bar(p.notes)),
+    ...p.tiers.map((t) => h("td", { class: "num", "data-tip": `${t.full[0]} of ${t.full[1]} with full memory\n${t.notes[0]} of ${t.notes[1]} with limited memory` }, `${t.full[0]} → ${t.notes[0]}`)))));
+  const worst = [...pairs].filter((p) => p.memo && p.memo.wrong).sort((a, b) => b.memo.wrong - a.memo.wrong)[0];
+  const lines = [pairs.map((p) => `${p.name} goes from ${p.full[0]} to ${p.notes[0]} of ${p.full[1]} shifts`).join(", ") + "."];
+  if (worst) {
+    const fullRight = worst.memo_full[0] === worst.memo_full[1] ? "all " + worst.memo_full[1] : worst.memo_full[0] + " of " + worst.memo_full[1];
+    lines.push(`${worst.name} stopped applying the memo that changes two rules in the middle of the long shifts. With full memory it got ${fullRight} of the chats that depend on the memo right. With limited memory it got ${worst.memo.wrong} of ${worst.memo.total} wrong, and in ${worst.memo.missing} of those ${worst.memo.wrong} the memo's new limit was not in the notes it had saved.`);
+  }
+  $("#memory-finding").textContent = lines.join(" ");
+}
+
+/* what the newer shift types showed */
+function drawNewer() {
+  const fresh = ["unclear", "audit", "styled"].filter((t) => DATA.sizes.includes(t));
+  if (!fresh.length) return;
+  const top = models[0], ran = (m, t) => m.tiers[t] && m.tiers[t][1] > 0;
+  const paras = [];
+  if (DATA.sizes.every((t) => top.tiers[t][0] === top.tiers[t][1])) {
+    const n = DATA.sizes.reduce((a, t) => a + top.tiers[t][1], 0);
+    paras.push(`${top.name} has passed every shift it was run on: ${n} shifts across all ${DATA.sizes.length} shift types.`);
+  }
+  const clean = models.filter((m) => m !== top && ["unclear", "styled"].every((t) => ran(m, t) && m.tiers[t][0] === 12 && m.tiers[t][1] === 12));
+  if (clean.length) paras.push(`${clean.map((m) => m.name).join(" and ")} ${clean.length > 1 ? "each " : ""}passed 12 of 12 unclear and 12 of 12 styled shifts.`);
+  const styled = models.filter((m) => ran(m, "styled") && m.tiers.styled[0] < m.tiers.styled[1]);
+  if (styled.length === 1) {
+    const m = styled[0], total = styleBreaks(m), topRule = Object.entries(m.style || {}).sort((a, b) => b[1] - a[1])[0];
+    paras.push(`Only ${m.name} failed the style guide, passing ${m.tiers.styled[0]} of ${m.tiers.styled[1]} styled shifts` + (topRule ? `; ${topRule[1]} of its ${total} rule breaks were the ${DATA.style[topRule[0] - 1]} rule.` : "."));
+  }
+  const notRun = models.filter((m) => fresh.some((t) => !ran(m, t)));
+  if (notRun.length) paras.push(`Not run on these shift types: ${notRun.map((m) => m.name).join(", ")}.`);
+  const card = $("#newer");
+  card.hidden = false;
+  card.append(...paras.map((t) => h("p", null, t)));
+}
+
 /* method and limits */
 function drawMethod() {
   const n = DATA.totals.shifts;
   const cards = [
-    ["Ledger-exact", "One right outcome per chat", "Which line items were paid, how many, to which destination, and whether it was escalated. Nothing is graded from the wording of a reply."],
+    ["Ledger-exact", "One right outcome per chat", "Which line items were paid, how many, to which destination, and whether it was escalated. In styled shifts the replies are also checked against the style guide by fixed patterns. No model grades anything."],
     ["All or nothing", "Every chat has to be right", "One wrong payment anywhere fails the shift. The share of individual chats right is reported beside it."],
-    [`${n}/${n}`, "A reference solution passes", "A scripted agent that knows the answers passes every shift through the same desk the models use, in the sandbox."],
+    [`${n}/${n}`, "A reference solution passes", "A scripted agent that knows the answers passes every shift through the same desk the models use."],
     [`0/${n}`, "A naive agent fails", "A scripted agent that trusts the log and does what the customer asks passes none."],
     ["Seeded", "Fresh private sets on demand", "Every shift is generated from a company, a shift type and a seed. The answer key never enters the agent's sandbox."],
     ["Replayable", "Re-graded without a model", "The world is deterministic given the agent's actions, so a saved run can be replayed and graded again when the scorer changes."],
     ["6", "Scoring faults found and fixed", "Six times, reading a failing run showed the benchmark was wrong, not the model: an ambiguous rule, a scripted customer who ignored a question, a scorer that undercounted. Each was fixed before these numbers."],
   ];
   $("#method-cards").replaceChildren(...cards.map(([big, title, text]) => h("div", { class: "card" }, h("span", { class: "big" }, big), h("h3", null, title), h("p", null, text))));
-  const top = models[0], partial = models.filter((m) => ["contested", "gauntlet"].some((t) => m.tiers[t][1] > 0 && m.tiers[t][1] < 12));
-  const notRun = models.filter((m) => !m.tiers.contested[1] || !m.tiers.gauntlet[1]);
+  const top = models[0], extra = DATA.sizes.filter((t) => t !== "short" && t !== "long");
+  const partial = models.filter((m) => extra.some((t) => m.tiers[t][1] > 0 && m.tiers[t][1] < 12));
+  const notRun = models.filter((m) => extra.some((t) => !m.tiers[t][1]));
+  const passedAll = DATA.sizes.every((t) => top.tiers[t][0] === top.tiers[t][1]);
   const items = [
     "Each model was run once. The standard errors come from the spread across 24 shifts and say nothing about run-to-run variation.",
-    top.main[0] === top.main[1] ? `${top.name} has not failed a shift it was given, so the benchmark does not yet show where the strongest model breaks.` : null,
-    partial.length ? partial.map((m) => `${m.name} was run on ${m.tiers.contested[1]} of 12 contested and ${m.tiers.gauntlet[1]} of 12 gauntlet shifts`).join("; ") + "." : null,
-    notRun.length ? "Not run on every shift type: " + notRun.map((m) => m.name + " (" + ["contested", "gauntlet"].filter((t) => !m.tiers[t][1]).join(", ") + ")").join("; ") + "." : null,
+    passedAll ? `${top.name} has not failed a shift it was given, so the benchmark does not yet show where the strongest model breaks.` : null,
+    ...partial.map((m) => `${m.name} was run on only part of some shift types: ` + extra.filter((t) => m.tiers[t][1] > 0 && m.tiers[t][1] < 12).map((t) => `${m.tiers[t][1]} of 12 ${t}`).join(", ") + "."),
+    notRun.length ? "Not run on every shift type: " + notRun.map((m) => m.name + " (" + extra.filter((t) => !m.tiers[t][1]).join(", ") + ")").join("; ") + "." : null,
+    DATA.memory.length ? "Limited memory was run on " + DATA.memory.map((p) => p.name).join(", ") + " only." : null,
     "Costs are estimates from token counts at list prices, with cache pricing assumed for some models.",
     "The customer is scripted, not simulated. Apart from confirming when asked, a scripted reply can answer a question the agent did not ask.",
   ].filter(Boolean);
+  $("#ds-count").textContent = DATA.totals.shifts;
   $("#limit-list").replaceChildren(...items.map((t) => h("li", null, t)));
 }
 
@@ -578,7 +649,7 @@ $("#copy").addEventListener("click", async (e) => {
   setTimeout(() => { e.target.textContent = "Copy command"; }, 2000);
 });
 
-drawHero(); drawTabs(); drawBoard(); drawChart(); drawTypes(); drawExample(); drawHeat(); drawStories(); drawFinished(); drawMethod();
+drawHero(); drawTabs(); drawBoard(); drawChart(); drawTypes(); drawExample(); drawHeat(); drawStories(); drawFinished(); drawNewer(); drawMemory(); drawMethod();
 $("#built").textContent = `Rendered from run data embedded in this page, built ${DATA.built}. ${DATA.totals.graded} graded shifts across ${DATA.totals.models} models. To update it after new runs, rebuild with scripts/build_dashboard.py and scripts/build_site.py.`;
 let resizeTimer;
 window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawChart, 150); });
