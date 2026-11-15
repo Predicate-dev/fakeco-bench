@@ -34,21 +34,21 @@ SOURCES = [
     dict(key="fable-5-2", name="Claude Fable 5.2", provider="Anthropic", runs=[
         dict(dir="out-fable-short"), dict(dir="out-fable-long"), dict(dir="out-rc2-fable"),
         dict(dir="out-g1-fable", sandbox="g1-fable.json"), dict(dir="out-h2-fable"), dict(dir="out-s2-fable"), dict(dir="out-t1-fable"), dict(dir="out-tone2-fable"), dict(dir="out-f52-rest"), dict(dir="out-f52-rerun")]),
-    dict(key="fable-5-1", name="Claude Fable 5.1", provider="Anthropic", runs=[dict(dir="out-f51-main")]),
+    dict(key="fable-5-1", name="Claude Fable 5.1", provider="Anthropic", runs=[dict(dir="out-f51-main"), dict(dir="out-tk-claude-fable-5-1")]),
     dict(key="fable-5-2-notes", name="Claude Fable 5.2, limited memory", provider="Anthropic", runs=[dict(dir="out-fable-notes")]),
-    dict(key="gpt-6-astra", name="GPT-6 Astra", provider="OpenAI", runs=[dict(dir="out-v2-astra"), dict(dir="out-g2-astra")]),
+    dict(key="gpt-6-astra", name="GPT-6 Astra", provider="OpenAI", runs=[dict(dir="out-v2-astra"), dict(dir="out-g2-astra"), dict(dir="out-tk-gpt-6-astra")]),
     dict(key="gpt-6-1-sol", name="GPT-6.1 Sol", provider="OpenAI", runs=[
         dict(dir="out-sol", only=["short", "long"]), dict(dir="out-sol-rerun"), dict(dir="out-rc2-sol"),
         dict(dir="out-g2-sol"), dict(dir="out-h2-sol"), dict(dir="out-s2-sol"), dict(dir="out-t1-sol"), dict(dir="out-t1b-gpt-6.1-sol"),
         dict(dir="out-tone2-gpt-6.1-sol")]),
     dict(key="gpt-6-1-sol-notes", name="GPT-6.1 Sol, limited memory", provider="OpenAI", runs=[dict(dir="out-sol-notes")]),
-    dict(key="opus-5-5", name="Claude Opus 5.5", provider="Anthropic", runs=[dict(dir="out-opus4"), dict(dir="out-rc2-opus")]),
+    dict(key="opus-5-5", name="Claude Opus 5.5", provider="Anthropic", runs=[dict(dir="out-opus4"), dict(dir="out-rc2-opus"), dict(dir="out-tk-claude-opus-5-5")]),
     dict(key="gpt-6-1-terra", name="GPT-6.1 Terra", provider="OpenAI", runs=[
         dict(dir="out-48-terra", skip=["gauntlet"]), dict(dir="out-g2-terra"), dict(dir="out-h2-terra"), dict(dir="out-s2-terra"), dict(dir="out-t1-terra"), dict(dir="out-t1b-gpt-6.1-terra"),
         dict(dir="out-tone2-gpt-6.1-terra")]),
     dict(key="gpt-6-1-terra-notes", name="GPT-6.1 Terra, limited memory", provider="OpenAI", runs=[dict(dir="out-terra-notes")]),
     dict(key="sonnet-5-5", name="Claude Sonnet 5.5", provider="Anthropic", runs=[
-        dict(dir="out-v1-sonnet55"), dict(dir="out-rc2-sonnet55"), dict(dir="out-g3-sonnet55")]),
+        dict(dir="out-v1-sonnet55"), dict(dir="out-rc2-sonnet55"), dict(dir="out-g3-sonnet55"), dict(dir="out-tk-claude-sonnet-5-5")]),
     dict(key="gpt-6-luna", name="GPT-6 Luna", provider="OpenAI", runs=[
         dict(dir="out-48-luna", skip=["gauntlet"]), dict(dir="out-g2-luna"), dict(dir="out-h2-luna"), dict(dir="out-s2-luna"), dict(dir="out-t1-luna"), dict(dir="out-tone2-gpt-6-luna")]),
     dict(key="gpt-6-luna-notes", name="GPT-6 Luna, limited memory", provider="OpenAI", runs=[dict(dir="out-luna-notes")]),
