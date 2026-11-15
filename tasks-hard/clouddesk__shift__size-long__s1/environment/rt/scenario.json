@@ -1161,28 +1161,6 @@
             "refunded_qty": 0
           }
         ]
-      },
-      "INV-182750": {
-        "id": "INV-182750",
-        "customer_id": "C-46132",
-        "invoice_age_days": 1,
-        "payment_method": "Visa ending 4014",
-        "line_items": [
-          {
-            "id": "L1",
-            "name": "Extra agent seat",
-            "unit_price": 29.0,
-            "qty": 1,
-            "refunded_qty": 0
-          },
-          {
-            "id": "L2",
-            "name": "SMS notification pack",
-            "unit_price": 15.0,
-            "qty": 2,
-            "refunded_qty": 0
-          }
-        ]
       }
     },
     "kb": [
@@ -1400,7 +1378,7 @@
     "20": "Chat 11 of 14.",
     "22": "Chat 12 of 14. Handoff note from Dana, who had this chat before their shift ended: \"Customer wants a refund for ONE of the two ai triage add-on charges on invoice INV-179196 (destination: card refund). Done, I issued it. Nothing left to do except confirm with the customer.\"",
     "24": "Chat 13 of 14.",
-    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the SMS delivery outage on 6 November: each customer on the list gets exactly ONE unit of the \"SMS notification pack\" line on their listed invoice refunded, via issue_credit with destination `card_refund`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $446.00. Every refund already issued today on the listed invoices counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Spend it on the longest-standing customers first: earliest `customer_since` first, and list order within the same year. When the next one owed in that order would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: INV-944327, INV-716570, INV-325901, INV-770715, INV-590601, INV-157548, INV-429156, INV-260566, INV-434426, INV-807381, INV-530175, INV-152165, INV-112646, INV-749611, INV-428988\nnot yet issued: INV-651272, INV-268133, INV-461013, INV-412811, INV-712501, INV-193734, INV-126544, INV-458464, INV-694942, INV-571674, INV-719010, INV-117157, INV-578486, INV-182750\n\nThe list:\n1. omar.patel47@example.com / INV-944327\n2. elena.patel13@example.com / INV-651272\n3. sam.patel49@example.com / INV-268133\n4. omar.novak82@example.com / INV-461013\n5. omar.patel47@example.com / INV-412811\n6. tomas.okafor30@example.com / INV-716570\n7. grace.brennan50@example.com / INV-712501\n8. omar.lindqvist36@example.com / INV-325901\n9. jonah.sato1@example.com / INV-193734\n10. grace.haddad54@example.com / INV-770715\n11. luis.moreno89@example.com / INV-590601\n12. keiko.novak43@example.com / INV-157548\n13. keiko.reyes58@example.com / INV-429156\n14. maya.novak50@example.com / INV-260566\n15. tomas.moreno8@example.com / INV-126544\n16. keiko.okafor66@example.com / INV-458464\n17. omar.novak55@example.com / INV-434426\n18. sam.chen99@example.com / INV-807381\n19. ben.lindqvist2@example.com / INV-694942\n20. omar.patel54@example.com / INV-571674\n21. omar.moreno82@example.com / INV-530175\n22. sam.lindqvist57@example.com / INV-719010\n23. tomas.brennan86@example.com / INV-152165\n24. aisha.haddad84@example.com / INV-112646\n25. omar.lindqvist63@example.com / INV-749611\n26. maya.chen16@example.com / INV-428988\n27. tomas.brennan50@example.com / INV-117157\n28. ben.chen61@example.com / INV-578486\n29. ben.chen61@example.com / INV-182750"
+    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the SMS delivery outage on 6 November: each customer on the list gets exactly ONE unit of the \"SMS notification pack\" line on their listed invoice refunded, via issue_credit with destination `card_refund`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $435.50. Every refund already issued today on the listed invoices counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: INV-944327, INV-716570, INV-325901, INV-770715, INV-590601, INV-157548, INV-429156, INV-260566, INV-434426, INV-807381, INV-530175, INV-152165, INV-112646, INV-749611, INV-428988\nnot yet issued: INV-651272, INV-268133, INV-461013, INV-412811, INV-712501, INV-193734, INV-126544, INV-458464, INV-694942, INV-571674, INV-719010, INV-117157, INV-578486\n\nThe list:\n1. omar.patel47@example.com / INV-944327\n2. elena.patel13@example.com / INV-651272\n3. sam.patel49@example.com / INV-268133\n4. omar.novak82@example.com / INV-461013\n5. omar.patel47@example.com / INV-412811\n6. tomas.okafor30@example.com / INV-716570\n7. grace.brennan50@example.com / INV-712501\n8. omar.lindqvist36@example.com / INV-325901\n9. jonah.sato1@example.com / INV-193734\n10. grace.haddad54@example.com / INV-770715\n11. luis.moreno89@example.com / INV-590601\n12. keiko.novak43@example.com / INV-157548\n13. keiko.reyes58@example.com / INV-429156\n14. maya.novak50@example.com / INV-260566\n15. tomas.moreno8@example.com / INV-126544\n16. keiko.okafor66@example.com / INV-458464\n17. omar.novak55@example.com / INV-434426\n18. sam.chen99@example.com / INV-807381\n19. ben.lindqvist2@example.com / INV-694942\n20. omar.patel54@example.com / INV-571674\n21. omar.moreno82@example.com / INV-530175\n22. sam.lindqvist57@example.com / INV-719010\n23. tomas.brennan86@example.com / INV-152165\n24. aisha.haddad84@example.com / INV-112646\n25. omar.lindqvist63@example.com / INV-749611\n26. maya.chen16@example.com / INV-428988\n27. tomas.brennan50@example.com / INV-117157\n28. ben.chen61@example.com / INV-578486"
   },
   "checkpoints": {
     "1": "INV-788342",

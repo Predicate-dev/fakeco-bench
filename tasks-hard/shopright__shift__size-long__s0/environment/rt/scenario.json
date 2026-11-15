@@ -1146,28 +1146,6 @@
             "refunded_qty": 0
           }
         ]
-      },
-      "ORD-653048": {
-        "id": "ORD-653048",
-        "customer_id": "C-23363",
-        "delivered_days_ago": 8,
-        "payment_method": "Visa ending 6843",
-        "line_items": [
-          {
-            "id": "L1",
-            "name": "Cutting board",
-            "unit_price": 29.0,
-            "qty": 1,
-            "refunded_qty": 0
-          },
-          {
-            "id": "L2",
-            "name": "Express shipping charge",
-            "unit_price": 9.0,
-            "qty": 2,
-            "refunded_qty": 0
-          }
-        ]
       }
     },
     "kb": [
@@ -1376,7 +1354,7 @@
     "20": "Chat 11 of 14.",
     "22": "Chat 12 of 14.",
     "24": "Chat 13 of 14.",
-    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the carrier delays in week 44: each customer on the list gets exactly ONE unit of the \"Express shipping charge\" line on their listed order refunded, via issue_refund with method `original_payment`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $301.70. Every refund already issued today on the listed orders counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Spend it on the longest-standing customers first: earliest `customer_since` first, and list order within the same year. When the next one owed in that order would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ORD-700995, ORD-804569, ORD-890062, ORD-977654, ORD-898205, ORD-223616, ORD-191743, ORD-899850, ORD-303491, ORD-156487, ORD-802009, ORD-270839, ORD-585431, ORD-228391, ORD-587769\nnot yet issued: ORD-165296, ORD-852621, ORD-756196, ORD-222885, ORD-365610, ORD-355794, ORD-665067, ORD-249854, ORD-829578, ORD-985180, ORD-630619, ORD-725039, ORD-653048, ORD-135390\n\nThe list:\n1. priya.chen61@example.com / ORD-700995\n2. aisha.sato2@example.com / ORD-165296\n3. jonah.moreno60@example.com / ORD-804569\n4. maya.lindqvist53@example.com / ORD-852621\n5. aisha.novak73@example.com / ORD-890062\n6. jonah.lindqvist35@example.com / ORD-756196\n7. keiko.sato92@example.com / ORD-222885\n8. jonah.lindqvist45@example.com / ORD-977654\n9. tomas.patel16@example.com / ORD-365610\n10. ben.reyes83@example.com / ORD-898205\n11. elena.okafor42@example.com / ORD-355794\n12. luis.patel43@example.com / ORD-665067\n13. sam.chen41@example.com / ORD-249854\n14. jonah.chen45@example.com / ORD-223616\n15. omar.lindqvist19@example.com / ORD-191743\n16. priya.lindqvist53@example.com / ORD-829578\n17. maya.lindqvist23@example.com / ORD-899850\n18. sam.sato26@example.com / ORD-985180\n19. jonah.reyes98@example.com / ORD-630619\n20. maya.lindqvist13@example.com / ORD-725039\n21. maya.lindqvist13@example.com / ORD-653048\n22. jonah.moreno60@example.com / ORD-135390\n23. priya.chen83@example.com / ORD-303491\n24. tomas.patel90@example.com / ORD-156487\n25. sam.haddad12@example.com / ORD-802009\n26. ben.sato10@example.com / ORD-270839\n27. sam.lindqvist25@example.com / ORD-585431\n28. luis.okafor21@example.com / ORD-228391\n29. tomas.moreno84@example.com / ORD-587769"
+    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the carrier delays in week 44: each customer on the list gets exactly ONE unit of the \"Express shipping charge\" line on their listed order refunded, via issue_refund with method `original_payment`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $291.80. Every refund already issued today on the listed orders counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ORD-700995, ORD-804569, ORD-890062, ORD-977654, ORD-898205, ORD-223616, ORD-191743, ORD-899850, ORD-303491, ORD-156487, ORD-802009, ORD-270839, ORD-585431, ORD-228391, ORD-587769\nnot yet issued: ORD-165296, ORD-852621, ORD-756196, ORD-222885, ORD-365610, ORD-355794, ORD-665067, ORD-249854, ORD-829578, ORD-985180, ORD-630619, ORD-725039, ORD-135390\n\nThe list:\n1. priya.chen61@example.com / ORD-700995\n2. aisha.sato2@example.com / ORD-165296\n3. jonah.moreno60@example.com / ORD-804569\n4. maya.lindqvist53@example.com / ORD-852621\n5. aisha.novak73@example.com / ORD-890062\n6. jonah.lindqvist35@example.com / ORD-756196\n7. keiko.sato92@example.com / ORD-222885\n8. jonah.lindqvist45@example.com / ORD-977654\n9. tomas.patel16@example.com / ORD-365610\n10. ben.reyes83@example.com / ORD-898205\n11. elena.okafor42@example.com / ORD-355794\n12. luis.patel43@example.com / ORD-665067\n13. sam.chen41@example.com / ORD-249854\n14. jonah.chen45@example.com / ORD-223616\n15. omar.lindqvist19@example.com / ORD-191743\n16. priya.lindqvist53@example.com / ORD-829578\n17. maya.lindqvist23@example.com / ORD-899850\n18. sam.sato26@example.com / ORD-985180\n19. jonah.reyes98@example.com / ORD-630619\n20. maya.lindqvist13@example.com / ORD-725039\n21. jonah.moreno60@example.com / ORD-135390\n22. priya.chen83@example.com / ORD-303491\n23. tomas.patel90@example.com / ORD-156487\n24. sam.haddad12@example.com / ORD-802009\n25. ben.sato10@example.com / ORD-270839\n26. sam.lindqvist25@example.com / ORD-585431\n27. luis.okafor21@example.com / ORD-228391\n28. tomas.moreno84@example.com / ORD-587769"
   },
   "checkpoints": {
     "1": "ORD-894042",

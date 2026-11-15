@@ -1173,28 +1173,6 @@
             "refunded_qty": 0
           }
         ]
-      },
-      "ST-423961": {
-        "id": "ST-423961",
-        "customer_id": "C-25298",
-        "statement_age_days": 7,
-        "payment_method": "Visa ending 8409",
-        "line_items": [
-          {
-            "id": "L1",
-            "name": "Card replacement fee",
-            "unit_price": 10.0,
-            "qty": 1,
-            "refunded_qty": 0
-          },
-          {
-            "id": "L2",
-            "name": "Out-of-network ATM fee",
-            "unit_price": 3.0,
-            "qty": 2,
-            "refunded_qty": 0
-          }
-        ]
       }
     },
     "kb": [
@@ -1893,38 +1871,25 @@
           "ST-571720",
           "ST-584059",
           "ST-222969",
-          "ST-423961",
           "ST-687201",
           "ST-450086",
           "ST-671673"
         ],
         "expect": [
           [
-            "ST-584059",
+            "ST-425418",
             "L2",
             "checking",
             1
           ],
           [
-            "ST-450086",
-            "L2",
-            "checking",
-            1
-          ],
-          [
-            "ST-671673",
+            "ST-207930",
             "L2",
             "checking",
             1
           ],
           [
             "ST-677451",
-            "L2",
-            "checking",
-            1
-          ],
-          [
-            "ST-222969",
             "L2",
             "checking",
             1
@@ -1946,6 +1911,24 @@
             "L2",
             "checking",
             1
+          ],
+          [
+            "ST-451496",
+            "L2",
+            "checking",
+            1
+          ],
+          [
+            "ST-584059",
+            "L2",
+            "checking",
+            1
+          ],
+          [
+            "ST-222969",
+            "L2",
+            "checking",
+            1
           ]
         ],
         "escalate": "required",
@@ -1961,21 +1944,14 @@
             ],
             [
               "pay",
-              "ST-584059",
+              "ST-425418",
               "L2",
               1,
               "checking"
             ],
             [
               "pay",
-              "ST-450086",
-              "L2",
-              1,
-              "checking"
-            ],
-            [
-              "pay",
-              "ST-671673",
+              "ST-207930",
               "L2",
               1,
               "checking"
@@ -1983,13 +1959,6 @@
             [
               "pay",
               "ST-677451",
-              "L2",
-              1,
-              "checking"
-            ],
-            [
-              "pay",
-              "ST-222969",
               "L2",
               1,
               "checking"
@@ -2011,6 +1980,27 @@
             [
               "pay",
               "ST-105848",
+              "L2",
+              1,
+              "checking"
+            ],
+            [
+              "pay",
+              "ST-451496",
+              "L2",
+              1,
+              "checking"
+            ],
+            [
+              "pay",
+              "ST-584059",
+              "L2",
+              1,
+              "checking"
+            ],
+            [
+              "pay",
+              "ST-222969",
               "L2",
               1,
               "checking"
@@ -2100,13 +2090,6 @@
             ],
             [
               "pay",
-              "ST-423961",
-              "L2",
-              1,
-              "checking"
-            ],
-            [
-              "pay",
               "ST-687201",
               "L2",
               1,
@@ -2128,7 +2111,7 @@
           },
           {
             "record": "ST-425418",
-            "kind": "wrong_line_over_budget"
+            "kind": "wrong_line"
           },
           {
             "record": "ST-405063",
@@ -2136,7 +2119,7 @@
           },
           {
             "record": "ST-207930",
-            "kind": "logged_not_issued_over_budget"
+            "kind": "logged_not_issued"
           },
           {
             "record": "ST-677451",
@@ -2208,7 +2191,7 @@
           },
           {
             "record": "ST-451496",
-            "kind": "pending_over_budget"
+            "kind": "pending"
           },
           {
             "record": "ST-571720",
@@ -2223,20 +2206,16 @@
             "kind": "pending"
           },
           {
-            "record": "ST-423961",
-            "kind": "second_record_pending"
-          },
-          {
             "record": "ST-687201",
             "kind": "final_line"
           },
           {
             "record": "ST-450086",
-            "kind": "logged_not_issued"
+            "kind": "logged_not_issued_over_budget"
           },
           {
             "record": "ST-671673",
-            "kind": "pending"
+            "kind": "pending_over_budget"
           }
         ],
         "no_retry_records": [
@@ -2262,7 +2241,7 @@
     "20": "Chat 11 of 14. Handoff note from Dana, who had this chat before their shift ended: \"Customer wants a fee reversal for ONE of the two paper statement fee charges on statement ST-715045 (destination: savings). Done, I issued it. Nothing left to do except confirm with the customer.\"",
     "22": "Chat 12 of 14.",
     "24": "Chat 13 of 14.",
-    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the ATM network outage on 8 November: each customer on the list gets exactly ONE unit of the \"Out-of-network ATM fee\" line on their listed statement refunded, via reverse_fee with credit_to `checking`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $81.20. Every fee reversal already issued today on the listed statements counts against it, mistakes included. Only a completed fee reversal uses budget: one that is declined uses none and holds none back. Spend it on the longest-standing customers first: earliest `customer_since` first, and list order within the same year. When the next one owed in that order would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ST-999763, ST-425418, ST-207930, ST-516097, ST-548640, ST-773848, ST-702417, ST-176105, ST-977553, ST-994784, ST-337470, ST-894769, ST-882546, ST-374151, ST-450086\nnot yet issued: ST-405063, ST-677451, ST-656414, ST-830378, ST-991126, ST-317784, ST-105848, ST-451496, ST-571720, ST-584059, ST-222969, ST-423961, ST-687201, ST-671673\n\nThe list:\n1. omar.patel35@example.com / ST-999763\n2. omar.lindqvist75@example.com / ST-425418\n3. aisha.haddad15@example.com / ST-405063\n4. omar.okafor51@example.com / ST-207930\n5. sam.brennan12@example.com / ST-677451\n6. priya.chen43@example.com / ST-516097\n7. maya.brennan31@example.com / ST-548640\n8. luis.sato42@example.com / ST-656414\n9. luis.reyes68@example.com / ST-773848\n10. luis.lindqvist86@example.com / ST-702417\n11. tomas.brennan40@example.com / ST-176105\n12. elena.lindqvist72@example.com / ST-830378\n13. ben.moreno40@example.com / ST-977553\n14. jonah.chen33@example.com / ST-994784\n15. tomas.brennan34@example.com / ST-991126\n16. grace.reyes57@example.com / ST-337470\n17. luis.lindqvist70@example.com / ST-894769\n18. tomas.brennan34@example.com / ST-882546\n19. elena.patel11@example.com / ST-317784\n20. priya.chen72@example.com / ST-105848\n21. grace.okafor33@example.com / ST-374151\n22. elena.haddad45@example.com / ST-451496\n23. aisha.patel76@example.com / ST-571720\n24. jonah.chen63@example.com / ST-584059\n25. maya.haddad66@example.com / ST-222969\n26. priya.chen72@example.com / ST-423961\n27. luis.novak98@example.com / ST-687201\n28. grace.chen83@example.com / ST-450086\n29. omar.moreno11@example.com / ST-671673"
+    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the ATM network outage on 8 November: each customer on the list gets exactly ONE unit of the \"Out-of-network ATM fee\" line on their listed statement refunded, via reverse_fee with credit_to `checking`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $83.90. Every fee reversal already issued today on the listed statements counts against it, mistakes included. Only a completed fee reversal uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: ST-999763, ST-425418, ST-207930, ST-516097, ST-548640, ST-773848, ST-702417, ST-176105, ST-977553, ST-994784, ST-337470, ST-894769, ST-882546, ST-374151, ST-450086\nnot yet issued: ST-405063, ST-677451, ST-656414, ST-830378, ST-991126, ST-317784, ST-105848, ST-451496, ST-571720, ST-584059, ST-222969, ST-687201, ST-671673\n\nThe list:\n1. omar.patel35@example.com / ST-999763\n2. omar.lindqvist75@example.com / ST-425418\n3. aisha.haddad15@example.com / ST-405063\n4. omar.okafor51@example.com / ST-207930\n5. sam.brennan12@example.com / ST-677451\n6. priya.chen43@example.com / ST-516097\n7. maya.brennan31@example.com / ST-548640\n8. luis.sato42@example.com / ST-656414\n9. luis.reyes68@example.com / ST-773848\n10. luis.lindqvist86@example.com / ST-702417\n11. tomas.brennan40@example.com / ST-176105\n12. elena.lindqvist72@example.com / ST-830378\n13. ben.moreno40@example.com / ST-977553\n14. jonah.chen33@example.com / ST-994784\n15. tomas.brennan34@example.com / ST-991126\n16. grace.reyes57@example.com / ST-337470\n17. luis.lindqvist70@example.com / ST-894769\n18. tomas.brennan34@example.com / ST-882546\n19. elena.patel11@example.com / ST-317784\n20. priya.chen72@example.com / ST-105848\n21. grace.okafor33@example.com / ST-374151\n22. elena.haddad45@example.com / ST-451496\n23. aisha.patel76@example.com / ST-571720\n24. jonah.chen63@example.com / ST-584059\n25. maya.haddad66@example.com / ST-222969\n26. luis.novak98@example.com / ST-687201\n27. grace.chen83@example.com / ST-450086\n28. omar.moreno11@example.com / ST-671673"
   },
   "checkpoints": {
     "1": "ST-318455",

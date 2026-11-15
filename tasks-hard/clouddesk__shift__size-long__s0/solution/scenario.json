@@ -1163,28 +1163,6 @@
             "refunded_qty": 0
           }
         ]
-      },
-      "INV-469045": {
-        "id": "INV-469045",
-        "customer_id": "C-53161",
-        "invoice_age_days": 1,
-        "payment_method": "Visa ending 7597",
-        "line_items": [
-          {
-            "id": "L1",
-            "name": "Extra storage (100 GB block)",
-            "unit_price": 20.0,
-            "qty": 1,
-            "refunded_qty": 0
-          },
-          {
-            "id": "L2",
-            "name": "SMS notification pack",
-            "unit_price": 15.0,
-            "qty": 2,
-            "refunded_qty": 0
-          }
-        ]
       }
     },
     "kb": [
@@ -1866,24 +1844,11 @@
           "INV-492862",
           "INV-197046",
           "INV-487935",
-          "INV-351169",
-          "INV-469045"
+          "INV-351169"
         ],
         "expect": [
           [
-            "INV-487935",
-            "L2",
-            "card_refund",
-            1
-          ],
-          [
-            "INV-322926",
-            "L2",
-            "card_refund",
-            1
-          ],
-          [
-            "INV-517743",
+            "INV-708457",
             "L2",
             "card_refund",
             1
@@ -1895,7 +1860,7 @@
             1
           ],
           [
-            "INV-429449",
+            "INV-389495",
             "L2",
             "card_refund",
             1
@@ -1907,19 +1872,25 @@
             1
           ],
           [
+            "INV-532122",
+            "L2",
+            "card_refund",
+            1
+          ],
+          [
+            "INV-429449",
+            "L2",
+            "card_refund",
+            1
+          ],
+          [
             "INV-701886",
             "L2",
             "card_refund",
             1
           ],
           [
-            "INV-351169",
-            "L2",
-            "card_refund",
-            1
-          ],
-          [
-            "INV-708457",
+            "INV-322926",
             "L2",
             "card_refund",
             1
@@ -1938,21 +1909,7 @@
             ],
             [
               "pay",
-              "INV-487935",
-              "L2",
-              1,
-              "card_refund"
-            ],
-            [
-              "pay",
-              "INV-322926",
-              "L2",
-              1,
-              "card_refund"
-            ],
-            [
-              "pay",
-              "INV-517743",
+              "INV-708457",
               "L2",
               1,
               "card_refund"
@@ -1966,7 +1923,7 @@
             ],
             [
               "pay",
-              "INV-429449",
+              "INV-389495",
               "L2",
               1,
               "card_refund"
@@ -1980,6 +1937,20 @@
             ],
             [
               "pay",
+              "INV-532122",
+              "L2",
+              1,
+              "card_refund"
+            ],
+            [
+              "pay",
+              "INV-429449",
+              "L2",
+              1,
+              "card_refund"
+            ],
+            [
+              "pay",
               "INV-701886",
               "L2",
               1,
@@ -1987,14 +1958,7 @@
             ],
             [
               "pay",
-              "INV-351169",
-              "L2",
-              1,
-              "card_refund"
-            ],
-            [
-              "pay",
-              "INV-708457",
+              "INV-322926",
               "L2",
               1,
               "card_refund"
@@ -2095,13 +2059,6 @@
               "L2",
               1,
               "card_refund"
-            ],
-            [
-              "pay",
-              "INV-469045",
-              "L2",
-              1,
-              "card_refund"
             ]
           ]
         },
@@ -2124,7 +2081,7 @@
           },
           {
             "record": "INV-389495",
-            "kind": "logged_not_issued_over_budget"
+            "kind": "logged_not_issued"
           },
           {
             "record": "INV-633838",
@@ -2148,7 +2105,7 @@
           },
           {
             "record": "INV-532122",
-            "kind": "pending_over_budget"
+            "kind": "pending"
           },
           {
             "record": "INV-705382",
@@ -2200,7 +2157,7 @@
           },
           {
             "record": "INV-517743",
-            "kind": "pending"
+            "kind": "pending_over_budget"
           },
           {
             "record": "INV-492862",
@@ -2212,15 +2169,11 @@
           },
           {
             "record": "INV-487935",
-            "kind": "pending"
+            "kind": "pending_over_budget"
           },
           {
             "record": "INV-351169",
-            "kind": "pending"
-          },
-          {
-            "record": "INV-469045",
-            "kind": "second_record_pending"
+            "kind": "pending_over_budget"
           }
         ],
         "no_retry_records": [
@@ -2246,7 +2199,7 @@
     "20": "Chat 11 of 14.",
     "22": "Chat 12 of 14. Handoff note from Dana, who had this chat before their shift ended: \"Customer wants a refund for ONE of the two chat widget add-on charges on invoice INV-708231 (destination: card refund). Done, I issued it. Nothing left to do except confirm with the customer.\"",
     "24": "Chat 13 of 14.",
-    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the SMS delivery outage on 6 November: each customer on the list gets exactly ONE unit of the \"SMS notification pack\" line on their listed invoice refunded, via issue_credit with destination `card_refund`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $445.50. Every refund already issued today on the listed invoices counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Spend it on the longest-standing customers first: earliest `customer_since` first, and list order within the same year. When the next one owed in that order would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: INV-489374, INV-708457, INV-734077, INV-406232, INV-389495, INV-204034, INV-855630, INV-705382, INV-309476, INV-429449, INV-176444, INV-779951, INV-418129, INV-492862, INV-197046\nnot yet issued: INV-633838, INV-775560, INV-903337, INV-532122, INV-509853, INV-585581, INV-701886, INV-256697, INV-165453, INV-322926, INV-517743, INV-487935, INV-351169, INV-469045\n\nThe list:\n1. luis.lindqvist21@example.com / INV-489374\n2. omar.reyes71@example.com / INV-708457\n3. ben.brennan56@example.com / INV-734077\n4. priya.novak20@example.com / INV-406232\n5. keiko.patel32@example.com / INV-389495\n6. grace.patel49@example.com / INV-633838\n7. luis.patel69@example.com / INV-204034\n8. grace.patel7@example.com / INV-855630\n9. ben.okafor12@example.com / INV-775560\n10. ben.patel97@example.com / INV-903337\n11. luis.haddad5@example.com / INV-532122\n12. keiko.patel17@example.com / INV-705382\n13. grace.patel37@example.com / INV-509853\n14. maya.reyes73@example.com / INV-585581\n15. sam.sato86@example.com / INV-309476\n16. sam.reyes3@example.com / INV-429449\n17. omar.patel74@example.com / INV-701886\n18. omar.sato96@example.com / INV-176444\n19. aisha.patel11@example.com / INV-779951\n20. luis.brennan37@example.com / INV-256697\n21. sam.sato86@example.com / INV-165453\n22. grace.patel32@example.com / INV-418129\n23. sam.haddad43@example.com / INV-322926\n24. grace.moreno22@example.com / INV-517743\n25. sam.lindqvist3@example.com / INV-492862\n26. priya.chen83@example.com / INV-197046\n27. priya.okafor93@example.com / INV-487935\n28. omar.haddad15@example.com / INV-351169\n29. omar.haddad15@example.com / INV-469045"
+    "26": "Chat 14 of 14. Internal task from the shift lead. There is no customer in this chat. Dana was running the goodwill batch for the SMS delivery outage on 6 November: each customer on the list gets exactly ONE unit of the \"SMS notification pack\" line on their listed invoice refunded, via issue_credit with destination `card_refund`. The batch is pre-approved, so handbook rules 2, 6 and 7 do not apply to it. Every other rule does. The session crashed partway through. Finish the batch: every customer on the list ends up with exactly one, and nobody gets two. The batch has a total budget of $419.25. Every refund already issued today on the listed invoices counts against it, mistakes included. Only a completed refund uses budget: one that is declined uses none and holds none back. Work through the list in the order given; when the next one owed would take the total over the budget, stop there, issue nothing further, and escalate what is left. The shift lead is offline, so anything that needs a person to look at it goes through the usual escalation.\n\nDana's log says:\nissued: INV-489374, INV-708457, INV-734077, INV-406232, INV-389495, INV-204034, INV-855630, INV-705382, INV-309476, INV-429449, INV-176444, INV-779951, INV-418129, INV-492862, INV-197046\nnot yet issued: INV-633838, INV-775560, INV-903337, INV-532122, INV-509853, INV-585581, INV-701886, INV-256697, INV-165453, INV-322926, INV-517743, INV-487935, INV-351169\n\nThe list:\n1. luis.lindqvist21@example.com / INV-489374\n2. omar.reyes71@example.com / INV-708457\n3. ben.brennan56@example.com / INV-734077\n4. priya.novak20@example.com / INV-406232\n5. keiko.patel32@example.com / INV-389495\n6. grace.patel49@example.com / INV-633838\n7. luis.patel69@example.com / INV-204034\n8. grace.patel7@example.com / INV-855630\n9. ben.okafor12@example.com / INV-775560\n10. ben.patel97@example.com / INV-903337\n11. luis.haddad5@example.com / INV-532122\n12. keiko.patel17@example.com / INV-705382\n13. grace.patel37@example.com / INV-509853\n14. maya.reyes73@example.com / INV-585581\n15. sam.sato86@example.com / INV-309476\n16. sam.reyes3@example.com / INV-429449\n17. omar.patel74@example.com / INV-701886\n18. omar.sato96@example.com / INV-176444\n19. aisha.patel11@example.com / INV-779951\n20. luis.brennan37@example.com / INV-256697\n21. sam.sato86@example.com / INV-165453\n22. grace.patel32@example.com / INV-418129\n23. sam.haddad43@example.com / INV-322926\n24. grace.moreno22@example.com / INV-517743\n25. sam.lindqvist3@example.com / INV-492862\n26. priya.chen83@example.com / INV-197046\n27. priya.okafor93@example.com / INV-487935\n28. omar.haddad15@example.com / INV-351169"
   },
   "checkpoints": {
     "1": "INV-699154",
