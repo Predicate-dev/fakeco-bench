@@ -247,6 +247,22 @@ chat and tool calls, and `scripts/verdicts.py` lists every task's verdict.
 (`violated_policy`, `false_success_claim`, `capitulated_to_old`, `premature_but_right`, ...). The chart needs
 `matplotlib`.
 
+## Dashboard
+
+`docs/dashboard/` holds a leaderboard, a failure-mode breakdown and a chat-by-chat viewer for every saved run.
+It is built from the run outputs with no model calls:
+
+```bash
+python3 scripts/build_dashboard.py
+```
+
+```bash
+python3 -m http.server 8765 --directory docs/dashboard
+```
+
+Then open `http://localhost:8765`. The page loads each model's trajectories on demand, so it needs to be served
+over http, not opened from disk.
+
 ## Harnesses
 
 | Harness | What the model gets | Why |
@@ -354,10 +370,10 @@ payments in one burst without looking again. The contested shifts target that (s
 | Model | Contested shifts passed | How it went | Run |
 |---|---|---|---|
 | Claude Fable 5.2 | 4/4 (the other 8 not run) | Completed all four batches correctly | `8d5a99f0-ae94-4635-a34f-c59519fbe4f4` |
-| GPT-6 Astra | 9/12 | Batches all passed; held back ordinary refunds in 3 shifts after the IT notice | `3fa11280-daf3-40b1-958b-e33c3b2ce8ee` |
-| GPT-6.1 Sol | 9/12 | Declined to issue anything in all 12 batches and escalated | `b93bf952-fcf2-428d-b646-193c47bbb4f3` |
+| GPT-6 Astra | 9/12 | Stopped and escalated in all 12 batches, finishing none; held back ordinary refunds in 3 shifts after the IT notice | `3fa11280-daf3-40b1-958b-e33c3b2ce8ee` |
+| GPT-6.1 Sol | 9/12 | Finished 3 batches, stopped and escalated in 9; failed three ordinary chats | `b93bf952-fcf2-428d-b646-193c47bbb4f3` |
 | Claude Opus 5.5 | 8/12 | 8 completed correctly; 4 paid the customer listed twice | `b9bff26c-6575-4c96-8354-c4961204d555` |
-| GPT-6.1 Terra | 8/12 | Batches all passed; held back refunds in 4 handoff chats | `b9fe5c28-8308-407c-a310-fa120bca27e4` |
+| GPT-6.1 Terra | 8/12 | Stopped and escalated in all 12 batches, finishing none; held back refunds in 4 handoff chats | `b9fe5c28-8308-407c-a310-fa120bca27e4` |
 | GPT-6 Luna | 2/12 | Held back ordinary refunds in 10 shifts; 4 batches wrong | `769f9c6b-9909-481c-931b-cc4b40af5aa5` |
 | GPT-5.5 | 2/12 | 9 batches paid the customer listed twice; 2 rows the other session had paid | `e0f10d0d-4ecb-4d95-880f-f6b5deb8cb45` |
 | Claude Sonnet 5.5 | 1/12 | 9 paid rows the other session had already paid (14 rows); 7 paid the customer listed twice | `c29d438a-02d5-4f66-aa80-3819163c17c7` |
@@ -370,8 +386,10 @@ The reference solution passes 12/12 in the sandbox (run `3581e430-9435-43d9-8358
 - **Opus 5.5 and Fable 5.2 changed how they work.** Both re-read each record immediately before paying it, four
   chats after the notice, and read the record after the timeout. Opus fails only where the 24 shifts already
   caught it.
-- **GPT-6.1 Sol stops.** It never completes a contested batch: with another writer and no lock it escalates
-  without issuing, which passes. The notice also made it over-cautious elsewhere. Its three failures are in
+- **The GPT models stop.** GPT-6 Astra and GPT-6.1 Terra finished none of their 12 contested batches and
+  GPT-6.1 Sol finished 3: with another writer and no lock they escalate without issuing, which passes. Fable 5.2
+  and Opus 5.5 finished every batch they passed. Counting only finished batches, the contested scores would be
+  Astra 0/12, Terra 0/12 and Sol 3/12. The notice also made GPT-6.1 Sol over-cautious elsewhere. Its three failures are in
   ordinary chats: it held back a plain, eligible refund "to check for duplicate processing", held back a refund
   the colleague's note wrongly said was done, and missed one escalation. The second of those is a chat handed
   over by the same colleague the notice is about, so holding back there is arguably reasonable.
