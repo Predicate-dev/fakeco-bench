@@ -46,12 +46,12 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 .bar nav { display: flex; flex-wrap: wrap; gap: 4px 18px; }
 .bar nav a { font: 500 12px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; }
 .head { position: relative; padding-top: 26px; display: flex; flex-direction: column; gap: 14px; }
-.fk h1 { font: 800 clamp(40px, 5.3vw, 68px)/1.02 var(--display); letter-spacing: -0.012em; }
+.fk h1 { font: 800 clamp(38px, 4.7vw, 60px)/1.02 var(--display); letter-spacing: -0.012em; }
 .fk h1 span { display: block; }
 .fk h1 mark { background: none; box-shadow: inset 0 -0.62em 0 var(--yellow); padding: 0 0.06em; }
-.head .stamp { position: absolute; right: 1%; bottom: 20px; font-size: clamp(20px, 3vw, 38px); }
+.head .stamp { position: absolute; right: 1%; bottom: 8px; font-size: clamp(20px, 2.6vw, 32px); }
 @media (max-width: 760px) { .head .stamp { position: static; align-self: flex-start; } }
-.dek { font-size: 19px; max-width: 58ch; }
+.dek { font-size: 18px; max-width: 88ch; }
 
 /* sections */
 .sec { border-top: 3px solid var(--ink); padding-block: 22px 56px; }
@@ -235,6 +235,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 
   <section class="sec" id="replay"><div class="wrap">
     <h2 id="replay-title">Replay</h2>
+    <div class="tabs" role="tablist" aria-label="Which run" id="replay-tabs"></div>
     <p class="lead" id="replay-lead"></p>
     <div class="replay">
       <div class="steps" id="steps" role="group" aria-label="Steps"></div>
@@ -295,13 +296,23 @@ document.addEventListener("focusin", (e) => { const t = e.target.closest && e.ta
 document.addEventListener("scroll", () => { tip.hidden = true; }, true);
 
 /* masthead */
+const NUM = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+const word = (n) => NUM[n] || String(n);
 function drawHead() {
-  const r = DATA.replay, t = DATA.totals;
-  if (r) {
-    $("#headline").replaceChildren(h("span", null, `${r.model} checked all ${r.rows} records.`), h("span", null, "Then it ", h("mark", null, "paid one customer twice"), "."));
+  const t = DATA.totals, lead = DATA.replays[0], top = models[0];
+  const clean = models.filter((m) => m.main[1] && m.main[0] === m.main[1]);
+  if (lead && lead.key === "repeat") {
+    $("#headline").replaceChildren(h("span", null, `${lead.model} clears all ${top.main[1]} standard shifts.`),
+      h("span", null, `Then a ${lead.rows}-row batch: it paid `, h("mark", null, `${word(lead.wrong)} customers already on the list`), "."));
+    $("#head-stamp").hidden = false;
+  } else if (lead) {
+    $("#headline").replaceChildren(h("span", null, `${lead.model} checked all ${lead.rows} records.`), h("span", null, "Then it ", h("mark", null, "paid one customer twice"), "."));
     $("#head-stamp").hidden = false;
   }
-  $("#dek").textContent = `FakeCo Bench puts an AI agent on a support desk for a whole shift, then reads the ledger. ${t.shifts} shifts, ${t.models} models, and no model does the grading.`;
+  const also = DATA.replays.find((r) => r.key === "duplicate" && r !== lead);
+  $("#dek").replaceChildren(...[`FakeCo Bench puts an AI agent on a support desk for a whole shift, then reads the ledger. ${t.shifts} shifts, ${t.models} models, and no model does the grading.`
+    + (clean.length === 1 && clean[0] === top ? ` ${short(top.name)} is the only one to pass all ${top.main[1]} short and long shifts.` : ""),
+    also ? h("span", { style: "display:block; margin-top:8px; font-size:16px" }, h("a", { href: "#replay" }, `Also below: ${also.model} checked all ${also.rows} records and still paid one customer twice.`)) : null].filter(Boolean));
 }
 
 /* leaderboard */
@@ -479,7 +490,7 @@ function resetBatch() {
 }
 
 /* replay */
-const R = DATA.replay; let step = 0, timer = null;
+let R = DATA.replays[0], step = 0, timer = null;
 function block(b) {
   if (b[0] === "p") return b[1] ? h("p", null, b[1]) : null;
   if (b[0] === "quote") return h("p", { class: "quote" }, `“${b[1]}”`, b[2] ? h("small", null, b[2]) : null);
@@ -507,13 +518,16 @@ function toggle() {
 }
 function drawReplay() {
   if (!R) { $("#replay").hidden = true; return; }
-  $("#replay-title").textContent = `Replay: how ${short(R.model)} paid one customer twice`;
+  $("#replay-title").textContent = `Replay: ${R.title}`;
   $("#replay-lead").textContent = `${R.where}. Every line below is from the saved run.`;
+  $("#replay-tabs").hidden = DATA.replays.length < 2;
+  $("#replay-tabs").replaceChildren(...DATA.replays.map((r) => h("button", { role: "tab", "aria-selected": String(r === R), onclick: () => { stop(); R = r; step = 0; drawReplay(); } }, `${short(r.model)} \u00b7 ${r.rows} rows`)));
   $("#steps").replaceChildren(...R.steps.map((s, i) => h("button", { type: "button", onclick: () => go(i) }, h("b", null, i + 1), h("span", null, s.title))));
   drawStep();
 }
 
 /* strips */
+const PLACE = { shopright: "the home-goods store", skylark: "the airline", clouddesk: "the software vendor", harbor: "the bank" };
 const CATCH = {
   contested: "A crashed session comes back and pays while the agent works.",
   gauntlet: "Thirteen chats, a different trap in each.",
@@ -526,7 +540,7 @@ const CATCH = {
 /* which models to line up, oldest to newest; the numbers come from the data */
 const LADDERS = [
   ["OpenAI", [["GPT-5.5", ["gpt-5-5"]], ["GPT-5.6", ["gpt-5-6-sol", "gpt-5-6-terra", "gpt-5-6-luna"]], ["GPT-6", ["gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna", "gpt-6-astra"]]]],
-  ["Anthropic", [["Claude 4", ["haiku-4-5", "sonnet-4-6"]], ["Claude 5", ["sonnet-5-5", "opus-5-5", "fable-5-2"]]]],
+  ["Anthropic", [["Claude 4", ["haiku-4-5", "sonnet-4-6"]], ["Claude 5", ["sonnet-5-5", "opus-5-5", "fable-5-1", "fable-5-2"]]]],
 ];
 function drawLadders() {
   const by = Object.fromEntries(models.map((m) => [m.key, m]));
@@ -559,10 +573,17 @@ function drawStrips() {
   const partial = DATA.sizes.filter((s) => top.tiers[s][1] > 0 && top.tiers[s][1] < 12);
   $("#graded").replaceChildren(...["The ledger decides: which lines were paid, how many, to where, and whether it was escalated.", "One wrong chat fails the shift.",
     `No model grades anything. A scripted reference agent passes all ${t.shifts} shifts; a naive one passes none.`].map((x) => h("li", null, x)));
-  const big = top.tiers.takeover && top.tiers.takeover[1] > 0, lm = pairs.find((p) => p.name === top.name), lmClean = lm && lm.notes === lm.n;
-  $("#limits").replaceChildren(...["One run per model.",
-    never ? `${top.name} has passed every shift it was run on` + (big || lmClean ? ", including " + [big ? "the large takeover" : null, lmClean ? "limited memory" : null].filter(Boolean).join(" and ") : "") + "." : `${top.name} leads but is not perfect.`,
-    partial.length ? `${top.name} ran only ${top.tiers[partial[0]][1]} of 12 on ${partial.length} shift types.` : null,
+  const fails = top.fails || [], sameSize = new Set(fails.map((f) => f[1])).size === 1, samePlace = new Set(fails.map((f) => f[0])).size === 1;
+  const ranAll = DATA.sizes.every((s) => top.tiers[s][1] >= 12);
+  let line;
+  if (!fails.length) line = `${top.name} has passed every shift it was run on.`;
+  else if (sameSize && samePlace) { const [place, size] = fails[0], n = top.tiers[size][1];
+    line = `${top.name} failed ${word(fails.length)} shifts, ${fails.length === 2 ? "both" : "all"} ${(TIER_NAMES[size] || size).toLowerCase()} batches at ${PLACE[place] || place}: ${fails.length} of ${n}, a small sample.`; }
+  else line = `${top.name} failed ${fails.length} of the ${DATA.sizes.reduce((a, s) => a + top.tiers[s][1], 0)} shifts it was run on.`;
+  /* the rerun note is from the run log, not from the data files */
+  $("#limits").replaceChildren(...["Each model was run once.", line,
+    fails.length ? "Those shifts and one other were rerun after a harness fix. The first attempt errored when a response passed an 8,000-token output cap; the cap is now 32,000." : null,
+    ranAll ? null : `${top.name} was not run on every shift of every type.`,
     "Costs are estimates from token counts."].filter(Boolean).map((x) => h("li", null, x)));
 }
 
