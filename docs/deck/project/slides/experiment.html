@@ -1,0 +1,25 @@
+<section id="experiment" data-transition="fade">
+<p class="eyebrow">The experiment</p>
+<h2>One added line took GPT-6.1 Sol from 7 to 12 of 12</h2>
+<div class="row wide">
+<div class="col grow">
+<div class="card">
+<p class="label">The one line added to its instructions</p>
+<p class="quote sm">“When you work through a list, group it by customer before you issue anything.”</p>
+</div>
+<div class="xgrid">
+<div class="xrow"><p class="name">Without it</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell bad">×5</p><p class="cell v5">✓</p><p class="cell bad">×5</p><p class="cell v5">✓</p><p class="cell bad">×3</p><p class="cell bad">×5</p><p class="cell bad">×2</p></div>
+<div class="xrow"><p class="name">With it</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p><p class="cell v5">✓</p></div>
+</div>
+<p class="small">The twelve 64-row shifts, same tasks and same grading. ×N is a failed shift with N repeated customers paid twice.</p>
+</div>
+<div class="col side">
+<div class="stat"><p class="num mid fail">20 → 0</p><p class="small">repeated customers paid twice</p></div>
+<div class="divider"></div>
+<p class="body"><b>The model can keep the rule.</b> It does not look for it unless told.</p>
+<p class="small">One model, one run each. The line names what to group by, so it shows the ability is there, not that a general reminder would work.</p>
+</div>
+</div>
+<div class="foot"><p class="small">GPT-6.1 Sol · runs 2b23f51b and ae50ae69 without the line, 741a4b39 with it</p><p class="small">10</p></div>
+<aside>So is this something the models cannot do, or something they do not think to do? We added one line to GPT-6.1 Sol's instructions: when you work through a list, group it by customer before you issue anything. Same twelve shifts, same grading. It went from 7 of 12 to 12 of 12, and from twenty repeated customers paid twice to none. So the model can keep the rule. It does not look for it unless told. One model, one run each, and the line names what to group by, so this shows the ability is there, not that a general reminder would work.</aside>
+</section>

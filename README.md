@@ -30,7 +30,12 @@ types, so the pool is not balanced):
   so size and the number of repeats are not separated.
 - **Harder single requests do not move the top models.** On the unclear, audit, styled, tone and gauntlet
   shifts together, Fable 5.2 passes 60 of 60 and GPT-6.1 Sol 57 of 60.
-- **Not tested:** whether one handbook line ("group the list by customer first") removes the failure.
+- **One added line removes it, for the one model tested.** With "When you work through a list, group it by
+  customer before you issue anything." appended to its instructions (`-k hint group`), GPT-6.1 Sol passes 12 of
+  12 large takeover shifts instead of 7, and pays no repeated customer twice instead of 20 (run
+  `741a4b39-d6c2-4a78-95fe-af58257edb5d`; same tasks and grading). So the model can keep the rule and does not
+  look for it unless told. One model, one run each, and the line names what to group by: it shows the ability
+  is there, not that a general reminder would work.
 
 The counts come from `docs/dashboard/data/`, which `scripts/build_dashboard.py` writes from the Valkyrie results.
 
@@ -263,6 +268,9 @@ valkyrie run start --agent fakeco-toolcall --dataset fakeco/hard@v5 \
   -s OPENAI_API_KEY openai-api-key --concurrency 4 --connect
 ```
 
+The one-line experiment: add `-k hint group` (with `-k max_steps 400` and the twelve `size-takeover` task IDs). It
+appends one sentence to the system prompt and changes nothing else.
+
 Limited memory: add `-k memory notes` to the command above. Every chat then starts with a fresh context, and
 the only thing carried over is what the agent saved with a `save_notes` tool (1,200 characters, `-k notes_limit N`
 to change it). The task and the grading are unchanged, so scores are comparable with a normal run.
@@ -325,6 +333,13 @@ python3 -m http.server 8765 --directory docs/dashboard
 
 Then open `http://localhost:8765`. The page loads each model's trajectories on demand, so it needs to be served
 over http, not opened from disk.
+
+### Findings page
+
+`python3 scripts/build_findings.py` writes `docs/findings/`: the result on one page. It shows the gap between
+chats right and shifts passed, the failure rate by kind of chat, what goes wrong inside failed batches, the
+batch at three sizes, the control, the one-line experiment, and every failed batch with the shift log the model
+wrote. It reads `docs/dashboard/data/`, so run `scripts/build_dashboard.py` first.
 
 ## Harnesses
 

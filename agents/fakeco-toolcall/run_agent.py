@@ -23,6 +23,9 @@ NATIVE_NOTE = ("\n\nYou are in a live chat with a customer. Each message you wri
                "use your tools for everything else.")
 EFFORTS = ("low", "medium", "high", "xhigh", "max")
 
+# --hint: an optional extra line of instruction, for testing whether one sentence removes a failure.
+HINTS = {"none": "", "group": "\n\nWhen you work through a list, group it by customer before you issue anything."}
+
 # --memory notes: the conversation is dropped at the start of every chat. Only the agent's own notes carry over.
 MEMORY_NOTE = (
     "\n\nMEMORY. You do not keep the conversation between chats. Each chat starts fresh: you will not see earlier "
@@ -173,6 +176,7 @@ def main() -> int:
     p.add_argument("--memory", default="full", choices=["full", "notes"],
                    help="notes: every chat starts with a fresh context and only the agent's saved notes")
     p.add_argument("--notes-limit", type=int, default=1200, help="characters the notes may hold (--memory notes)")
+    p.add_argument("--hint", default="none", choices=sorted(HINTS), help="extra line of instruction (see HINTS)")
     p.add_argument("--out", type=Path, default=Path(os.environ.get("AGENT_OUTPUT_ROOT", "/logs/agent")))
     args = p.parse_args()
 
@@ -183,7 +187,7 @@ def main() -> int:
     brief = args.instruction_path.read_text().split(DESK_SECTION)[0]
     # Valkyrie strips the canary comment before upload; drop it here too for runs straight from a task folder.
     brief = "\n".join(line for line in brief.splitlines() if "canary" not in line.lower() or not line.startswith("<!--"))
-    system = brief.strip() + NATIVE_NOTE
+    system = brief.strip() + NATIVE_NOTE + HINTS[args.hint]
     tools = json.loads(desk("tools"))
     if args.memory == "notes":
         NOTES["limit"] = args.notes_limit
@@ -208,7 +212,7 @@ def main() -> int:
         state = json.loads(desk("reply", "--json", "-", stdin=reply))
 
     (args.out / "summary.json").write_text(json.dumps(
-        {"task_id": args.task_id, "model": args.model, "agent": "fakeco-toolcall", "memory": args.memory,
+        {"task_id": args.task_id, "model": args.model, "agent": "fakeco-toolcall", "memory": args.memory, "hint": args.hint,
          **trace.usage}, indent=2))
     return 0
 

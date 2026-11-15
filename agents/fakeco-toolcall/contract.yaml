@@ -7,7 +7,7 @@ install_cmd: "bash setup.sh"
 run_cmd: >-
   /opt/fakeco-toolcall/venv/bin/python /bundle/fakeco-toolcall/run_agent.py
   "{problem_statement_path}" --task-id "{task_id}" --model "{model}"
-  --max-steps "{max_steps}" --effort "{effort}" --memory "{memory}" --notes-limit "{notes_limit}"
+  --max-steps "{max_steps}" --effort "{effort}" --memory "{memory}" --notes-limit "{notes_limit}" --hint "{hint}"
 
 final_output: /logs/agent
 
@@ -38,6 +38,12 @@ kwargs:
     required: false
     default: 1200
     description: "Characters the notes may hold when memory is notes."
+
+  hint:
+    type: str
+    required: false
+    default: none
+    description: "none, or group: adds one line to the system prompt, 'When you work through a list, group it by customer before you issue anything.'"
 
 provided:
   secrets: "Pass the key for the model's provider with -s ANTHROPIC_API_KEY <secret> or -s OPENAI_API_KEY <secret>."

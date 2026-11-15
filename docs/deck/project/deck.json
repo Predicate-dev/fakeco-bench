@@ -5,11 +5,11 @@
   "format": {"v": 1, "shared": ["project/deck.css"]},
   "title": "Exactly Once",
   "cover": "title",
-  "order": ["title", "gap", "method", "concentration", "mechanism", "noticed", "scale", "forms", "control", "results", "validity", "next", "takeaway", "cost"],
+  "order": ["title", "gap", "method", "concentration", "mechanism", "noticed", "scale", "forms", "control", "experiment", "results", "validity", "next", "takeaway", "cost"],
   "sections": {
     "question": {"description": "The observation that chat-level accuracy hides shift-level failure, and how the benchmark measures it.", "start": "title"},
     "findings": {"description": "Three findings: failures concentrate in inherited work, one cross-item error explains most of them, and it is not a length effect.", "start": "concentration"},
-    "evidence": {"description": "The same failure in other forms, the control that rules out harder items, and the results.", "start": "forms"},
+    "evidence": {"description": "The same failure in other forms, the control that rules out harder items, the one-line experiment, and the results.", "start": "forms"},
     "validity": {"description": "Why the failures are the model's, what is not yet shown, and the next experiment.", "start": "validity"}
   },
   "faces": {

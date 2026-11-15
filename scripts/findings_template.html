@@ -1,0 +1,322 @@
+<title>Exactly Once Findings</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* One column of findings, each a claim with its count and its chart; evidence in the models' own words at the end. */
+:root {
+  --bg: #F6F7F9; --surface: #FFFFFF; --ink: #131722; --soft: #586274; --line: #DFE3EA; --track: #E9ECF2;
+  --data: #2A6FDB; --data-2: #9DBDEC; --on-data: #FFFFFF; --fail: #C2401B; --fail-bg: #FBE6DD; --ok: #1F7A4D;
+  --display: 'Space Grotesk', 'Inter', system-ui, sans-serif; --text: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0F131B; --surface: #171C27; --ink: #EEF1F6; --soft: #A3ADBD; --line: #2A3242; --track: #232B3A;
+  --data: #6FA3F2; --data-2: #3B5A92; --on-data: #0F131B; --fail: #FF8A5C; --fail-bg: #38211A; --ok: #5FCB95; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0F131B; --surface: #171C27; --ink: #EEF1F6; --soft: #A3ADBD; --line: #2A3242; --track: #232B3A;
+  --data: #6FA3F2; --data-2: #3B5A92; --on-data: #0F131B; --fail: #FF8A5C; --fail-bg: #38211A; --ok: #5FCB95; color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--text); font-size: 15px; line-height: 1.5; }
+.xo { max-width: 1080px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 40px; }
+.xo * { box-sizing: border-box; }
+.xo h1, .xo h2, .xo h3, .xo p { margin: 0; }
+.xo a { color: var(--data); text-underline-offset: 3px; }
+.xo a:focus-visible, .xo button:focus-visible, .xo select:focus-visible, .xo summary:focus-visible { outline: 2px solid var(--data); outline-offset: 2px; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.soft { color: var(--soft); }
+.fail { color: var(--fail); }
+
+.head { display: flex; flex-direction: column; gap: 14px; }
+.brand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; }
+.brand .word { font-family: var(--display); font-weight: 600; font-size: 18px; letter-spacing: .02em; }
+.brand .tag { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.head h1 { font-family: var(--display); font-weight: 600; font-size: clamp(26px, 4.4vw, 42px); line-height: 1.12; letter-spacing: -.01em; text-wrap: balance; max-width: 22ch; }
+.head .dek { max-width: 68ch; color: var(--soft); font-size: 16px; }
+.links { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+.tile .big { font-family: var(--display); font-weight: 600; font-size: 34px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.tile .cap { color: var(--soft); font-size: 13.5px; }
+
+.sec { display: flex; flex-direction: column; gap: 14px; }
+.sec .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--fail); }
+.sec h2 { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2.8vw, 26px); line-height: 1.2; text-wrap: balance; }
+.sec .note { color: var(--soft); max-width: 72ch; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; min-width: 0; }
+.scroll { overflow-x: auto; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--soft); margin-bottom: 12px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 18px; height: 9px; border-radius: 2px; display: inline-block; }
+.pairs { display: grid; grid-template-columns: minmax(120px, 190px) 1fr auto; gap: 7px 14px; align-items: center; }
+.pairs .name { font-weight: 500; font-size: 14px; }
+.pairs .bars { display: flex; flex-direction: column; gap: 2px; min-width: 60px; }
+.pairs .bar { height: 8px; border-radius: 0 3px 3px 0; min-width: 2px; }
+.pairs .val { font-size: 12.5px; color: var(--soft); white-space: nowrap; }
+
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; align-self: flex-start; }
+.seg button { font: inherit; font-size: 13.5px; padding: 6px 12px; border: 0; background: var(--surface); color: var(--soft); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.rates { display: flex; flex-direction: column; gap: 18px; }
+.rate { display: grid; grid-template-columns: 120px 1fr; gap: 6px 18px; align-items: center; }
+.rate .pct { font-family: var(--display); font-weight: 600; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
+.rate .what { font-weight: 600; }
+.track { height: 12px; background: var(--track); border-radius: 3px; overflow: hidden; }
+.track i { display: block; height: 100%; background: var(--data); border-radius: 3px; min-width: 2px; }
+.track i.hot { background: var(--fail); }
+.rate .sub { color: var(--soft); font-size: 13.5px; }
+
+table.t { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.t th { text-align: left; font-weight: 500; color: var(--soft); font-size: 12.5px; padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.t td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.t tr:last-child td { border-bottom: 0; }
+table.t td.r, table.t th.r { text-align: right; }
+table.t td.c, table.t th.c { text-align: center; }
+.chip { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--soft); white-space: nowrap; }
+.chip.hot { border-color: var(--fail); color: var(--fail); background: var(--fail-bg); }
+.cell { display: block; min-width: 54px; padding: 5px 0; border-radius: 4px; text-align: center; font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 13.5px; }
+.cell.na { color: var(--soft); background: transparent; }
+
+.errs { display: grid; grid-template-columns: minmax(180px, 1.3fr) 2fr auto; gap: 9px 14px; align-items: center; }
+.errs .lab { font-size: 14px; }
+.errs .val { font-size: 12.5px; color: var(--soft); white-space: nowrap; }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.panel h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.panel .cap { color: var(--soft); font-size: 13.5px; margin-bottom: 10px; }
+
+.hint .line { font-family: var(--mono); font-size: 14px; background: var(--track); border-radius: 6px; padding: 10px 12px; }
+.hgrid { display: grid; grid-template-columns: minmax(110px, auto) repeat(12, minmax(34px, 1fr)) auto; gap: 5px; align-items: center; min-width: 620px; }
+.hgrid .hc { font-family: var(--mono); font-size: 12.5px; text-align: center; padding: 6px 0; border-radius: 4px; border: 1px solid var(--line); }
+.hgrid .hc.pass { color: var(--ok); }
+.hgrid .hc.bad { color: var(--fail); border-color: var(--fail); background: var(--fail-bg); }
+.hgrid .hh { font-size: 11px; color: var(--soft); text-align: center; }
+.hgrid .tot { font-family: var(--display); font-weight: 600; font-size: 18px; padding-left: 10px; white-space: nowrap; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; font-size: 14px; }
+.filters select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); max-width: 100%; }
+.ev { display: flex; flex-direction: column; gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.card .top { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.card .who { font-weight: 600; }
+.card .where { color: var(--soft); font-size: 13.5px; }
+.card .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.card details summary { cursor: pointer; color: var(--data); font-size: 13.5px; }
+.card pre { margin: 8px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--text); font-size: 14px; line-height: 1.5; border-left: 3px solid var(--line); padding-left: 12px; max-width: 78ch; }
+.more { font: inherit; align-self: flex-start; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+@media (max-width: 560px) { .rate { grid-template-columns: 1fr; } .pairs { grid-template-columns: 1fr auto; } .pairs .bars { grid-column: 1 / -1; order: 3; } .errs { grid-template-columns: 1fr auto; } .errs .track { grid-column: 1 / -1; order: 3; } }
+</style>
+
+<div class="xo">
+  <header class="head">
+    <div class="brand"><span class="word">Exactly Once</span><span class="tag">Findings</span></div>
+    <h1>Agents check a rule one item at a time. The rules they break hold across items.</h1>
+    <p class="dek" id="dek"></p>
+    <nav class="links" aria-label="Related pages">
+      <a href="https://claude.ai/artifact/De5mX3ZZspSzSM9iEwH2Ra">Deck</a>
+      <a href="https://claude.ai/artifact/H8MseJ8GYr1Jnis3rSwGBf">Talk script</a>
+      <a href="https://claude.ai/artifact/UvfGzRp6HjqTocHeYqn8yR">Every trajectory</a>
+      <a href="https://claude.ai/artifact/F8RDiBYYHFxrKrBfDstuy4">Website</a>
+    </nav>
+  </header>
+
+  <div class="tiles" id="tiles"></div>
+
+  <section class="sec" id="gap">
+    <p class="kicker">The observation</p>
+    <h2>Chat by chat the models look finished. Shift by shift they are not.</h2>
+    <p class="note">A shift passes only if every chat in it is right. On the 24 standard shifts, 264 chats per model.</p>
+    <div class="panel">
+      <div class="legend"><span><i class="sw" style="background:var(--data-2)"></i>Chats right</span><span><i class="sw" style="background:var(--data)"></i>Whole shifts passed</span></div>
+      <div class="pairs" id="pairs"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="where">
+    <p class="kicker">Finding 1</p>
+    <h2>Failures are concentrated in work the agent inherits</h2>
+    <p class="note">Every scored chat, by what it asks of the agent. Models ran different sets of shift types, so the pool is not balanced.</p>
+    <div class="seg" role="group" aria-label="Which models">
+      <button type="button" id="seg-all" aria-pressed="true">All fourteen models</button>
+      <button type="button" id="seg-top" aria-pressed="false">Top three only</button>
+    </div>
+    <div class="panel"><div class="rates" id="rates"></div></div>
+    <details class="panel"><summary>The sixteen kinds of chat that fail most often</summary>
+      <div class="scroll"><table class="t" id="kinds"></table></div>
+    </details>
+  </section>
+
+  <section class="sec" id="error">
+    <p class="kicker">Finding 2</p>
+    <h2 id="error-h"></h2>
+    <p class="note">The instruction says every customer on the list ends up with exactly one, and nobody gets two. The list is written per record, so each row passes on its own. What went wrong in each failed batch, counted once per batch:</p>
+    <div class="panel"><div class="errs" id="errs"></div></div>
+  </section>
+
+  <section class="sec" id="size">
+    <p class="kicker">Finding 3</p>
+    <h2>It is not a length effect: most models fail at 12 rows</h2>
+    <p class="note">The same batch job at three list sizes, 12 shifts each. The 12-row and 28-row lists hold one repeated customer, the 64-row list five, so size and repeats rise together.</p>
+    <div class="panel scroll"><table class="t" id="sizes"></table></div>
+  </section>
+
+  <section class="sec" id="control">
+    <p class="kicker">The control</p>
+    <h2>Making single requests harder did not move the top models</h2>
+    <p class="note">Shifts passed of 12 on the five variants that make one request harder, beside the 64-row batch. Only models run on all five are shown.</p>
+    <div class="panel scroll"><table class="t" id="ctrl"></table></div>
+  </section>
+
+  <section class="sec" id="others">
+    <p class="kicker">The same shape, twice more</p>
+    <h2>Other rules that hold across items fail the same way</h2>
+    <div class="two">
+      <div class="panel scroll"><h3>A list that changes mid-task</h3><p class="cap">A second session pays from the same list while the agent works. Stopping and escalating does no harm, so it is scored as a pass, but the batch is not finished.</p><table class="t" id="cont"></table></div>
+      <div class="panel scroll"><h3>A rule from an earlier chat</h3><p class="cap">The same shifts with a fresh context for every chat and only the agent's own notes carried over.</p><table class="t" id="mem"></table></div>
+    </div>
+  </section>
+
+  <section class="sec hint" id="hint">
+    <p class="kicker">The experiment</p>
+    <h2 id="hint-h">Does one line of instruction remove the failure?</h2>
+    <div id="hint-body"></div>
+  </section>
+
+  <section class="sec" id="words">
+    <p class="kicker">Evidence</p>
+    <h2>Failed batches, in the models' own words</h2>
+    <p class="note">Every failed batch chat, with what went wrong on the list and the shift log the model wrote afterwards. Passed chats are not shown.</p>
+    <div class="filters">
+      <label for="f-model">Model</label><select id="f-model"></select>
+      <label for="f-size">Shift type</label><select id="f-size"></select>
+      <span class="soft" id="f-count"></span>
+    </div>
+    <div class="ev" id="ev"></div>
+    <button type="button" class="more" id="more" hidden>Show more</button>
+  </section>
+</div>
+
+<script>
+const D = /*DATA*/null;
+const $ = s => document.querySelector(s);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const pct = (a, b, d = 0) => b ? (100 * a / b).toFixed(d) + "%" : "–";
+const n = x => x.toLocaleString("en-US");
+const T = D.totals;
+
+$("#dek").textContent = `${n(T.chats)} scored chats from ${T.models} models, each working whole support shifts at four simulated companies. ` +
+  `Graded on the ledger and the tool log, with no judge model. One run per model, every run on Valkyrie.`;
+
+[[n(T.chats), "scored chats, pooled"], [n(T.failed), "of them failed"],
+ [pct(T.dup_batches, T.failed), `of all failures are one error: ${T.dup_batches} of ${T.failed}`, true],
+ [`${T.by_one} of ${T.failed_shifts}`, "failed shifts were lost by exactly one chat"]].forEach(([big, cap, hot]) => {
+  const t = el("div", "tile"); t.append(el("div", "big" + (hot ? " fail" : ""), big), el("div", "cap", cap)); $("#tiles").append(t); });
+
+// chats right against shifts passed
+D.models.forEach(m => {
+  const bars = el("div", "bars");
+  [[m.chats, "var(--data-2)"], [m.main, "var(--data)"]].forEach(([v, c]) => { const b = el("div", "bar"); b.style.width = (100 * v[0] / v[1]) + "%"; b.style.background = c; bars.append(b); });
+  $("#pairs").append(el("div", "name", m.name), bars, el("div", "val num", `${pct(m.chats[0], m.chats[1])} · ${pct(m.main[0], m.main[1])}`));
+});
+
+// failure rate by family
+const FAM = [["single", "One request, one decision", "Refund windows, caps, ownership, ambiguous requests, tone, forged memos."],
+             ["handoff", "A colleague's handoff note", "The note says one thing and the record says another."],
+             ["batch", "A batch someone else started", "A list, a budget, and payments already made before a crash."]];
+function drawRates(scope) {
+  const f = D.families[scope], top = Math.max(...FAM.map(([k]) => f[k][0] / f[k][1]));
+  $("#rates").replaceChildren(...FAM.map(([k, what, sub]) => {
+    const [bad, tot] = f[k], r = el("div", "rate"), body = el("div"), track = el("div", "track"), i = el("i", k === "batch" ? "hot" : "");
+    i.style.width = (100 * (bad / tot) / top) + "%"; track.append(i);
+    body.append(el("div", "what", what), track, el("div", "sub", `${n(bad)} of ${n(tot)} chats fail. ${sub}`));
+    body.style.display = "flex"; body.style.flexDirection = "column"; body.style.gap = "6px";
+    r.append(el("div", "pct" + (k === "batch" ? " fail" : ""), pct(bad, tot, bad / tot < 0.1 ? 1 : 0)), body); return r; }));
+  $("#seg-all").setAttribute("aria-pressed", scope === "all"); $("#seg-top").setAttribute("aria-pressed", scope === "top");
+}
+$("#seg-all").addEventListener("click", () => drawRates("all")); $("#seg-top").addEventListener("click", () => drawRates("top")); drawRates("all");
+
+function table(sel, head, rows) {
+  const t = $(sel), tr = el("tr");
+  head.forEach(([h, cls]) => tr.append(el("th", cls || "", h)));
+  const thead = el("thead"); thead.append(tr); const tb = el("tbody");
+  rows.forEach(cells => { const r = el("tr"); cells.forEach((c, i) => { const td = el("td", head[i][1] || ""); if (c instanceof Node) td.append(c); else td.textContent = c; r.append(td); }); tb.append(r); });
+  t.replaceChildren(thead, tb);
+}
+const FAMNAME = { single: "one request", handoff: "handoff", batch: "inherited batch" };
+table("#kinds", [["Kind of chat"], ["What it tests"], ["Family"], ["Failed", "r"], ["Rate", "r"]],
+  D.kinds.map(([k, f, bad, tot, what]) => [el("span", "num", k), what, el("span", "chip" + (f === "batch" ? " hot" : ""), FAMNAME[f]), `${bad} of ${tot}`, pct(bad, tot)]));
+
+// the one error
+$("#error-h").textContent = `One error accounts for ${pct(T.dup_batches, T.failed)} of every failed chat`;
+const maxE = Math.max(...D.errors.map(e => e[1]));
+D.errors.forEach(([lab, batches, rows], i) => {
+  const track = el("div", "track"), bar = el("i", i === 0 ? "hot" : ""); bar.style.width = (100 * batches / maxE) + "%"; track.append(bar);
+  $("#errs").append(el("div", "lab", lab), track, el("div", "val num", `${batches} of ${T.failed_batches} batches · ${rows} rows`));
+});
+
+// heat cells: one hue, light to dark
+function heat(v, of) {
+  if (v == null) return el("span", "cell na", "–");
+  const c = el("span", "cell", String(v)), p = Math.round(100 * v / of);
+  c.style.background = `color-mix(in srgb, var(--data) ${p}%, var(--track))`; c.style.color = p > 55 ? "var(--on-data)" : "var(--ink)"; return c;
+}
+table("#sizes", [["Batches passed, of 12"], ...D.batch_sizes.map(b => [`${b.rows} rows · ${b.repeats} repeated`, "c"])],
+  D.models.map(m => [m.name, ...D.batch_sizes.map(b => heat(m.batch[b.kind] ? m.batch[b.kind][0] : null, 12))]));
+
+const ctrlModels = D.models.filter(m => D.control.every(c => m.sizes[c.size] && m.sizes[c.size][1] === 12));
+table("#ctrl", [["Shifts passed, of 12"], ...ctrlModels.map(m => [m.name, "c"])],
+  [...D.control.map(c => [c.label, ...ctrlModels.map(m => heat(m.sizes[c.size][0], 12))]),
+   ["All five, of 60", ...ctrlModels.map(m => heat(D.control.reduce((s, c) => s + m.sizes[c.size][0], 0), 60))],
+   ["The 64-row batch, for comparison", ...ctrlModels.map(m => heat(m.sizes.takeover ? m.sizes.takeover[0] : null, 12))]]);
+
+table("#cont", [["Model"], ["Finished", "r"], ["Stopped", "r"], ["Of", "r"]], D.contested.map(c => [c.name, c.finished, c.stopped, c.n]));
+table("#mem", [["Model"], ["Full memory", "r"], ["Notes only", "r"], ["Of", "r"]], D.memory.map(m => [m.name, m.full, m.notes, m.n]));
+
+// the hint experiment
+(function () {
+  const box = $("#hint-body"), H = D.hint;
+  if (!H) { box.append(el("p", "note", "The run is in progress: GPT-6.1 Sol on the twelve 64-row shifts with one line added to its instructions.")); return; }
+  const base = H.shifts.filter(s => s.base).length, hint = H.shifts.filter(s => s.hint).length;
+  const dupB = H.shifts.reduce((s, x) => s + (x.base_dup || 0), 0), dupH = H.shifts.reduce((s, x) => s + x.hint_dup, 0);
+  $("#hint-h").textContent = `One added line took GPT-6.1 Sol from ${base} to ${hint} of 12 on the 64-row batch`;
+  const p = el("p", "note", "The same twelve shifts and the same grading. The only change is this line at the end of the instructions:");
+  const line = el("p", "line", H.line), panel = el("div", "panel scroll"), g = el("div", "hgrid");
+  g.append(el("div"));
+  H.shifts.forEach(s => g.append(el("div", "hh", s.task.split("__")[0].slice(0, 4) + " " + s.task.slice(-2))));
+  g.append(el("div"));
+  [["Without the line", "base", "base_dup", base], ["With the line", "hint", "hint_dup", hint]].forEach(([lab, k, d, tot]) => {
+    g.append(el("div", "", lab));
+    H.shifts.forEach(s => g.append(el("div", "hc " + (s[k] ? "pass" : "bad"), s[k] ? "pass" : (s[d] ? "×" + s[d] : "fail"))));
+    g.append(el("div", "tot", `${tot} of 12`));
+  });
+  panel.append(g);
+  box.style.display = "flex"; box.style.flexDirection = "column"; box.style.gap = "12px";
+  box.append(p, line, panel, el("p", "note", `A cell marked ×N failed with N repeated customers paid twice. Repeated customers paid twice in total: ${dupB} without the line, ${dupH} with it. One model and one run each, so read a large difference and nothing finer. The line names what to group by, so it shows the ability is there, not that a general reminder would work.`));
+})();
+
+// evidence
+const fm = $("#f-model"), fs = $("#f-size"); let shown = 12;
+const counts = {}; D.evidence.forEach(e => counts[e.m] = (counts[e.m] || 0) + 1);
+D.models.filter(m => counts[m.key]).forEach(m => { const o = el("option", "", `${m.name} (${counts[m.key]})`); o.value = m.key; fm.append(o); });
+function sizeOptions() {
+  const here = D.evidence.filter(e => e.m === fm.value), by = {}; here.forEach(e => by[e.s] = (by[e.s] || 0) + 1);
+  fs.replaceChildren(...[["", `All (${here.length})`], ...Object.keys(by).map(s => [s, `${D.size_label[s] || s} (${by[s]})`])].map(([v, t]) => { const o = el("option", "", t); o.value = v; return o; }));
+}
+function drawEv() {
+  const rows = D.evidence.filter(e => e.m === fm.value && (!fs.value || e.s === fs.value)).sort((a, b) => b.dup - a.dup);
+  $("#f-count").textContent = `${Math.min(shown, rows.length)} of ${rows.length} failed batches shown`;
+  $("#ev").replaceChildren(...rows.slice(0, shown).map(e => {
+    const c = el("div", "card"), top = el("div", "top"), chips = el("div", "chips");
+    top.append(el("span", "who", D.names[e.m]), el("span", "where", `${e.c} · ${D.size_label[e.s] || e.s} · seed ${e.seed.slice(1)} · ${e.calls} tool calls`));
+    e.e.forEach(([code, k]) => chips.append(el("span", "chip" + (code.startsWith("second_record") ? " hot" : ""), `${D.error_label[code] || code} ×${k}`)));
+    const d = el("details"), s = el("summary", "", "The shift log it wrote"), pre = el("pre", "", e.log || "(It wrote no message.)");
+    d.append(s, pre); c.append(top, chips, d); return c; }));
+  $("#more").hidden = rows.length <= shown;
+}
+fm.addEventListener("change", () => { shown = 12; sizeOptions(); drawEv(); });
+fs.addEventListener("change", () => { shown = 12; drawEv(); });
+$("#more").addEventListener("click", () => { shown += 24; drawEv(); });
+if ([...fm.options].some(o => o.value === "fable-5-2")) fm.value = "fable-5-2";
+sizeOptions(); drawEv();
+</script>

@@ -124,6 +124,13 @@ h3 { font-family: 'Inter', Arial, sans-serif; font-size: 30px; font-weight: 600;
 .cell.v4 { background: #2A6FDB; color: #FFFFFF; }
 .cell.v5 { background: #1B4FA8; color: #FFFFFF; }
 
+/* experiment grid: twelve shifts, without and with the added line */
+.xgrid { display: flex; flex-direction: column; gap: 8px; }
+.xrow { display: grid; grid-template-columns: 240px repeat(12, 1fr); gap: 6px; align-items: center; }
+.xrow .name { font-size: 28px; font-weight: 600; color: #10151F; }
+.xrow .cell { font-size: 24px; line-height: 56px; }
+.cell.bad { background: #D2451E; color: #FFFFFF; }
+
 /* leaderboard rows */
 .board { display: flex; flex-direction: column; gap: 8px; }
 .lb { display: grid; grid-template-columns: 300px 1fr 170px; gap: 24px; align-items: center; }
