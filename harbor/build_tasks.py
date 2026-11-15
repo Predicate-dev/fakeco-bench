@@ -85,7 +85,7 @@ def task_id(sc) -> str:
 
 
 def instruction(sc) -> str:
-    names = [t["name"] for t in WORLDS[sc.world].tool_specs(extended=sc.tools == "extended")]
+    names = [t["name"] for t in WORLDS[sc.world].tool_specs(extended=sc.tools == "extended", paged=sc.tools == "paged")]
     tool_names = ", ".join(f"`{n}`" for n in names[:-1]) + f" and `{names[-1]}`"
     closing = SHIFT_CLOSING if sc.mode == "shift" else CHAT_CLOSING
     return f"{CANARY}\n\n{sc.system}\n\n{DESK_BRIEF.format(tool_names=tool_names, closing=closing)}"

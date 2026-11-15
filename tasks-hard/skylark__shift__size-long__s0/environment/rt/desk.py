@@ -103,11 +103,14 @@ class Desk:
                      else "\n(Someone is waiting. Answer with: desk reply 'your message')")
         return "\n".join(lines)
 
+    def _specs(self) -> list[dict]:
+        return self.world.tool_specs(extended=self.sc.tools == "extended", paged=self.sc.tools == "paged")
+
     def tools(self) -> str:
-        return json.dumps(self.world.tool_specs(extended=self.sc.tools == "extended"), indent=2)
+        return json.dumps(self._specs(), indent=2)
 
     def call(self, name: str, args) -> str:
-        known = [t["name"] for t in self.world.tool_specs(extended=self.sc.tools == "extended")]
+        known = [t["name"] for t in self._specs()]
         if name not in known:
             return json.dumps({"error": f"Unknown tool: {name}. Available tools: {known}"})
         if not isinstance(args, dict):

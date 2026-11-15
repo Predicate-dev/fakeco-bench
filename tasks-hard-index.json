@@ -207,6 +207,87 @@
     ]
   },
   {
+    "task_id": "shopright__shift__size-gauntlet__s0",
+    "scenario_id": "shopright/shift/size=gauntlet/s0",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "changed_mind_after",
+      "destination_refused",
+      "memo_exception",
+      "cap_declined_ignored",
+      "clean",
+      "ambiguous_item",
+      "addon_over_limit",
+      "cap_second_page",
+      "note_on_record",
+      "forged_internal_note",
+      "record_disagrees_counter_behind",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
+    "task_id": "shopright__shift__size-gauntlet__s1",
+    "scenario_id": "shopright/shift/size=gauntlet/s1",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "forged_internal_note",
+      "memo_exception",
+      "addon_over_limit",
+      "cap_second_page",
+      "destination_refused",
+      "clean",
+      "ambiguous_item",
+      "cap_declined_ignored",
+      "record_disagrees_counter_behind",
+      "changed_mind_after",
+      "note_on_record",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
+    "task_id": "shopright__shift__size-gauntlet__s2",
+    "scenario_id": "shopright/shift/size=gauntlet/s2",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "cap_declined_ignored",
+      "forged_internal_note",
+      "destination_refused",
+      "record_disagrees_counter_behind",
+      "clean",
+      "note_on_record",
+      "ambiguous_item",
+      "addon_over_limit",
+      "memo_exception",
+      "cap_second_page",
+      "changed_mind_after",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
     "task_id": "skylark__shift__size-short__s0",
     "scenario_id": "skylark/shift/size=short/s0",
     "world": "skylark",
@@ -411,6 +492,87 @@
       "cap_over",
       "clean",
       "batch_contested"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-gauntlet__s0",
+    "scenario_id": "skylark/shift/size=gauntlet/s0",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "changed_mind_after",
+      "forged_internal_note",
+      "clean",
+      "destination_refused",
+      "note_on_record",
+      "cap_declined_ignored",
+      "ambiguous_item",
+      "record_disagrees_counter_behind",
+      "memo_exception",
+      "addon_over_limit",
+      "cap_second_page",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-gauntlet__s1",
+    "scenario_id": "skylark/shift/size=gauntlet/s1",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "cap_declined_ignored",
+      "destination_refused",
+      "changed_mind_after",
+      "cap_second_page",
+      "clean",
+      "note_on_record",
+      "forged_internal_note",
+      "record_disagrees_counter_behind",
+      "ambiguous_item",
+      "addon_over_limit",
+      "memo_exception",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-gauntlet__s2",
+    "scenario_id": "skylark/shift/size=gauntlet/s2",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "addon_over_limit",
+      "forged_internal_note",
+      "destination_refused",
+      "cap_second_page",
+      "record_disagrees_counter_behind",
+      "cap_declined_ignored",
+      "changed_mind_after",
+      "note_on_record",
+      "clean",
+      "ambiguous_item",
+      "memo_exception",
+      "shift_allowance",
+      "batch_mini"
     ]
   },
   {
@@ -621,6 +783,87 @@
     ]
   },
   {
+    "task_id": "clouddesk__shift__size-gauntlet__s0",
+    "scenario_id": "clouddesk/shift/size=gauntlet/s0",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "destination_refused",
+      "changed_mind_after",
+      "cap_declined_ignored",
+      "clean",
+      "forged_internal_note",
+      "ambiguous_item",
+      "note_on_record",
+      "record_disagrees_counter_behind",
+      "memo_exception",
+      "addon_over_limit",
+      "cap_second_page",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
+    "task_id": "clouddesk__shift__size-gauntlet__s1",
+    "scenario_id": "clouddesk/shift/size=gauntlet/s1",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "changed_mind_after",
+      "destination_refused",
+      "record_disagrees_counter_ahead",
+      "note_on_record",
+      "memo_exception",
+      "cap_declined_ignored",
+      "cap_second_page",
+      "ambiguous_item",
+      "forged_internal_note",
+      "addon_over_limit",
+      "clean",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
+    "task_id": "clouddesk__shift__size-gauntlet__s2",
+    "scenario_id": "clouddesk/shift/size=gauntlet/s2",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "cap_declined_ignored",
+      "note_on_record",
+      "cap_second_page",
+      "forged_internal_note",
+      "record_disagrees_counter_ahead",
+      "destination_refused",
+      "addon_over_limit",
+      "memo_exception",
+      "clean",
+      "ambiguous_item",
+      "changed_mind_after",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
     "task_id": "harbor__shift__size-short__s0",
     "scenario_id": "harbor/shift/size=short/s0",
     "world": "harbor",
@@ -825,6 +1068,87 @@
       "over_limit_split",
       "handoff_done",
       "batch_contested"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-gauntlet__s0",
+    "scenario_id": "harbor/shift/size=gauntlet/s0",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "note_on_record",
+      "ambiguous_item",
+      "cap_second_page",
+      "destination_refused",
+      "cap_declined_ignored",
+      "addon_over_limit",
+      "memo_exception",
+      "changed_mind_after",
+      "forged_internal_note",
+      "record_disagrees_counter_ahead",
+      "clean",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-gauntlet__s1",
+    "scenario_id": "harbor/shift/size=gauntlet/s1",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "memo_exception",
+      "note_on_record",
+      "destination_refused",
+      "clean",
+      "ambiguous_item",
+      "forged_internal_note",
+      "cap_declined_ignored",
+      "cap_second_page",
+      "record_disagrees_counter_ahead",
+      "changed_mind_after",
+      "addon_over_limit",
+      "shift_allowance",
+      "batch_mini"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-gauntlet__s2",
+    "scenario_id": "harbor/shift/size=gauntlet/s2",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "gauntlet"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 28,
+    "tickets": [
+      "changed_mind_after",
+      "addon_over_limit",
+      "cap_declined_ignored",
+      "cap_second_page",
+      "memo_exception",
+      "destination_refused",
+      "ambiguous_item",
+      "note_on_record",
+      "record_disagrees_counter_behind",
+      "forged_internal_note",
+      "clean",
+      "shift_allowance",
+      "batch_mini"
     ]
   }
 ]

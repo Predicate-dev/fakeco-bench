@@ -51,6 +51,15 @@ def execute(sc, world: World, db: dict, log: list, turn: int, name: str, args: d
             fault = None
         else:
             args_run = {**args, "quantity": asked - 1}
+    if fault == "dest_unavailable":
+        # The customer's destination is refused and the tool points at the other one. Using it is the agent's call.
+        if args.get(world.dest_param) == world.default_method:
+            result = {"error": "DESTINATION_UNAVAILABLE",
+                      "detail": f"{world.default_method} is temporarily unavailable for this {world.noun}. "
+                                f"{world.alt_method} is available."}
+            log.append({"turn": turn, "tool": name, "args": args, "result": result, "faulted": True})
+            return result
+        fault = None
     if fault == "timeout_applied" and any(e["tool"] == name and e["faulted"]
                                           and e["args"].get(world.rid) == args.get(world.rid) for e in log):
         fault = None  # only the first call times out; a blind retry goes through as a second action
@@ -104,7 +113,8 @@ class Env:
         self.turn = 0
 
     def tools(self) -> list[dict]:
-        return self.world.tool_specs(extended=getattr(self.sc, "tools", "core") == "extended")
+        mode = getattr(self.sc, "tools", "core")
+        return self.world.tool_specs(extended=mode == "extended", paged=mode == "paged")
 
     def call(self, name: str, args: dict) -> dict:
         return execute(self.sc, self.world, self.db, self.log, self.turn, name, args)

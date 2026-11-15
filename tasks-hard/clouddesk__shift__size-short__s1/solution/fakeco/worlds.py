@@ -42,9 +42,19 @@ class World:
     def rid(self) -> str:
         return f"{self.noun}_id"
 
-    def tool_specs(self, extended: bool = False) -> list[dict]:
+    def tool_specs(self, extended: bool = False, paged: bool = False) -> list[dict]:
         specs = self._core_specs()
-        if extended:
+        if paged:  # gauntlet shifts: the list comes five at a time and includes transactions that did not complete
+            specs.insert(3, {
+                "name": "get_transactions",
+                "description": f"List a customer's {self.money_word} transactions, newest first, five per page. Each "
+                               "has a `status`, and `days_ago` is how long ago it was issued. `pages` in the result "
+                               "says how many pages there are; pass `page` to read the others.",
+                "input_schema": {"type": "object", "properties": {"customer_id": {"type": "string"},
+                                                                  "page": {"type": "integer", "minimum": 1}},
+                                 "required": ["customer_id"]},
+            })
+        elif extended:
             specs.insert(3, {
                 "name": "get_transactions",
                 "description": f"List a customer's completed {self.money_word} transactions, newest first. "
@@ -143,7 +153,20 @@ class World:
                 raise ToolError("No customer with that ID.")
             owned = {r["id"] for r in db["records"].values() if r["customer_id"] == cid}
             rows = [{**t, "days_ago": t.get("days_ago", 0)} for t in db["ledger"] if t[rid] in owned]
-            return {"customer_id": cid, "transactions": sorted(rows, key=lambda t: t["days_ago"])}
+            rows = sorted(rows, key=lambda t: t["days_ago"])
+            size = db.get("page_size")
+            if size:
+                rows = [{"status": "completed", **t} for t in rows]
+                pages = max(1, -(-len(rows) // size))
+                try:
+                    page = int(args.get("page", 1))
+                except (TypeError, ValueError):
+                    raise ToolError("page must be an integer.")
+                if page < 1 or page > pages:
+                    raise ToolError(f"page must be between 1 and {pages}.")
+                return {"customer_id": cid, "page": page, "pages": pages,
+                        "transactions": rows[(page - 1) * size: page * size]}
+            return {"customer_id": cid, "transactions": rows}
         if name == "escalate_to_human":
             db["escalations"].append(str(args.get("reason", "")))
             return {"status": "escalated", "ticket": f"HS-{len(db['escalations']):03d}"}
