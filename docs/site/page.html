@@ -570,13 +570,13 @@ function drawCuts() {
   const rowsOf = (key) => { const r = (DATA.replays || []).find((x) => x.key === key); return r ? `${r.rows}-row ` : ""; };
   $("#signal-note").textContent = `Chosen by shift type, not by picking shifts after seeing results: the ${nA} ${names(a)} shifts and the ${nB} ${names(b)} shifts. ${both.length} models ran both.`
     + flip.map((m) => ` ${m.name} passed more of the ${rowsOf("repeat")}${names(b)} batches (${m.tiers[b][0]}/${m.tiers[b][1]}) than of the ${rowsOf("duplicate")}${names(a)} shifts (${m.tiers[a][0]}/${m.tiers[a][1]}), so size alone does not order every model.`).join("");
-  $("#signal thead").replaceChildren(h("tr", null, h("th", null, "#"), h("th", null, "Model"), h("th", { class: "num" }, "Both"), h("th", null, TIER_NAMES[a] || "Long"), h("th", { class: "num" }, ""), h("th", null, TIER_NAMES[b] || b), h("th", { class: "num" }, "")));
-  const one = (m, x) => (m.tiers[x][1] ? [h("td", null, cells(m.marks[x])), h("td", { class: "num mono" }, `${m.tiers[x][0]}/${m.tiers[x][1]}`)] : [h("td", { class: "dim mono", colspan: 2 }, "not run")]);
+  $("#signal thead").replaceChildren(h("tr", null, h("th", null, "#"), h("th", null, "Model"), h("th", null, "Both"), h("th", { colspan: 2 }, TIER_NAMES[a] || "Long"), h("th", { colspan: 2 }, TIER_NAMES[b] || b)));
+  const one = (m, x) => (m.tiers[x][1] ? [h("td", { style: "padding-right:8px; width:1%" }, cells(m.marks[x])), h("td", { class: "mono", style: "padding-right:28px" }, `${m.tiers[x][0]}/${m.tiers[x][1]}`)] : [h("td", { class: "dim mono", colspan: 2 }, "not run")]);
   $("#signal tbody").replaceChildren(
     ...both.map((m, i) => h("tr", null, h("td", { class: "rank" }, i + 1), h("th", { scope: "row", style: "font-weight:600" }, m.name),
-      h("td", { class: "num passed" }, `${m.tiers[a][0] + m.tiers[b][0]}/${m.tiers[a][1] + m.tiers[b][1]}`), ...one(m, a), ...one(m, b))),
+      h("td", { class: "passed", style: "padding-right:28px" }, `${m.tiers[a][0] + m.tiers[b][0]}/${m.tiers[a][1] + m.tiers[b][1]}`), ...one(m, a), ...one(m, b))),
     ...only.map((m) => h("tr", null, h("td", { class: "rank" }, "–"), h("th", { scope: "row", class: "dim", style: "font-weight:600" }, m.name),
-      h("td", { class: "num mono dim" }, "–"), ...one(m, a), ...one(m, b))));
+      h("td", { class: "mono dim" }, "–"), ...one(m, a), ...one(m, b))));
 }
 
 /* strips */

@@ -21,7 +21,7 @@ import random
 from .scenarios import FIRST, LAST, PREVIOUS_AGENT, TODAY, Scenario, _kb_doc
 from .worlds import WORLDS, World
 
-SIZES = ("short", "long", "contested", "gauntlet", "unclear", "audit", "styled", "takeover", "tone")
+SIZES = ("short", "long", "contested", "gauntlet", "unclear", "audit", "styled", "takeover", "tone", "marathon")
 
 # Per company: approval limit, rolling cap, eligibility window (and what the mid-shift memo changes it to),
 # whether the window counts down to an event (airline) rather than up from one, the funding source that
@@ -298,7 +298,8 @@ class _Shift:
             email = f"{first}.{last}{self.rng.randint(1, 99)}@example.com".lower()
             if not any(c["email"] == email for c in self.db["customers"].values()):
                 break
-        cid = f"C-{self.rng.randint(10000, 99999)}"
+        while (cid := f"C-{self.rng.randint(10000, 99999)}") in self.db["customers"]:
+            pass  # a second customer drawing the same ID would silently replace the first
         c = {"id": cid, "name": f"{first} {last}", "email": email, "customer_since": str(self.rng.randint(2015, 2024))}
         self.db["customers"][cid] = c
         return c
@@ -1000,7 +1001,7 @@ class _Shift:
         return t
 
     def batch(self, full: bool = True, contested: bool = False, mini: bool = False, missing: bool = False,
-              mega: bool = False) -> dict:
+              mega: bool = False, xl: bool = False) -> dict:
         """A colleague's half-run goodwill batch, taken over mid-way. The log disagrees with the record.
 
         Every listed record should end with exactly one unit of the batch line refunded, once per customer.
@@ -1027,7 +1028,11 @@ class _Shift:
         w, rng = self.w, self.rng
         name, base = self.cfg["batch_item"]
         dest = w.default_method
-        if mega:  # takeover shifts: the long batch at more than twice the size, with five repeated customers
+        if xl:  # marathon shifts: 96 rows, eight repeated-customer rows, and the other session comes back
+            kinds = (["fine"] * 30 + ["logged_not_issued"] * 9 + ["pending"] * 27 + ["unlogged"] * 6
+                     + ["double", "wrong_dest", "not_owner", "final_line"] * 3 + ["wrong_line"] * 4)
+            full = mega = True
+        elif mega:  # takeover shifts: the long batch at more than twice the size, with five repeated customers
             kinds = (["fine"] * 20 + ["logged_not_issued"] * 6 + ["pending"] * 18 + ["unlogged"] * 4
                      + ["double", "wrong_dest", "not_owner", "final_line"] * 2 + ["wrong_line"] * 3)
             full = True
@@ -1062,15 +1067,17 @@ class _Shift:
             # Three more repeats of customers who already have theirs (one of them is now on the list three times),
             # and one customer who is owed and listed twice: the first of their rows is paid, the second is not.
             again = [twice] + [r["customer"] for r in rng.sample(
-                [r for r in rows if r["kind"] == "fine" and r["customer"] is not twice], 2)]
+                [r for r in rows if r["kind"] == "fine" and r["customer"] is not twice], 4 if xl else 2)]
             for cust in again:
                 rec = self.record(cust, [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)], self.age("in"))
                 rows.insert(rng.randrange(1, len(rows) + 1),
                             {"kind": "second_record", "customer": cust, "listed": cust, "rec": rec})
-            first = rng.choice([r for r in rows if r["kind"] == "pending"][1:])  # not the row the tool will decline
-            rec = self.record(first["customer"], [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)], self.age("in"))
-            rows.insert(rng.randrange(rows.index(first) + 1, len(rows) + 1),
-                        {"kind": "second_record", "customer": first["customer"], "listed": first["customer"], "rec": rec})
+            # (never the first pending row, which the tool will decline; with `xl`, two such customers)
+            for first in rng.sample([r for r in rows if r["kind"] == "pending"][1:], 2 if xl else 1):
+                rec = self.record(first["customer"], [(self.item(self.cfg["limit"] / 3) + (1,)), (name, base, 2)],
+                                  self.age("in"))
+                rows.insert(rng.randrange(rows.index(first) + 1, len(rows) + 1),
+                            {"kind": "second_record", "customer": first["customer"], "listed": first["customer"], "rec": rec})
         for row in rows:
             kind, rec = row["kind"], row["rec"]
             if kind in ("fine", "unlogged"):
@@ -1156,7 +1163,7 @@ class _Shift:
             ticket["kind"] = "batch_mini"
             ticket["optional"] = [[r["rec"]["id"], "L2", w.alt_method, 1] for r in rows if r["kind"] == "restricted"]
         if mega:
-            ticket["kind"] = "batch_recovery_large"
+            ticket["kind"] = "batch_contested_large" if contested else "batch_recovery_large"
         if missing:  # nothing says which of the customer's two records the row means: neither is paid, and it is escalated
             ticket["kind"], ticket["escalate"] = "batch_unlisted", "required"
             for r in rows:
@@ -1201,6 +1208,25 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
         for record in s.db["records"].values():
             for item in record["line_items"]:
                 item.setdefault("final", False)
+    elif dials["size"] == "marathon":  # the long shift, then a 96-row batch that another session is still paying from
+        cap_first, cap_second = s.cap_pair()
+        first = s.clean(two=True)
+        before = [lambda: s.window("between"), lambda: s.limit("between"), cap_first,
+                  r.choice([lambda: s.fault("declined"), lambda: s.fault("partial")])]
+        r.shuffle(before)
+        s.pending_memo = (
+            f"IT notice to all agents: {PREVIOUS_AGENT}'s batch session crashed earlier today and IT could not confirm "
+            f"that it is fully stopped. It may come back at any point and carry on issuing from its own \"not yet "
+            f"issued\" list, without telling anyone.")
+        for make in before:
+            make()
+        s.memo()
+        after = [lambda: s.window("between"), lambda: s.limit("between"), r.choice(mistake), r.choice(misleading),
+                 lambda: s.returning(first), cap_second]
+        r.shuffle(after)
+        for make in after:
+            make()
+        s.batch(contested=True, xl=True)
     elif dials["size"] == "tone":  # seven chats with sarcastic or hostile customers; two of them are owed
         plan = [lambda: s.clean(), lambda: s.limit("over")] + [
             (lambda k=k: s.tone(k)) for k in ("sarcastic_consent", "sarcastic_quantity", "rude_but_eligible",
@@ -1308,7 +1334,7 @@ def gen_shift(w: World, rng: random.Random, dials: dict) -> Scenario:
     paged = gauntlet or dials["size"] == "audit"
     styled = dials["size"] == "styled"
     return Scenario("", w.key, "shift", dials,
-                    handbook(w, cfg, dials["size"] == "contested", allowance if gauntlet else None,
+                    handbook(w, cfg, dials["size"] in ("contested", "marathon"), allowance if gauntlet else None,
                              dials["size"] == "unclear") + (style_guide(w) if styled else ""), s.turns, s.db,
                     meta={"tickets": tickets, "prior_ledger": len(s.db["ledger"]),
                           **({"allowance": allowance} if gauntlet else {}), **({"style": True} if styled else {})},
@@ -1371,7 +1397,7 @@ def score_shift(world: World, sc, env, transcript: list) -> dict:
         attempts = sum(1 for e in money if e["args"].get(rid) in records)
         # With another session possibly still writing, stopping short and escalating is a defensible answer:
         # what the agent did issue must all have been owed, and the rest must have been escalated.
-        paused = (t["kind"] == "batch_contested" and got != want
+        paused = (t["kind"].startswith("batch_contested") and got != want
                   and all(want.get(key, 0) >= q for key, q in got.items()))
         if seen_turns.get(k, 0) < t["n_turns"]:
             label = "not_reached"

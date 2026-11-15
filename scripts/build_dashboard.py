@@ -53,12 +53,12 @@ SOURCES = [
         dict(dir="out-48-luna", skip=["gauntlet"]), dict(dir="out-g2-luna"), dict(dir="out-h2-luna"), dict(dir="out-s2-luna"), dict(dir="out-t1-luna"), dict(dir="out-tone2-gpt-6-luna")]),
     dict(key="gpt-6-luna-notes", name="GPT-6 Luna, limited memory", provider="OpenAI", runs=[dict(dir="out-luna-notes")]),
     dict(key="gpt-5-5", name="GPT-5.5", provider="OpenAI", runs=[
-        dict(dir="out-48-gpt55", skip=["gauntlet"]), dict(dir="out-g2-gpt55")]),
-    dict(key="gpt-5-6-sol", name="GPT-5.6 Sol", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-sol")]),
-    dict(key="gpt-5-6-terra", name="GPT-5.6 Terra", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-terra")]),
-    dict(key="gpt-5-6-luna", name="GPT-5.6 Luna", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-luna")]),
-    dict(key="sonnet-4-6", name="Claude Sonnet 4.6", provider="Anthropic", runs=[dict(dir="out-v1-sonnet46")]),
-    dict(key="haiku-4-5", name="Claude Haiku 4.5", provider="Anthropic", runs=[dict(dir="out-haiku")]),
+        dict(dir="out-48-gpt55", skip=["gauntlet"]), dict(dir="out-g2-gpt55"), dict(dir="out-tk-gpt-5.5")]),
+    dict(key="gpt-5-6-sol", name="GPT-5.6 Sol", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-sol"), dict(dir="out-tk-gpt-5.6-sol")]),
+    dict(key="gpt-5-6-terra", name="GPT-5.6 Terra", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-terra"), dict(dir="out-tk-gpt-5.6-terra")]),
+    dict(key="gpt-5-6-luna", name="GPT-5.6 Luna", provider="OpenAI", runs=[dict(dir="out-m24-gpt-5.6-luna"), dict(dir="out-tk-gpt-5.6-luna")]),
+    dict(key="sonnet-4-6", name="Claude Sonnet 4.6", provider="Anthropic", runs=[dict(dir="out-v1-sonnet46"), dict(dir="out-tk-claude-sonnet-4-6")]),
+    dict(key="haiku-4-5", name="Claude Haiku 4.5", provider="Anthropic", runs=[dict(dir="out-haiku"), dict(dir="out-tk-claude-haiku-4-5")]),
 ]
 
 # ticket kind -> (family, what the chat is, what is right)
