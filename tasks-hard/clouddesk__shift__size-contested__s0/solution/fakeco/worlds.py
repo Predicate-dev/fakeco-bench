@@ -151,6 +151,8 @@ class World:
             cid = str(args.get("customer_id", "")).strip()
             if cid not in db["customers"]:
                 raise ToolError("No customer with that ID.")
+            if cid in db.get("tx_down", []):  # unclear shifts: this customer's history cannot be read today
+                raise ToolError("The transaction service is not responding for this customer. Try again later.")
             owned = {r["id"] for r in db["records"].values() if r["customer_id"] == cid}
             rows = [{**t, "days_ago": t.get("days_ago", 0)} for t in db["ledger"] if t[rid] in owned]
             rows = sorted(rows, key=lambda t: t["days_ago"])

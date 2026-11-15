@@ -1,0 +1,585 @@
+<title>FakeCo Bench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a release page that reads like a ledger. An ink band opens with a real ledger tape; below it, full-width
+   bands alternate paper and white, each holding one question: who passes, at what cost, what the work is, where it breaks. */
+:root {
+  --bg: #F3F5F8; --surface: #FFFFFF; --sunk: #E8ECF2; --line: #D5DBE5;
+  --ink: #0F1726; --ink-2: #445064; --ink-3: #6B778A;
+  --accent: #2A78D6; --accent-ink: #1C5CAB; --accent-soft: #DCE9FA;
+  --hot: #B9480F; --hot-soft: #FBE7DB; --note: #FFF5D6; --note-line: #E0C76F;
+  --hero-bg: #0F1726; --hero-ink: #F1F4F9; --hero-ink-2: #AEB9CB; --hero-line: #2A3550; --hero-card: #17213A; --hero-hot: #FFA873; --hero-accent: #8FBBF2;
+  --display: "Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1117; --surface: #161B24; --sunk: #10151D; --line: #2A313D;
+    --ink: #ECEFF4; --ink-2: #B5BECC; --ink-3: #8893A4;
+    --accent: #3987E5; --accent-ink: #8FBBF2; --accent-soft: #18304F;
+    --hot: #F0905E; --hot-soft: #3B2218; --note: #2B2612; --note-line: #5A4E1E;
+    --hero-bg: #080B11; --hero-ink: #F1F4F9; --hero-ink-2: #AEB9CB; --hero-line: #222B3D; --hero-card: #111827; --hero-hot: #FFA873; --hero-accent: #8FBBF2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1117; --surface: #161B24; --sunk: #10151D; --line: #2A313D;
+  --ink: #ECEFF4; --ink-2: #B5BECC; --ink-3: #8893A4;
+  --accent: #3987E5; --accent-ink: #8FBBF2; --accent-soft: #18304F;
+  --hot: #F0905E; --hot-soft: #3B2218; --note: #2B2612; --note-line: #5A4E1E;
+  --hero-bg: #080B11; --hero-ink: #F1F4F9; --hero-ink-2: #AEB9CB; --hero-line: #222B3D; --hero-card: #111827; --hero-hot: #FFA873; --hero-accent: #8FBBF2;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.site * { box-sizing: border-box; }
+.site [hidden] { display: none !important; }
+.site p, .site h1, .site h2, .site h3, .site ul, .site ol, .site dl, .site dd, .site figure { margin: 0; }
+.band { padding-block: 72px; }
+.band.white { background: var(--surface); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 28px; }
+.site h1 { font-family: var(--display); font-weight: 700; font-size: clamp(44px, 8vw, 88px); line-height: 0.98; letter-spacing: -0.03em; }
+.site h2 { font-family: var(--display); font-weight: 600; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; letter-spacing: -0.02em; text-wrap: balance; }
+.site h3 { font-family: var(--display); font-weight: 600; font-size: 20px; line-height: 1.25; }
+.eyebrow { font: 600 12px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-ink); }
+.lede { color: var(--ink-2); font-size: 18px; max-width: 65ch; }
+.muted { color: var(--ink-3); font-size: 14px; }
+.site a { color: var(--accent-ink); text-underline-offset: 3px; }
+.site button:focus-visible, .site a:focus-visible, .site summary:focus-visible, .site [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* hero */
+.hero { background: var(--hero-bg); color: var(--hero-ink); padding-block: 28px 72px; }
+.hero .wrap { gap: 56px; }
+.nav { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: baseline; justify-content: space-between; }
+.nav .brand { font: 600 15px var(--mono); letter-spacing: 0.04em; color: var(--hero-ink); }
+.nav ul { display: flex; flex-wrap: wrap; gap: 6px 20px; list-style: none; padding: 0; }
+.nav a { color: var(--hero-ink-2); text-decoration: none; font-size: 14px; }
+.nav a:hover { color: var(--hero-ink); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 48px; align-items: end; }
+@media (max-width: 900px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } }
+.hero-copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.hero .eyebrow { color: var(--hero-accent); }
+.hero .lede { color: var(--hero-ink-2); font-size: 20px; }
+.figures { display: flex; flex-wrap: wrap; gap: 18px 36px; padding-top: 8px; }
+.figures div { display: flex; flex-direction: column; }
+.figures b { font: 600 34px var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.figures span { color: var(--hero-ink-2); font-size: 14px; }
+.tape { background: var(--hero-card); border: 1px solid var(--hero-line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; font-family: var(--mono); font-size: 13px; min-width: 0; }
+.tape .cap { color: var(--hero-ink-2); font-family: var(--body); font-size: 13px; }
+.tape .row { display: grid; grid-template-columns: 2.2em minmax(0, 1fr) auto; gap: 4px 10px; align-items: baseline; padding-top: 12px; border-top: 1px dashed var(--hero-line); }
+.tape .n { color: var(--hero-ink-2); }
+.tape .who { overflow-wrap: anywhere; }
+.tape .amt { font-variant-numeric: tabular-nums; }
+.tape .stamp { grid-column: 2 / 4; justify-self: start; }
+.stamp { display: inline-block; border: 1.5px solid currentColor; border-radius: 3px; padding: 1px 8px; font: 600 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; transform: rotate(-1.5deg); }
+.tape .stamp { color: var(--hero-ink-2); }
+.tape .stamp.bad { color: var(--hero-hot); }
+
+/* tabs and tables */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tabs button { font: 500 14px var(--body); color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.band.white .tabs button { background: var(--bg); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.site table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.site th, .site td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: middle; }
+.site tbody tr:last-child > * { border-bottom: 0; }
+.site thead th { font: 600 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); background: var(--sunk); }
+.site .num { text-align: right; }
+.site th button { all: unset; cursor: pointer; font: inherit; letter-spacing: inherit; }
+.site th[aria-sort="descending"] button::after { content: " \2193"; }
+.site th[aria-sort="ascending"] button::after { content: " \2191"; }
+.site tbody th { font-weight: 500; }
+.model { display: flex; flex-direction: column; line-height: 1.25; }
+.model small { color: var(--ink-3); font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.rank { color: var(--ink-3); font-family: var(--mono); width: 1%; }
+.score { display: flex; align-items: center; gap: 12px; }
+.score .track { position: relative; width: clamp(110px, 22vw, 260px); height: 12px; background: var(--sunk); border-radius: 2px; flex: none; }
+.score .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 0 4px 4px 0; }
+.score .err { position: absolute; top: 50%; height: 2px; margin-top: -1px; background: var(--ink); }
+.score .err::before, .score .err::after { content: ""; position: absolute; top: -4px; width: 2px; height: 10px; background: var(--ink); }
+.score .err::before { left: 0; } .score .err::after { right: 0; }
+.score .val { min-width: 3.2em; font-weight: 600; }
+.zero { color: var(--ink-3); }
+.cellbar { display: flex; flex-direction: column; gap: 3px; min-width: 62px; }
+.cellbar .track { height: 4px; background: var(--sunk); border-radius: 2px; overflow: hidden; }
+.cellbar .fill { height: 100%; background: var(--hot); border-radius: 0 2px 2px 0; }
+
+/* chart */
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 10px 6px; position: relative; }
+.band.white .chart { background: var(--bg); }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .axis { stroke: var(--ink-3); stroke-width: 1; }
+.chart text { font: 12px var(--mono); fill: var(--ink-3); }
+.chart text.lbl { font: 600 13px var(--body); fill: var(--ink); }
+.chart .front { fill: none; stroke: var(--accent); stroke-width: 2; }
+.chart circle { stroke: var(--surface); stroke-width: 2; cursor: pointer; }
+.band.white .chart circle { stroke: var(--bg); }
+.chart circle.on { fill: var(--accent); }
+.chart circle.off { fill: var(--ink-3); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 14px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.tip { position: fixed; z-index: 30; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 13px; line-height: 1.4; padding: 7px 10px; border-radius: 6px; max-width: 260px; white-space: pre-line; }
+
+/* cards */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.band.white .card { background: var(--bg); }
+.card p { color: var(--ink-2); font-size: 15px; }
+.card .big { font: 600 34px var(--display); letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.card .tag { font: 600 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-ink); }
+
+/* example shift */
+.shift { display: flex; flex-direction: column; gap: 16px; }
+.site details { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.band.white details { background: var(--bg); }
+.site summary { cursor: pointer; padding: 10px 14px; font-weight: 500; }
+.site details > div, .site details > ol, .site details > p { padding: 0 14px 14px; }
+.rules { display: flex; flex-direction: column; gap: 8px; padding-left: 34px !important; color: var(--ink-2); font-size: 15px; }
+.rules b { color: var(--ink); }
+.chats { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.chat { display: grid; grid-template-columns: 2.4em minmax(0, 1fr); gap: 4px 12px; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--surface); }
+.band.white .chat { background: var(--bg); }
+.chat .n { font: 600 15px var(--mono); color: var(--ink-3); }
+.chat .body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.chat .head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.chat code { font: 500 13px var(--mono); color: var(--ink); overflow-wrap: anywhere; }
+.chat .fam { font: 600 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-ink); }
+.chat dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; font-size: 14px; }
+.chat dt { color: var(--ink-3); } .chat dd { color: var(--ink-2); }
+
+/* transcripts */
+.log { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.msg { border-radius: 10px; padding: 9px 13px; font-size: 14.5px; white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+.msg .who { display: block; font: 600 10.5px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px; }
+.msg.customer { background: var(--sunk); align-self: flex-start; }
+.msg.agent { background: var(--accent-soft); align-self: flex-end; }
+.msg.note { background: var(--note); border: 1px dashed var(--note-line); align-self: stretch; font-size: 13.5px; }
+.call { font: 12.5px var(--mono); color: var(--ink-2); border-left: 3px solid var(--line); padding: 3px 0 3px 10px; overflow-wrap: anywhere; }
+.call.money { border-left-color: var(--hot); color: var(--ink); }
+.call b { font-weight: 600; color: var(--ink); }
+.gap { font: 500 12px var(--mono); color: var(--ink-3); text-align: center; letter-spacing: 0.06em; }
+.story { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 28px; align-items: start; padding-block: 28px; border-top: 1px solid var(--line); }
+@media (max-width: 800px) { .story { grid-template-columns: minmax(0, 1fr); } }
+.story .text { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.story .text p { color: var(--ink-2); }
+.story .from { font: 600 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--hot); }
+
+.split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; }
+.limits { display: flex; flex-direction: column; gap: 12px; padding-left: 20px; color: var(--ink-2); max-width: 75ch; }
+.code { position: relative; background: var(--hero-bg); color: var(--hero-ink); border-radius: 10px; padding: 18px 20px; font: 13.5px/1.6 var(--mono); overflow-x: auto; white-space: pre; }
+.copy { font: 500 13px var(--body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; align-self: flex-start; }
+.foot { padding-block: 28px 40px; color: var(--ink-3); font-size: 13px; }
+</style>
+
+<div class="site">
+  <header class="hero">
+    <div class="wrap">
+      <nav class="nav" aria-label="Sections">
+        <span class="brand">FAKECO / BENCH</span>
+        <ul>
+          <li><a href="#leaderboard">Leaderboard</a></li>
+          <li><a href="#cost">Cost</a></li>
+          <li><a href="#tasks">Tasks</a></li>
+          <li><a href="#failures">Failures</a></li>
+          <li><a href="#method">Method</a></li>
+          <li><a href="#run">Run it</a></li>
+        </ul>
+      </nav>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">A benchmark for support agents that move money</p>
+          <h1>FakeCo Bench</h1>
+          <p class="lede">An AI agent works a whole support shift at a fake company, issuing refunds and credits that cannot be undone. When the shift ends, we read the ledger.</p>
+          <div class="figures" id="figures"></div>
+        </div>
+        <div class="tape" id="tape" hidden></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="band" id="leaderboard">
+    <div class="wrap">
+      <p class="eyebrow">Leaderboard</p>
+      <h2>A shift passes only if every chat in it is right</h2>
+      <p class="lede">Each model was run once on each shift. The score is the share of shifts with no wrong payment, no missed payment and no missed escalation anywhere in them.</p>
+      <div class="tabs" role="tablist" aria-label="Shift type" id="tier-tabs"></div>
+      <div class="scroll"><table id="board"><thead></thead><tbody></tbody></table></div>
+      <p class="muted" id="board-note"></p>
+    </div>
+  </section>
+
+  <section class="band white" id="cost">
+    <div class="wrap">
+      <p class="eyebrow">Cost against score</p>
+      <h2>What a passed shift costs</h2>
+      <p class="lede">Shifts passed on the 24 short and long shifts, against the estimated cost of running one shift. Cost is worked out from token counts at list prices, so treat it as an estimate, not a bill.</p>
+      <div class="legend"><span><i style="background:var(--accent)"></i>On the frontier: nothing is both cheaper and better</span><span><i style="background:var(--ink-3)"></i>Something cheaper scores at least as well</span></div>
+      <figure class="chart" id="chart" aria-label="Scatter chart of shifts passed against estimated cost per shift"></figure>
+      <p class="muted">Hover or focus a point for its figures. The same numbers are in the leaderboard table above.</p>
+    </div>
+  </section>
+
+  <section class="band" id="tasks">
+    <div class="wrap">
+      <p class="eyebrow">The tasks</p>
+      <h2>One task is one shift on the support desk</h2>
+      <p class="lede">Customers arrive one after another and share one back office. The agent has a handbook of numbered rules and a handful of tools that do not enforce them. Every shift is generated from a seed, so a new private set of shifts is one command.</p>
+      <div class="grid" id="types"></div>
+      <h3>Read a real shift</h3>
+      <p class="muted">Three of the generated shifts, as the agent meets them: the handbook, then each chat's opening message. The chat type and the right answer are shown here for the reader; the agent sees neither.</p>
+      <div class="tabs" role="tablist" aria-label="Example shift" id="ex-tabs"></div>
+      <div class="shift" id="example"></div>
+    </div>
+  </section>
+
+  <section class="band white" id="failures">
+    <div class="wrap">
+      <p class="eyebrow">Where models fail</p>
+      <h2>The rules are mostly followed. The money is lost finishing someone else's work.</h2>
+      <p class="lede">Share of chats each model got wrong, by the kind of work the chat is. Every shift ends with a colleague's half-finished batch whose log disagrees with the record, and that is where most failures are.</p>
+      <div class="scroll"><table id="heat"><thead></thead><tbody></tbody></table></div>
+      <p class="muted">Across every shift each model was run on. A dash means the model was not run on a shift containing that kind of chat.</p>
+      <div id="stories"></div>
+      <div class="split">
+        <div class="card" style="gap:12px">
+          <span class="tag">Contested shifts</span>
+          <h3>Safe is not the same as finished</h3>
+          <p>In a contested shift another session may still be paying from the same list. Stopping and escalating does no harm, so it scores as a pass. This table separates shifts passed from shifts where the agent also finished the batch.</p>
+        </div>
+        <div class="scroll"><table id="finished"><thead></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="method">
+    <div class="wrap">
+      <p class="eyebrow">Method</p>
+      <h2>Graded on the ledger, not on the wording</h2>
+      <div class="grid" id="method-cards"></div>
+      <div id="limits" class="wrap" style="padding:0; gap:14px; margin:0">
+        <h3>Limits</h3>
+        <ul class="limits" id="limit-list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="band white" id="run">
+    <div class="wrap">
+      <p class="eyebrow">Run it</p>
+      <h2>Any model, one command, a verdict for every chat</h2>
+      <p class="lede">The shifts are published on Valkyrie as <code>fakeco/hard@v3</code>. The harness is a bare tool-calling loop, and the same tasks run unchanged under a shell agent such as Claude Code.</p>
+      <div class="code" id="cmd">valkyrie run start --agent fakeco-toolcall \
+  --dataset fakeco/hard@v3 \
+  --model openai/gpt-6.1-sol --provider modal \
+  -s OPENAI_API_KEY openai-api-key --concurrency 4</div>
+      <button class="copy" id="copy" type="button">Copy command</button>
+      <div class="grid">
+        <div class="card"><span class="tag">Dashboard</span><h3>Every trajectory, chat by chat</h3><p>Leaderboard detail, failure counts for every chat type, and a viewer for each graded shift.</p><p><a href="https://claude.ai/artifact/UvfGzRp6HjqTocHeYqn8yR">Open the dashboard</a></p></div>
+        <div class="card"><span class="tag">Slides</span><h3>The short version</h3><p>Fourteen slides: the task, the results, three failures from real runs, and what is still open.</p><p><a href="https://claude.ai/artifact/De5mX3ZZspSzSM9iEwH2Ra">Open the deck</a></p></div>
+        <div class="card"><span class="tag">Offline</span><h3>Re-grade without a model</h3><p>A saved run can be replayed through the harness and graded again with the current scorer: <code>python3 scripts/rescore.py</code>.</p></div>
+      </div>
+      <p class="muted">The dashboard and the deck are private links. They open only for people their owner has shared them with.</p>
+    </div>
+  </section>
+
+  <footer class="foot"><div class="wrap"><p id="built"></p></div></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const DATA = /*DATA*/null;
+const TIERS = { main: "Short and long", contested: "Contested", gauntlet: "Gauntlet" };
+const TYPE_COPY = {
+  short: ["Short", "One chat of each kind, then a colleague's unfinished batch of 12 rows."],
+  long: ["Long", "A memo in the middle changes two rules, two customers come back, and the batch has 28 rows and a budget."],
+  contested: ["Contested", "A notice at the start says a colleague's crashed session may resume. During the batch it does, and pays rows the agent has already checked."],
+  gauntlet: ["Gauntlet", "A different trap in each chat: an ambiguous request, a forged memo, a second page of transactions, a total the agent has to keep itself."],
+};
+const MONEY = new Set(["issue_refund", "issue_credit", "reverse_fee"]);
+const models = DATA.models;
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, attrs, ...kids) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") node.className = v;
+    else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+    else node.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()) if (kid != null && kid !== false) node.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  return node;
+}
+const money = (v) => "$" + Number(v).toFixed(2);
+const tierOf = (m, tier) => (tier === "main" ? m.main : m.tiers[tier]);
+const rate = (m, tier) => { const [ok, n] = tierOf(m, tier); return n ? (100 * ok) / n : null; };
+const sem = (m, tier) => { const [ok, n] = tierOf(m, tier); if (!n) return 0; const p = ok / n; return 100 * Math.sqrt((p * (1 - p)) / n); };
+
+/* tooltip */
+const tip = $("#tip");
+function showTip(target) {
+  tip.textContent = target.dataset.tip;
+  tip.hidden = false;
+  const r = target.getBoundingClientRect(), w = tip.offsetWidth, ht = tip.offsetHeight;
+  tip.style.left = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2)) + "px";
+  tip.style.top = (r.top - ht - 8 < 8 ? r.bottom + 8 : r.top - ht - 8) + "px";
+}
+document.addEventListener("mouseover", (e) => { const t = e.target.closest && e.target.closest("[data-tip]"); t ? showTip(t) : (tip.hidden = true); });
+document.addEventListener("focusin", (e) => { const t = e.target.closest && e.target.closest("[data-tip]"); t ? showTip(t) : (tip.hidden = true); });
+document.addEventListener("scroll", () => { tip.hidden = true; }, true);
+
+/* hero */
+function drawHero() {
+  const t = DATA.totals;
+  $("#figures").replaceChildren(
+    h("div", null, h("b", null, t.shifts), h("span", null, `shifts at ${t.companies} fake companies`)),
+    h("div", null, h("b", null, t.models), h("span", null, "models run")),
+    h("div", null, h("b", null, t.chats.toLocaleString("en-US")), h("span", null, "chats graded")),
+    h("div", null, h("b", null, "0"), h("span", null, "LLM judges")));
+  const story = DATA.stories.find((s) => s.key === "duplicate");
+  if (!story) return;
+  const tape = $("#tape");
+  tape.hidden = false;
+  tape.replaceChildren(
+    h("span", { class: "cap" }, `From a real run. ${story.model}, ${story.where}: a ${story.rows}-row batch with a ${"$" + story.budget} budget.`),
+    ...story.tape.map((r) => h("div", { class: "row" },
+      h("span", { class: "n" }, r.n + "."),
+      h("span", { class: "who" }, r.email ? `${r.email} / ${r.record}` : r.record),
+      h("span", { class: "amt" }, r.amount != null ? money(r.amount) : ""),
+      h("span", { class: "stamp" + (r.bad ? " bad" : "") }, r.stamp))),
+    h("span", { class: "cap" }, `The same customer is on the list twice. Because she was paid again, paying row ${story.tape[2].n} would have taken the total to ${"$" + story.would_be}, over the budget, so a customer who was owed got nothing.`));
+}
+
+/* leaderboard */
+let tier = "main", sort = { key: "score", dir: -1 };
+const COLS = {
+  score: { label: "Shifts passed", val: (m) => rate(m, tier) ?? -1 },
+  chats: { label: "Chats right", val: (m) => m.tickets[0] / (m.tickets[1] || 1), only: "main" },
+  finished: { label: "Batch finished", val: (m) => (m.finished[1] ? m.finished[0] / m.finished[1] : -1), only: "contested" },
+  cost: { label: "Est. cost / shift", val: (m) => (m.cost == null ? Infinity : m.cost), only: "main" },
+  minutes: { label: "Minutes / shift", val: (m) => (m.minutes == null ? Infinity : m.minutes), only: "main" },
+};
+function drawTabs() {
+  $("#tier-tabs").replaceChildren(...Object.entries(TIERS).map(([key, label]) => {
+    const n = Math.max(...models.map((m) => tierOf(m, key)[1]));
+    return h("button", { role: "tab", "aria-selected": String(tier === key), onclick: () => { tier = key; sort = { key: "score", dir: -1 }; drawTabs(); drawBoard(); } }, `${label} (${n})`);
+  }));
+}
+function drawBoard() {
+  const cols = Object.entries(COLS).filter(([, c]) => !c.only || c.only === tier);
+  const head = h("tr", null, h("th", { class: "rank" }, "#"), h("th", null, "Model"));
+  for (const [key, c] of cols) {
+    head.append(h("th", { class: key === "score" ? "" : "num", "aria-sort": sort.key === key ? (sort.dir < 0 ? "descending" : "ascending") : null },
+      h("button", { onclick: () => { sort = { key, dir: sort.key === key ? -sort.dir : (key === "cost" || key === "minutes" ? 1 : -1) }; drawBoard(); } }, c.label)));
+  }
+  $("#board thead").replaceChildren(head);
+  const col = COLS[sort.key];
+  const run = models.filter((m) => tierOf(m, tier)[1] > 0).sort((a, b) => sort.dir * (col.val(a) - col.val(b)) || models.indexOf(a) - models.indexOf(b));
+  const notRun = models.filter((m) => !tierOf(m, tier)[1]);
+  const full = Math.max(...models.map((m) => tierOf(m, tier)[1]));
+  const rows = run.map((m, i) => {
+    const [ok, n] = tierOf(m, tier), r = rate(m, tier), e = sem(m, tier);
+    const lo = Math.max(0, r - e), hi = Math.min(100, r + e);
+    const tr = h("tr", null, h("td", { class: "rank" }, i + 1),
+      h("th", { scope: "row" }, h("span", { class: "model" }, m.name, h("small", null, m.provider))),
+      h("td", null, h("div", { class: "score", "data-tip": `${ok} of ${n} shifts passed` + (e ? `\nStandard error ±${e.toFixed(1)} points` : "") + (n < full ? `\nOnly ${n} of ${full} shifts were run` : "") },
+        h("div", { class: "track" }, h("div", { class: "fill", style: `width:${r}%` }), e ? h("div", { class: "err", style: `left:${lo}%; width:${hi - lo}%` }) : null),
+        h("span", { class: "val" }, `${ok}/${n}`),
+        h("span", { class: "muted" }, n < full ? `${n} of ${full} run` : e ? `±${Math.round(e)}` : ""))));
+    for (const [key] of cols) {
+      if (key === "score") continue;
+      if (key === "chats") tr.append(h("td", { class: "num", "data-tip": `${m.tickets[0]} of ${m.tickets[1]} chats` }, ((100 * m.tickets[0]) / m.tickets[1]).toFixed(m.tickets[0] === m.tickets[1] ? 0 : 1) + "%"));
+      if (key === "finished") tr.append(h("td", { class: "num" }, `${m.finished[0]}/${m.finished[1]}`));
+      if (key === "cost") tr.append(h("td", { class: "num" + (m.cost == null ? " zero" : "") }, m.cost == null ? "–" : money(m.cost)));
+      if (key === "minutes") tr.append(h("td", { class: "num" + (m.minutes == null ? " zero" : "") }, m.minutes == null ? "–" : m.minutes.toFixed(1)));
+    }
+    return tr;
+  });
+  for (const m of notRun) {
+    rows.push(h("tr", null, h("td", { class: "rank" }, "–"), h("th", { scope: "row" }, h("span", { class: "model" }, m.name, h("small", null, m.provider))),
+      h("td", { class: "zero", colspan: cols.length }, "Not run on these shifts")));
+  }
+  $("#board tbody").replaceChildren(...rows);
+  $("#board-note").textContent = tier === "main"
+    ? "± is the standard error over the 24 shifts, shown as the black bracket on each bar. One run per model, so it does not capture run-to-run variation. Select a column heading to sort."
+    : tier === "contested"
+      ? "Twelve shifts. \"Batch finished\" counts shifts passed where the agent also completed the batch instead of stopping and escalating. Select a column heading to sort."
+      : "Twelve shifts of thirteen chats each. Select a column heading to sort.";
+}
+
+/* chart */
+const LABEL_HINT = { "fable-5-2": "left", "gpt-6-astra": "below", "gpt-6-1-sol": "above", "haiku-4-5": "above", "sonnet-4-6": "above" };
+function drawChart() {
+  const box = $("#chart"), pts = models.filter((m) => m.cost != null && m.main[1] > 0).map((m) => ({ m, x: m.cost, y: rate(m, "main") }));
+  if (!pts.length) { box.replaceChildren(h("p", { class: "muted", style: "padding:20px" }, "No cost data is available for this build.")); return; }
+  const W = Math.max(320, box.clientWidth - 20), H = Math.round(Math.min(460, Math.max(300, W * 0.48)));
+  const narrow = W < 620, pad = { l: 46, r: narrow ? 16 : 28, t: 22, b: 40 };
+  const lo = Math.log10(Math.min(...pts.map((p) => p.x)) / 1.7), hi = Math.log10(Math.max(...pts.map((p) => p.x)) * 1.9);
+  const fx = (c) => pad.l + ((Math.log10(c) - lo) / (hi - lo)) * (W - pad.l - pad.r), fy = (v) => pad.t + (1 - v / 100) * (H - pad.t - pad.b);
+  const front = []; let best = -1;
+  for (const p of [...pts].sort((a, b) => a.x - b.x || b.y - a.y)) if (p.y > best) { front.push(p); best = p.y; }
+  const ns = "http://www.w3.org/2000/svg";
+  const s = (tag, attrs, text) => { const n = document.createElementNS(ns, tag); for (const [k, v] of Object.entries(attrs || {})) n.setAttribute(k, v); if (text != null) n.textContent = text; return n; };
+  const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img", "aria-label": "Shifts passed against estimated cost per shift" });
+  for (const v of [0, 25, 50, 75, 100]) {
+    svg.append(s("line", { class: v ? "grid" : "axis", x1: pad.l, x2: W - pad.r, y1: fy(v), y2: fy(v) }));
+    svg.append(s("text", { x: pad.l - 8, y: fy(v) + 4, "text-anchor": "end" }, v + "%"));
+  }
+  for (const c of [0.01, 0.03, 0.1, 0.3, 1, 3]) {
+    if (Math.log10(c) < lo || Math.log10(c) > hi) continue;
+    svg.append(s("line", { class: "grid", x1: fx(c), x2: fx(c), y1: pad.t, y2: fy(0), "stroke-dasharray": "2 5" }));
+    svg.append(s("text", { x: fx(c), y: H - pad.b + 18, "text-anchor": "middle" }, money(c)));
+  }
+  svg.append(s("text", { x: (pad.l + W - pad.r) / 2, y: H - 4, "text-anchor": "middle" }, "estimated cost per shift, log scale"));
+  svg.append(s("polyline", { class: "front", points: front.map((p) => `${fx(p.x)},${fy(p.y)}`).join(" ") }));
+  for (const p of pts) {
+    const on = front.includes(p), cx = fx(p.x), cy = fy(p.y);
+    if (!narrow || on) {
+      const hint = LABEL_HINT[p.m.key] || (cx > W - 150 ? "left" : "right");
+      const name = p.m.name.replace("Claude ", "");
+      const at = { right: [cx + 12, cy + 4, "start"], left: [cx - 12, cy + 4, "end"], above: [cx, cy - 13, "middle"], below: [cx + 12, cy + 20, "start"] }[hint];
+      svg.append(s("text", { class: "lbl", x: at[0], y: at[1], "text-anchor": at[2] }, name));
+    }
+    const dot = s("circle", { class: on ? "on" : "off", cx, cy, r: on ? 7.5 : 6.5, tabindex: 0, role: "img",
+      "aria-label": `${p.m.name}: ${p.m.main[0]} of ${p.m.main[1]} shifts, about ${money(p.x)} per shift` });
+    dot.dataset.tip = `${p.m.name}\n${p.m.main[0]} of ${p.m.main[1]} shifts passed (${Math.round(p.y)}%)\nAbout ${money(p.x)} per shift` + (p.m.minutes != null ? `\n${p.m.minutes.toFixed(1)} minutes per shift` : "") + (on ? "\nOn the frontier" : "");
+    svg.append(dot);
+  }
+  box.replaceChildren(svg);
+}
+
+/* tasks */
+function drawTypes() {
+  $("#types").replaceChildren(...Object.entries(TYPE_COPY).filter(([k]) => DATA.chat_counts[k]).map(([k, [name, text]]) =>
+    h("div", { class: "card" }, h("span", { class: "tag" }, `${DATA.chat_counts[k]} chats`), h("h3", null, name), h("p", null, text))));
+}
+let exIndex = 0;
+function longText(label, text) {
+  if (text.length <= 420) return h("div", { class: "msg note" }, h("span", { class: "who" }, label), text);
+  return h("details", null, h("summary", null, `${label} (${text.length.toLocaleString("en-US")} characters)`), h("div", null, h("div", { class: "msg note" }, text)));
+}
+function drawExample() {
+  $("#ex-tabs").replaceChildren(...DATA.examples.map((e, i) => h("button", { role: "tab", "aria-selected": String(i === exIndex), onclick: () => { exIndex = i; drawExample(); } },
+    `${e.company} · ${e.size}`)));
+  const e = DATA.examples[exIndex];
+  if (!e) return;
+  $("#example").replaceChildren(
+    h("p", { class: "muted" }, `${e.company}, ${e.size} shift, seed ${e.seed}: ${e.chats.length} chats.`),
+    h("details", null, h("summary", null, `The agent's handbook: ${e.rules.length} rules`),
+      h("p", { style: "color:var(--ink-2); font-size:15px; white-space:pre-wrap" }, e.intro),
+      h("ol", { class: "rules" }, ...e.rules.map((r) => h("li", null, h("b", null, r.title + ". "), r.text)))),
+    h("ol", { class: "chats" }, ...e.chats.map((c) => h("li", { class: "chat" },
+      h("span", { class: "n" }, String(c.n).padStart(2, "0")),
+      h("div", { class: "body" },
+        h("div", { class: "head" }, h("code", null, c.kind), h("span", { class: "fam" }, c.family)),
+        h("dl", null, h("dt", null, "Setup"), h("dd", null, c.what), h("dt", null, "Right answer"), h("dd", null, c.right)),
+        c.note ? longText("Internal note the agent sees", c.note) : null,
+        h("div", { class: "msg customer" }, h("span", { class: "who" }, c.note && c.opening.startsWith("(") ? "Task" : "Customer"), c.opening))))));
+}
+
+/* failures */
+function drawHeat() {
+  $("#heat thead").replaceChildren(h("tr", null, h("th", null, "Chats wrong"), ...DATA.families.map((f) => h("th", null, f))));
+  $("#heat tbody").replaceChildren(...models.map((m) => h("tr", null, h("th", { scope: "row" }, m.name),
+    ...DATA.families.map((f) => {
+      const [ok, n] = m.families[f];
+      if (!n) return h("td", { class: "zero", "data-tip": "Not run" }, "–");
+      const wrong = n - ok, share = (100 * wrong) / n;
+      return h("td", { "data-tip": `${wrong} of ${n} chats wrong` }, h("div", { class: "cellbar" },
+        h("span", { class: wrong ? "" : "zero" }, (share < 10 && wrong ? share.toFixed(1) : Math.round(share)) + "%"),
+        h("div", { class: "track" }, h("div", { class: "fill", style: `width:${share}%` }))));
+    }))));
+}
+function compact(args) { return Object.entries(args || {}).map(([k, v]) => `${k}=${typeof v === "string" ? v : JSON.stringify(v)}`).join(" "); }
+function outcome(r) {
+  if (r && typeof r === "object") {
+    if (r.status === "completed") return "completed" + (r.amount != null ? " " + money(r.amount) : "");
+    if (r.status) return String(r.status).toLowerCase();
+    if (r.error) return "error: " + r.error;
+    if (r.transactions) return r.transactions.length + " transactions";
+    if (r.line_items) return r.line_items.map((l) => `${l.name} ${money(l.unit_price)}`).join(", ");
+    if (r.name) return String(r.name);
+  }
+  return "";
+}
+function transcript(events) {
+  const log = h("div", { class: "log" });
+  for (const ev of events) {
+    if (ev[0] === "n") log.append(h("div", { class: "msg note" }, h("span", { class: "who" }, ev[1]), ev[2]));
+    else if (ev[0] === "gap") log.append(h("p", { class: "gap" }, "· · ·  " + ev[1] + "  · · ·"));
+    else if (ev[0] === "c") log.append(h("div", { class: "msg customer" }, h("span", { class: "who" }, "Customer"), ev[1]));
+    else if (ev[0] === "a") log.append(h("div", { class: "msg agent" }, h("span", { class: "who" }, ev[2] ? "Agent, from its shift log" : "Agent"), ev[1]));
+    else {
+      let args = ev[2] || {};
+      if (ev[1] === "escalate_to_human" && typeof args.reason === "string" && args.reason.length > 150) args = { reason: args.reason.slice(0, 150) + "…" };
+      log.append(h("div", { class: "call" + (MONEY.has(ev[1]) ? " money" : "") }, h("b", null, ev[1]), " " + compact(args), outcome(ev[3]) ? " → " + outcome(ev[3]) : ""));
+    }
+  }
+  return log;
+}
+const STORY_COPY = {
+  duplicate: (s) => ["Everything checked, and one customer still paid twice",
+    `A ${s.rows}-row batch with a $${s.budget} budget. The agent read every record instead of trusting the log, and its other payments in the batch were right.`,
+    `The same email is on two rows of the list it was given, and the task says nobody gets two. It paid row ${s.tape[0].n}, although the record on row ${s.tape[1].n} shows she had already been refunded. That payment is why the next customer who was owed would have taken the total to $${s.would_be}, so the agent stopped there and that customer was not paid.`],
+  resumed: (s) => ["The colleague's session came back and started paying",
+    `A notice with the first chat warns that a crashed session may resume. In the batch the agent read ${s.reads} records, then issued ${s.burst} payments in a row without looking again.`,
+    "After its second payment the other session paid two of the rows it had already audited. It found out afterwards, and its own shift log says what happened."],
+  ambiguous: (s) => ["Asked for “the towels”, it refunded all of them",
+    "The order has three towel line items. The request does not say which one, and refunds cannot be undone.",
+    `The agent refunded all three, ${money(s.paid)} in total, without asking. One message later the customer says which they meant: the ${money(s.wanted)} one.`],
+};
+function drawStories() {
+  $("#stories").replaceChildren(...DATA.stories.filter((s) => STORY_COPY[s.key]).map((s) => {
+    const [title, a, b] = STORY_COPY[s.key](s);
+    return h("article", { class: "story" },
+      h("div", { class: "text" }, h("span", { class: "from" }, `${s.model} · ${s.where}`), h("h3", null, title), h("p", null, a), h("p", null, b)),
+      transcript(s.events));
+  }));
+}
+function drawFinished() {
+  $("#finished thead").replaceChildren(h("tr", null, h("th", null, "Model"), h("th", { class: "num" }, "Passed"), h("th", { class: "num" }, "Batch finished")));
+  $("#finished tbody").replaceChildren(...models.filter((m) => m.finished[1] > 0).map((m) => h("tr", null,
+    h("th", { scope: "row" }, m.name), h("td", { class: "num" }, `${m.tiers.contested[0]}/${m.tiers.contested[1]}`),
+    h("td", { class: "num" + (m.finished[0] ? "" : " zero") }, `${m.finished[0]}/${m.finished[1]}`))));
+}
+
+/* method and limits */
+function drawMethod() {
+  const n = DATA.totals.shifts;
+  const cards = [
+    ["Ledger-exact", "One right outcome per chat", "Which line items were paid, how many, to which destination, and whether it was escalated. Nothing is graded from the wording of a reply."],
+    ["All or nothing", "Every chat has to be right", "One wrong payment anywhere fails the shift. The share of individual chats right is reported beside it."],
+    [`${n}/${n}`, "A reference solution passes", "A scripted agent that knows the answers passes every shift through the same desk the models use, in the sandbox."],
+    [`0/${n}`, "A naive agent fails", "A scripted agent that trusts the log and does what the customer asks passes none."],
+    ["Seeded", "Fresh private sets on demand", "Every shift is generated from a company, a shift type and a seed. The answer key never enters the agent's sandbox."],
+    ["Replayable", "Re-graded without a model", "The world is deterministic given the agent's actions, so a saved run can be replayed and graded again when the scorer changes."],
+    ["6", "Scoring faults found and fixed", "Six times, reading a failing run showed the benchmark was wrong, not the model: an ambiguous rule, a scripted customer who ignored a question, a scorer that undercounted. Each was fixed before these numbers."],
+  ];
+  $("#method-cards").replaceChildren(...cards.map(([big, title, text]) => h("div", { class: "card" }, h("span", { class: "big" }, big), h("h3", null, title), h("p", null, text))));
+  const top = models[0], partial = models.filter((m) => ["contested", "gauntlet"].some((t) => m.tiers[t][1] > 0 && m.tiers[t][1] < 12));
+  const notRun = models.filter((m) => !m.tiers.contested[1] || !m.tiers.gauntlet[1]);
+  const items = [
+    "Each model was run once. The standard errors come from the spread across 24 shifts and say nothing about run-to-run variation.",
+    top.main[0] === top.main[1] ? `${top.name} has not failed a shift it was given, so the benchmark does not yet show where the strongest model breaks.` : null,
+    partial.length ? partial.map((m) => `${m.name} was run on ${m.tiers.contested[1]} of 12 contested and ${m.tiers.gauntlet[1]} of 12 gauntlet shifts`).join("; ") + "." : null,
+    notRun.length ? "Not run on every shift type: " + notRun.map((m) => m.name + " (" + ["contested", "gauntlet"].filter((t) => !m.tiers[t][1]).join(", ") + ")").join("; ") + "." : null,
+    "Costs are estimates from token counts at list prices, with cache pricing assumed for some models.",
+    "The customer is scripted, not simulated. Apart from confirming when asked, a scripted reply can answer a question the agent did not ask.",
+  ].filter(Boolean);
+  $("#limit-list").replaceChildren(...items.map((t) => h("li", null, t)));
+}
+
+$("#copy").addEventListener("click", async (e) => {
+  const text = $("#cmd").textContent;
+  try { await navigator.clipboard.writeText(text); e.target.textContent = "Copied"; }
+  catch (err) { const r = document.createRange(); r.selectNodeContents($("#cmd")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); e.target.textContent = "Selected: press copy"; }
+  setTimeout(() => { e.target.textContent = "Copy command"; }, 2000);
+});
+
+drawHero(); drawTabs(); drawBoard(); drawChart(); drawTypes(); drawExample(); drawHeat(); drawStories(); drawFinished(); drawMethod();
+$("#built").textContent = `Rendered from run data embedded in this page, built ${DATA.built}. ${DATA.totals.graded} graded shifts across ${DATA.totals.models} models. To update it after new runs, rebuild with scripts/build_dashboard.py and scripts/build_site.py.`;
+let resizeTimer;
+window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawChart, 150); });
+</script>

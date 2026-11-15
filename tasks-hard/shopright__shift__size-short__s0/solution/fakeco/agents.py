@@ -99,7 +99,8 @@ class _Scripted:
     def _shift(self, text, call, who):
         """Multi-ticket shifts: run this ticket's scripted operations when its first message arrives."""
         for t in self.sc.meta["tickets"]:
-            if text.endswith(self.sc.user_turns[t["first_turn"]]):
+            wait = t.get("ask_before", 0) if who == "oracle" else 0
+            if text.endswith(self.sc.user_turns[t["first_turn"] + wait]):
                 for op in t["ops"][who]:
                     if op[0] == "pay":
                         call(self.w.money_tool, {self.w.rid: op[1], "line_item_id": op[2], "quantity": op[3],

@@ -288,6 +288,81 @@
     ]
   },
   {
+    "task_id": "shopright__shift__size-unclear__s0",
+    "scenario_id": "shopright/shift/size=unclear/s0",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "record_not_named",
+      "eligibility_unknown",
+      "email_missing_owner",
+      "transactions_unavailable",
+      "clean",
+      "question_not_request",
+      "email_missing_not_owner",
+      "quantity_not_stated",
+      "destination_not_stated",
+      "ambiguous_item",
+      "batch_unlisted"
+    ]
+  },
+  {
+    "task_id": "shopright__shift__size-unclear__s1",
+    "scenario_id": "shopright/shift/size=unclear/s1",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "record_not_named",
+      "eligibility_unknown",
+      "clean",
+      "destination_not_stated",
+      "ambiguous_item",
+      "email_missing_owner",
+      "quantity_not_stated",
+      "email_missing_not_owner",
+      "transactions_unavailable",
+      "question_not_request",
+      "batch_unlisted"
+    ]
+  },
+  {
+    "task_id": "shopright__shift__size-unclear__s2",
+    "scenario_id": "shopright/shift/size=unclear/s2",
+    "world": "shopright",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "quantity_not_stated",
+      "clean",
+      "record_not_named",
+      "email_missing_owner",
+      "email_missing_not_owner",
+      "transactions_unavailable",
+      "ambiguous_item",
+      "destination_not_stated",
+      "question_not_request",
+      "eligibility_unknown",
+      "batch_unlisted"
+    ]
+  },
+  {
     "task_id": "skylark__shift__size-short__s0",
     "scenario_id": "skylark/shift/size=short/s0",
     "world": "skylark",
@@ -573,6 +648,81 @@
       "memo_exception",
       "shift_allowance",
       "batch_mini"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-unclear__s0",
+    "scenario_id": "skylark/shift/size=unclear/s0",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "clean",
+      "eligibility_unknown",
+      "transactions_unavailable",
+      "email_missing_owner",
+      "destination_not_stated",
+      "ambiguous_item",
+      "email_missing_not_owner",
+      "question_not_request",
+      "quantity_not_stated",
+      "record_not_named",
+      "batch_unlisted"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-unclear__s1",
+    "scenario_id": "skylark/shift/size=unclear/s1",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "question_not_request",
+      "clean",
+      "destination_not_stated",
+      "ambiguous_item",
+      "record_not_named",
+      "quantity_not_stated",
+      "transactions_unavailable",
+      "email_missing_owner",
+      "eligibility_unknown",
+      "email_missing_not_owner",
+      "batch_unlisted"
+    ]
+  },
+  {
+    "task_id": "skylark__shift__size-unclear__s2",
+    "scenario_id": "skylark/shift/size=unclear/s2",
+    "world": "skylark",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "eligibility_unknown",
+      "question_not_request",
+      "email_missing_not_owner",
+      "ambiguous_item",
+      "clean",
+      "record_not_named",
+      "transactions_unavailable",
+      "destination_not_stated",
+      "quantity_not_stated",
+      "email_missing_owner",
+      "batch_unlisted"
     ]
   },
   {
@@ -864,6 +1014,81 @@
     ]
   },
   {
+    "task_id": "clouddesk__shift__size-unclear__s0",
+    "scenario_id": "clouddesk/shift/size=unclear/s0",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "email_missing_not_owner",
+      "email_missing_owner",
+      "clean",
+      "quantity_not_stated",
+      "eligibility_unknown",
+      "transactions_unavailable",
+      "ambiguous_item",
+      "record_not_named",
+      "destination_not_stated",
+      "question_not_request",
+      "batch_unlisted"
+    ]
+  },
+  {
+    "task_id": "clouddesk__shift__size-unclear__s1",
+    "scenario_id": "clouddesk/shift/size=unclear/s1",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "eligibility_unknown",
+      "transactions_unavailable",
+      "email_missing_not_owner",
+      "email_missing_owner",
+      "record_not_named",
+      "destination_not_stated",
+      "ambiguous_item",
+      "question_not_request",
+      "quantity_not_stated",
+      "clean",
+      "batch_unlisted"
+    ]
+  },
+  {
+    "task_id": "clouddesk__shift__size-unclear__s2",
+    "scenario_id": "clouddesk/shift/size=unclear/s2",
+    "world": "clouddesk",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "quantity_not_stated",
+      "email_missing_owner",
+      "clean",
+      "eligibility_unknown",
+      "destination_not_stated",
+      "email_missing_not_owner",
+      "record_not_named",
+      "ambiguous_item",
+      "transactions_unavailable",
+      "question_not_request",
+      "batch_unlisted"
+    ]
+  },
+  {
     "task_id": "harbor__shift__size-short__s0",
     "scenario_id": "harbor/shift/size=short/s0",
     "world": "harbor",
@@ -1149,6 +1374,81 @@
       "clean",
       "shift_allowance",
       "batch_mini"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-unclear__s0",
+    "scenario_id": "harbor/shift/size=unclear/s0",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 0,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "ambiguous_item",
+      "eligibility_unknown",
+      "record_not_named",
+      "destination_not_stated",
+      "quantity_not_stated",
+      "transactions_unavailable",
+      "question_not_request",
+      "email_missing_not_owner",
+      "clean",
+      "email_missing_owner",
+      "batch_unlisted"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-unclear__s1",
+    "scenario_id": "harbor/shift/size=unclear/s1",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 1,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "quantity_not_stated",
+      "question_not_request",
+      "record_not_named",
+      "eligibility_unknown",
+      "transactions_unavailable",
+      "clean",
+      "email_missing_owner",
+      "email_missing_not_owner",
+      "destination_not_stated",
+      "ambiguous_item",
+      "batch_unlisted"
+    ]
+  },
+  {
+    "task_id": "harbor__shift__size-unclear__s2",
+    "scenario_id": "harbor/shift/size=unclear/s2",
+    "world": "harbor",
+    "mode": "shift",
+    "dials": {
+      "size": "unclear"
+    },
+    "seed": 2,
+    "control": false,
+    "turns": 29,
+    "tickets": [
+      "quantity_not_stated",
+      "destination_not_stated",
+      "eligibility_unknown",
+      "email_missing_owner",
+      "clean",
+      "record_not_named",
+      "email_missing_not_owner",
+      "ambiguous_item",
+      "transactions_unavailable",
+      "question_not_request",
+      "batch_unlisted"
     ]
   }
 ]
