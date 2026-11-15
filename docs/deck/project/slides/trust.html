@@ -1,0 +1,13 @@
+<section id="trust" class="dark" data-transition="fade">
+<p class="eyebrow">Why trust the numbers</p>
+<h2>We read the failures before we counted them</h2>
+<div class="cards">
+<div class="card"><p class="big">48/48</p><p class="body">The scripted reference solution passes every shift, through the same desk the models use.</p></div>
+<div class="card"><p class="big">0/48</p><p class="body">An agent that trusts the log and the customer passes none.</p></div>
+<div class="card"><p class="big">96/96</p><p class="body">Saved shifts replayed offline rebuild exactly the ledger the sandbox recorded.</p></div>
+<div class="card"><p class="big">6</p><p class="body">Scoring faults found by reading traces, and fixed before these numbers.</p></div>
+</div>
+<p class="body">One of the six: two OpenAI models refused to pay anything while another session could still write to the same records. We had marked that wrong. They were right that a re-read cannot rule out a duplicate without a lock, so stopping and escalating now passes.</p>
+<div class="foot"><p class="small">FakeCo Bench</p><p class="small">11</p></div>
+<aside>A benchmark is only as good as its failures. Six times, a failure turned out to be our mistake: a scripted customer who ignored a question, an ambiguous rule, a scorer that undercounted. We fixed each one and re-graded from the saved runs. The reference solution passes everything and a naive agent passes nothing.</aside>
+</section>

@@ -1,0 +1,78 @@
+/* FakeCo Bench: a ledger-and-desk look. Ink navy on cool paper, blue for data, orange for what went wrong. */
+body { font-family: 'Inter', Arial, sans-serif; color: #111A2B; }
+
+section {
+  --ink: #111A2B; --soft: #4A5568; --paper: #F5F6F8; --band: #E6EAF0; --rule: #CBD2DD;
+  --blue: #2A78D6; --blue-deep: #1C5CAB; --orange: #C8531B; --orange-soft: #FBE7DB;
+  background: #F5F6F8; color: #111A2B;
+  padding: 128px 128px 160px;
+  display: flex; flex-direction: column; gap: 40px;
+  counter-increment: page;
+}
+section.dark { background: #111A2B; color: #F1F3F7; }
+section.statement { background: #1C5CAB; color: #F5F6F8; justify-content: center; gap: 48px; }
+
+h1, h2, h3 { font-family: 'Space Grotesk', Arial, sans-serif; }
+h1 { font-size: 120px; font-weight: 600; line-height: 1.02; letter-spacing: -2px; }
+h2 { font-size: 64px; font-weight: 600; line-height: 1.1; letter-spacing: -1px; }
+h3 { font-size: 36px; font-weight: 600; line-height: 1.2; }
+
+.eyebrow { font-size: 24px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #1C5CAB; }
+.dark .eyebrow { color: #8FBBF2; }
+.statement .eyebrow { color: #CFE2FA; }
+.lede { font-size: 36px; line-height: 1.4; color: #4A5568; width: 1400px; }
+.dark .lede { color: #B8C2D3; }
+.statement .lede { color: #DCE8F8; }
+.body { font-size: 32px; line-height: 1.45; color: #4A5568; }
+.dark .body { color: #B8C2D3; }
+.small { font-size: 24px; line-height: 1.4; color: #4A5568; }
+.dark .small { color: #B8C2D3; }
+.big { font-family: 'Space Grotesk', Arial, sans-serif; font-size: 120px; font-weight: 600; line-height: 1; letter-spacing: -2px; color: #111A2B; }
+.dark .big { color: #F1F3F7; }
+.mono { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 26px; line-height: 1.5; color: #111A2B; }
+.dark .mono { color: #E6EAF0; }
+.warn { color: #C8531B; font-weight: 600; }
+.dark .warn { color: #FFB38A; }
+.good { color: #1C5CAB; font-weight: 600; }
+.dark .good { color: #8FBBF2; }
+
+.foot { position: absolute; left: 128px; bottom: 64px; width: 1664px; display: flex; flex-direction: row; justify-content: space-between; }
+.foot .small { font-size: 24px; }
+
+.row { display: flex; flex-direction: row; gap: 48px; }
+.col { display: flex; flex-direction: column; gap: 24px; }
+.grow { flex: 1; }
+.cards { display: flex; flex-direction: row; gap: 32px; }
+.card { flex: 1; display: flex; flex-direction: column; gap: 16px; background: #FFFFFF; border: 2px solid #CBD2DD; border-radius: 12px; padding: 36px; }
+.dark .card { background: #1A2436; border: 2px solid #33405A; }
+.card .body { font-size: 28px; }
+.card .quote { font-size: 28px; line-height: 1.4; color: #111A2B; }
+.dark .card .quote { color: #F1F3F7; }
+.card .big { font-size: 96px; }
+.card.alert { border: 2px solid #C8531B; background: #FBE7DB; }
+
+.ledger { display: flex; flex-direction: column; gap: 6px; background: #FFFFFF; border: 2px solid #CBD2DD; border-radius: 12px; padding: 32px 36px; }
+.dark .ledger { background: #1A2436; border: 2px solid #33405A; }
+.ledger .mono { font-size: 25px; }
+
+/* leaderboard rows */
+.board { display: flex; flex-direction: column; gap: 14px; }
+.lb { display: grid; grid-template-columns: 330px 1fr 250px; gap: 28px; align-items: center; }
+.lb .name { font-size: 28px; font-weight: 600; color: #111A2B; }
+.lb .track { height: 30px; background: #E6EAF0; border-radius: 4px; display: flex; flex-direction: row; }
+.lb .fill { height: 30px; background: #2A78D6; border-radius: 4px; }
+.lb .val { font-size: 28px; color: #4A5568; }
+
+/* plot host */
+.plot { position: relative; width: 1664px; height: 590px; }
+.plot .tick { position: absolute; font-size: 24px; color: #4A5568; width: 90px; }
+.plot .ytick { text-align: right; }
+.plot .xtick { text-align: center; }
+.plot .pt { position: absolute; font-size: 24px; font-weight: 600; color: #111A2B; width: 220px; }
+.plot .axis { position: absolute; font-size: 24px; color: #4A5568; text-align: center; }
+
+table { font-family: 'Inter', Arial, sans-serif; font-size: 26px; color: #111A2B; }
+.dark table { color: #F1F3F7; }
+
+.stagger { animation: rise 0.5s ease both; animation-delay: calc(var(--i) * 120ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }

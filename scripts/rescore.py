@@ -27,7 +27,7 @@ class Replay:
             if r.get("kind") == "customer":
                 cur = {"tools": [], "reply": None}
                 self.turns.append(cur)
-            elif cur is not None and r.get("kind") == "tool":
+            elif cur is not None and r.get("kind") == "tool" and r["name"] != "save_notes":  # the harness's own tool
                 cur["tools"].append((r["name"], r["args"]))
             elif cur is not None and r.get("kind") == "reply":
                 cur["reply"] = r["text"]

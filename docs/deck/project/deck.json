@@ -1,0 +1,21 @@
+{
+  "v": 5,
+  "createdOnFiles": {"v": 1, "at": "2026-11-15T15:14:00Z"},
+  "lists": "css",
+  "format": {"v": 1, "shared": ["project/deck.css"]},
+  "title": "FakeCo Bench",
+  "cover": "cover",
+  "order": ["cover", "problem", "shift", "grading", "leaderboard", "pareto", "duplicate", "moving", "gauntlet", "map", "trust", "fit", "limits", "close"],
+  "sections": {
+    "what": {"description": "What FakeCo is and why a chat-level benchmark is no longer enough.", "start": "cover"},
+    "results": {"description": "How ten models score, and what that costs.", "start": "leaderboard"},
+    "failures": {"description": "Three ways agents fail, each shown from a real run.", "start": "duplicate"},
+    "case": {"description": "Why the numbers can be trusted, how the benchmark fits what Vals values, and what is still open.", "start": "trust"}
+  },
+  "faces": {
+    "space-grotesk": {"family": "Space Grotesk", "href": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"},
+    "inter": {"family": "Inter", "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"},
+    "jetbrains-mono": {"family": "JetBrains Mono", "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"}
+  },
+  "designSystems": []
+}

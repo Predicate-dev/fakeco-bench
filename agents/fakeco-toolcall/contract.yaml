@@ -7,7 +7,7 @@ install_cmd: "bash setup.sh"
 run_cmd: >-
   /opt/fakeco-toolcall/venv/bin/python /bundle/fakeco-toolcall/run_agent.py
   "{problem_statement_path}" --task-id "{task_id}" --model "{model}"
-  --max-steps "{max_steps}" --effort "{effort}"
+  --max-steps "{max_steps}" --effort "{effort}" --memory "{memory}" --notes-limit "{notes_limit}"
 
 final_output: /logs/agent
 
@@ -28,6 +28,16 @@ kwargs:
     required: false
     default: default
     description: "Anthropic models only: output_config.effort (low, medium, high, xhigh, max). 'default' sends none."
+  memory:
+    type: str
+    required: false
+    default: full
+    description: "full: one context for the whole shift. notes: every chat starts with a fresh context; only the agent's own notes (save_notes tool) carry over."
+  notes_limit:
+    type: int
+    required: false
+    default: 1200
+    description: "Characters the notes may hold when memory is notes."
 
 provided:
   secrets: "Pass the key for the model's provider with -s ANTHROPIC_API_KEY <secret> or -s OPENAI_API_KEY <secret>."
