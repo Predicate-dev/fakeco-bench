@@ -206,8 +206,9 @@ def memory_pairs(index: dict) -> list:
             continue
         pairs.append({"name": base["name"], "n": len(both), "full": sum(full[s["id"]] for s in both),
                       "notes": sum(s["pass"] for s in both), "sizes": sorted({s["size"] for s in both}, key=index["sizes"].index),
+                      "counts": {size: sum(1 for s in both if s["size"] == size) for size in index["sizes"] if any(s["size"] == size for s in both)},
                       "memo": memo_check(m["key"])})
-    return pairs
+    return sorted(pairs, key=lambda p: -p["n"])
 
 
 def main() -> None:

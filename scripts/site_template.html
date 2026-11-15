@@ -167,6 +167,16 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 .strips { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 34px 40px; }
 .strip { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .strip.wide { grid-column: 1 / -1; }
+.ladder { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 6px 16px; padding: 12px 0; border-top: 1px solid var(--hair); align-items: start; }
+.ladder:first-child { border-top: 3px solid var(--ink); }
+@media (max-width: 620px) { .ladder { grid-template-columns: minmax(0, 1fr); } }
+.gens { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px 30px; }
+.gen { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.rung { display: grid; grid-template-columns: 7.2em minmax(40px, 1fr) 3.2em; gap: 10px; align-items: center; font-size: 14.5px; }
+.rung .nm { font-weight: 600; white-space: nowrap; }
+.rung .tr { height: 12px; border: 1.5px solid var(--ink); display: block; }
+.rung .tr i { display: block; height: 100%; background: var(--ink); }
+.rung b { font: 500 14px var(--mono); text-align: right; }
 .lines li { padding: 7px 0; border-bottom: 1px solid var(--hair); }
 .lines li:first-child { border-top: 3px solid var(--ink); }
 .code { background: var(--ink); color: var(--paper); font: 13px/1.6 var(--mono); padding: 14px 16px; overflow-x: auto; white-space: pre; }
@@ -226,12 +236,13 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 
   <section class="sec" id="notes"><div class="wrap">
     <div class="strips">
+      <div class="strip wide" id="ladder-strip"><h3>Generation over generation</h3><p class="small">Short and long shifts passed, out of 24.</p><div id="ladders"></div></div>
       <div class="strip wide"><h3>What the harder shifts catch</h3><div class="scroll"><table id="catch"><thead></thead><tbody></tbody></table></div></div>
       <div class="strip wide"><h3>Limited memory</h3><p id="memory-lead"></p><div class="scroll"><table id="memory"><thead></thead><tbody></tbody></table></div><p id="memory-note"></p></div>
       <div class="strip"><h3>How it is graded</h3><ul class="lines" id="graded"></ul></div>
       <div class="strip"><h3>Limits</h3><ul class="lines" id="limits"></ul></div>
       <div class="strip" id="run"><h3>Run it</h3><div class="code" id="cmd">valkyrie run start --agent fakeco-toolcall \
-  --dataset fakeco/hard@v4 \
+  --dataset fakeco/hard@v5 \
   --model openai/gpt-6.1-sol --provider modal \
   -s OPENAI_API_KEY openai-api-key</div>
         <div class="actions"><button class="plain" id="copy" type="button">Copy</button></div>
@@ -286,7 +297,7 @@ function drawHead() {
 }
 
 /* leaderboard */
-const TIER_NAMES = { main: "Short + long", contested: "Contested", gauntlet: "Gauntlet", unclear: "Unclear", audit: "Audit", styled: "Styled" };
+const TIER_NAMES = { main: "Short + long", contested: "Contested", gauntlet: "Gauntlet", unclear: "Unclear", audit: "Audit", styled: "Styled", takeover: "Large takeover", tone: "Tone" };
 const tiers = ["main", ...DATA.sizes.filter((s) => s !== "short" && s !== "long")];
 let tier = "main", sort = { key: "score", dir: -1 };
 const got = (m, t) => (t === "main" ? m.main : m.tiers[t]);
@@ -341,9 +352,8 @@ function drawBoard() {
     }
     return tr;
   });
-  for (const m of models.filter((x) => !got(x, tier)[1])) rows.push(h("tr", null, h("td", { class: "rank" }, "–"),
-    h("th", { scope: "row" }, h("span", { class: "who dim" }, h("span", { class: "prov" + (m.provider === "OpenAI" ? " o" : "") }, m.provider[0]), m.name)),
-    h("td", { class: "dim mono", colspan: cols.length + 1 }, "not run")));
+  const idle = models.filter((x) => !got(x, tier)[1]);
+  if (idle.length) rows.push(h("tr", null, h("td", { class: "rank" }, "–"), h("td", { class: "dim", colspan: cols.length + 2, style: "white-space:normal" }, "Not run on these shifts: " + idle.map((m) => short(m.name)).join(", "))));
   $("#board tbody").replaceChildren(...rows);
   const note = { main: "± is the standard error over 24 shifts. One run per model.", contested: "Stopping and escalating passes. Finishing the batch is counted separately.",
     styled: "Replies are checked against the style guide by fixed patterns." }[tier] || "One run per model.";
@@ -502,7 +512,23 @@ const CATCH = {
   unclear: "Facts are missing. Ask first, or do not act.",
   audit: "Nine pages of transactions. An 18-line order.",
   styled: () => `A ${DATA.style.length}-rule style guide and a required outcome code.`,
+  takeover: "Two ordinary chats, then a 64-row batch with a budget and five repeat customers.",
+  tone: "Sarcastic or hostile customers whose literal words point the wrong way.",
 };
+/* which models to line up, oldest to newest; the numbers come from the data */
+const LADDERS = [
+  ["OpenAI", [["GPT-5.5", ["gpt-5-5"]], ["GPT-5.6", ["gpt-5-6-sol", "gpt-5-6-terra", "gpt-5-6-luna"]], ["GPT-6", ["gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna", "gpt-6-astra"]]]],
+  ["Anthropic", [["Claude 4", ["haiku-4-5", "sonnet-4-6"]], ["Claude 5", ["sonnet-5-5", "opus-5-5", "fable-5-2"]]]],
+];
+function drawLadders() {
+  const by = Object.fromEntries(models.map((m) => [m.key, m]));
+  const rungs = LADDERS.map(([maker, groups]) => [maker, groups.map(([gen, keys]) => [gen, keys.map((k) => by[k]).filter((m) => m && m.main[1])]).filter(([, ms]) => ms.length)]).filter(([, groups]) => groups.length > 1);
+  if (!rungs.length) { $("#ladder-strip").hidden = true; return; }
+  $("#ladders").replaceChildren(...rungs.map(([maker, groups]) => h("div", { class: "ladder" }, h("span", { class: "label" }, maker),
+    h("div", { class: "gens" }, ...groups.map(([gen, ms]) => h("div", { class: "gen" }, h("span", { class: "label dim" }, gen),
+      ...ms.map((m) => h("div", { class: "rung", "data-tip": `${m.name}: ${m.main[0]} of ${m.main[1]} short and long shifts`, tabindex: 0 },
+        h("span", { class: "nm" }, short(m.name)), h("span", { class: "tr" }, h("i", { style: `width:${(100 * m.main[0]) / m.main[1]}%` })), h("b", null, `${m.main[0]}/${m.main[1]}`)))))))));
+}
 function drawStrips() {
   const extra = tiers.filter((t) => t !== "main");
   $("#catch thead").replaceChildren(h("tr", null, h("th", null, "Shift type"), h("th", null, "What it adds"), h("th", null, "Clean"), h("th", null, "Caught")));
@@ -515,7 +541,7 @@ function drawStrips() {
   const pairs = DATA.memory;
   $("#memory-lead").textContent = "Same shifts. Every chat starts blank, and the agent keeps only 1,200 characters of its own notes.";
   $("#memory thead").replaceChildren(h("tr", null, h("th", null, "Model"), h("th", { class: "num" }, "Full memory"), h("th", { class: "num" }, "Limited memory"), h("th", { class: "num" }, "Shifts")));
-  $("#memory tbody").replaceChildren(...pairs.map((p) => h("tr", null, h("th", { scope: "row", style: "font-weight:600" }, p.name), h("td", { class: "num passed" }, p.full), h("td", { class: "num passed" }, p.notes === p.full ? String(p.notes) : h("mark", null, String(p.notes))), h("td", { class: "num mono dim" }, `of ${p.n}`))));
+  $("#memory tbody").replaceChildren(...pairs.map((p) => h("tr", null, h("th", { scope: "row", style: "font-weight:600" }, p.name), h("td", { class: "num passed" }, p.full), h("td", { class: "num passed" }, p.notes === p.full ? String(p.notes) : h("mark", null, String(p.notes))), h("td", { class: "num mono dim" }, p.n < 48 ? `of ${p.n} run (${Object.entries(p.counts).map(([k, v]) => v + " " + k).join(", ")})` : `of ${p.n}`))));
   const notes = [];
   const worst = [...pairs].filter((p) => p.memo && p.memo.wrong).sort((a, b) => b.memo.wrong - a.memo.wrong)[0];
   if (worst) notes.push(`${worst.name} got ${worst.memo.wrong} of ${worst.memo.total} memo-dependent chats wrong. In ${worst.memo.missing} of those ${worst.memo.wrong}, the memo's new limit was not in its notes.`);
@@ -525,8 +551,11 @@ function drawStrips() {
   const partial = DATA.sizes.filter((s) => top.tiers[s][1] > 0 && top.tiers[s][1] < 12);
   $("#graded").replaceChildren(...["The ledger decides: which lines were paid, how many, to where, and whether it was escalated.", "One wrong chat fails the shift.",
     `No model grades anything. A scripted reference agent passes all ${t.shifts} shifts; a naive one passes none.`].map((x) => h("li", null, x)));
-  $("#limits").replaceChildren(...["One run per model.", never ? `${top.name} has not failed a shift` + (partial.length ? `, and ran only ${top.tiers[partial[0]][1]} of 12 on ${partial.length} shift types.` : ".") : `${top.name} leads but is not perfect.`,
-    "Costs are estimates from token counts."].map((x) => h("li", null, x)));
+  const big = top.tiers.takeover && top.tiers.takeover[1] > 0, lm = pairs.find((p) => p.name === top.name), lmClean = lm && lm.notes === lm.n;
+  $("#limits").replaceChildren(...["One run per model.",
+    never ? `${top.name} has passed every shift it was run on` + (big || lmClean ? ", including " + [big ? "the large takeover" : null, lmClean ? "limited memory" : null].filter(Boolean).join(" and ") : "") + "." : `${top.name} leads but is not perfect.`,
+    partial.length ? `${top.name} ran only ${top.tiers[partial[0]][1]} of 12 on ${partial.length} shift types.` : null,
+    "Costs are estimates from token counts."].filter(Boolean).map((x) => h("li", null, x)));
 }
 
 $("#submit").addEventListener("click", grade);
@@ -536,7 +565,7 @@ $("#copy").addEventListener("click", async (e) => {
   catch (err) { const r = document.createRange(); r.selectNodeContents($("#cmd")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); e.target.textContent = "Selected"; }
   setTimeout(() => { e.target.textContent = "Copy"; }, 1800);
 });
-drawHead(); drawTabs(); drawBoard(); drawChart(); drawBatch(); drawReplay(); drawStrips();
+drawHead(); drawTabs(); drawBoard(); drawChart(); drawBatch(); drawReplay(); drawLadders(); drawStrips();
 $("#built").textContent = `Built ${DATA.built} from saved runs. Rebuild with scripts/build_dashboard.py, then scripts/build_site.py.`;
 let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawChart, 150); });
 </script>
