@@ -408,7 +408,7 @@ The reference solution passes 12/12 large takeover shifts in the sandbox (run
 `3da54d72-3cf3-41fd-ac8b-88de08f87101`) and all 108 shifts offline. Large takeover runs use `-k max_steps 400`.
 
 - **Scale is what moves the strong GPT models.** GPT-6.1 Terra paid a repeated customer 45 times across its
-  eleven graded large batches and passed none. GPT-6.1 Sol paid one 20 times and passed seven.
+  large batches and passed none. GPT-6.1 Sol paid one 20 times and passed seven of twelve.
 - **Sarcasm catches GPT, not Fable.** GPT-6.1 Terra issued to the destination the customer had named
   sarcastically in 6 of 12 shifts, and GPT-6.1 Sol in 2.
 - **A first version of the tone shifts was unfair and is not counted.** One chat forced a destination the
