@@ -1,7 +1,6 @@
 # Exactly Once: agents check each item and miss the rules that span them
 
-> **TODO (human-written overview).** The hackathon asks for one paragraph here that is entirely human-written.
-> Replace this block with it. Everything below describes how the benchmark works and how to run it.
+We created a benchmark where an AI agent works as a whole customer-support shift at a pretend company, using tools that actually move money between users and accoutns. We graded this verifiably on the company's ledger. We did this because models get almost everything right, however it can fail across few chats in a whole shift. We found that models check a rule one item at a time and break rules that would hold across items, especially when we are working across multiple handoffs and user requests at a time. The main failure is the model paying a customer twice when they appear on a list under two records (383 of 645 failures). It is pretty hard on smaller models, and Claude Fable 5.2 still fails 2 of 12 large batches; eight models pass fewer than a quarter of the hardest shifts. When we added one line of instruction, we could take GPT 6.1 sol to the top, so models can do these but don't actively think to (system prompt ablation tests can work!).
 
 Exactly Once puts an agent on the support desk of four fake companies (the FakeCo world) and checks, from the
 tool log and the company's ledger, where it breaks. The benchmark was first called FakeCo Bench, and the dataset
